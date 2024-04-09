@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import stuba.fiit.sk.eventsphere.ui.theme.EventSphereTheme
+import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
+import stuba.fiit.sk.eventsphere.ui.theme.paragraph
+import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +35,8 @@ class MainActivity : ComponentActivity() {
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "Hello $name!",
-        modifier = modifier
+        modifier = modifier,
+        style = paragraph
     )
 }
 
