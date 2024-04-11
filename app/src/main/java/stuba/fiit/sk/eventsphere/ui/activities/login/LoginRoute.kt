@@ -5,10 +5,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun LoginRoute(
-    onNavigationToHome: () -> Unit
+    onNavigationToHome: () -> Unit,
+    loginViewModel: LoginViewModel
 ) {
-    val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory())
     LoginScreen (
-        toHome = onNavigationToHome
+        toHome = onNavigationToHome,
+        viewModel = loginViewModel
     )
 }
