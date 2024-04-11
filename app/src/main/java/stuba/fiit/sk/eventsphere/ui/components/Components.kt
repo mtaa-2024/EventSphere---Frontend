@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,7 +82,7 @@ fun SecondaryButton (
 }
 
 @Composable
-fun InputField(
+fun InputField (
     label: String,
     value: String,
     onChange: (String) -> Unit
@@ -97,6 +98,31 @@ fun InputField(
         },
         label = { Text(text = label, style = labelStyle) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        textStyle = TextStyle(color = grey),
+        modifier = Modifier
+            .onFocusChanged { isFocused = it.isFocused }
+            .fillMaxWidth()
+    )
+}
+
+@Composable
+fun InputPasswordField (
+    label: String,
+    value: String,
+    onChange: (String) -> Unit
+) {
+    var text by rememberSaveable { mutableStateOf(value) }
+    var isFocused by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = if (isFocused && text == label) "" else text,
+        onValueChange = {
+            text = it
+            onChange(it)
+        },
+        visualTransformation = PasswordVisualTransformation(),
+        label = { Text(text = label, style = labelStyle) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         textStyle = TextStyle(color = grey),
         modifier = Modifier
             .onFocusChanged { isFocused = it.isFocused }

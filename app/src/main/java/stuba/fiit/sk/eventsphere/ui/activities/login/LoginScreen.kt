@@ -1,9 +1,6 @@
 package stuba.fiit.sk.eventsphere.ui.activities.login
 
-import android.widget.ImageButton
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,18 +16,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.InputField
+import stuba.fiit.sk.eventsphere.ui.components.InputPasswordField
 import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
-import stuba.fiit.sk.eventsphere.ui.theme.green
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModelFactory
@@ -100,7 +98,7 @@ fun LoginScreen (
                     .height(25.dp)
             )
 
-            InputField(
+            InputPasswordField(
                 label = "Password",
                 value = viewModel.password,
                 onChange = viewModel::updatePassword
@@ -111,7 +109,11 @@ fun LoginScreen (
                     .weight(1f)
             )
 
-            PrimaryButton(text = "Login", onClick = toHome)
+            PrimaryButton(text = "Login", onClick = {
+                viewModel.viewModelScope.launch {
+                    viewModel.onLogin()
+                }
+            })
 
             Spacer(
                 modifier = Modifier

@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.JsonObject
+import stuba.fiit.sk.eventsphere.api.apiService
 
 class LoginViewModel() : ViewModel() {
     var user by mutableStateOf("Username or email")
@@ -17,6 +19,18 @@ class LoginViewModel() : ViewModel() {
         password = value
     }
 
+    suspend fun onLogin() {
+        if (user != "Username or email" && password != "Password") {
+            try {
+                println("Connecting to api")
+                val fetchedJson = apiService.getUser(user, password)
+                println("Fetched data from api")
+                println(fetchedJson)
+            } catch (e: Exception) {
+                print("Error: $e")
+            }
+        }
+    }
 }
 
 class LoginViewModelFactory : ViewModelProvider.Factory {
