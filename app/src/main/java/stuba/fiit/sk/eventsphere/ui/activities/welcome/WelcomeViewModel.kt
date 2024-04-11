@@ -18,6 +18,7 @@ val gson = Gson()
 class WelcomeViewModel(private val apiService: ApiService) : ViewModel() {
     private var _event = MutableLiveData<Event>()
 
+    /*
     init {
         viewModelScope.launch {
             try {
@@ -77,6 +78,7 @@ class WelcomeViewModel(private val apiService: ApiService) : ViewModel() {
             }
         }
     }
+     */
 
     private fun parsejson(key: String, jsonObject: JsonObject): String? {
         return if (jsonObject.get(key).isJsonNull) null else jsonObject.get(key)?.asString

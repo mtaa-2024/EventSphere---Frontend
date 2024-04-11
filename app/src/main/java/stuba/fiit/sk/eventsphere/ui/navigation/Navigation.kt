@@ -31,6 +31,9 @@ fun EventSphereNavHost(
                 },
                 onNavigationToRegister = {
                     navController.navigate(REGISTER_ROUTE)
+                },
+                onNavigationToHome = {
+                    navController.navigate(WELCOME_ROUTE)
                 }
 
             )
