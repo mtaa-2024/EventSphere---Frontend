@@ -1,27 +1,124 @@
 package stuba.fiit.sk.eventsphere.ui.activities.login
 
+import android.widget.ImageButton
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.InputField
+import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
+import stuba.fiit.sk.eventsphere.ui.theme.green
+import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
+import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
+import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModelFactory
 
 @Composable
 fun LoginScreen (
     toHome: () -> Unit,
-    viewModel: LoginViewModel
+    back: () -> Unit,
+    viewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory())
 ) {
     Column (
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        InputField(label = "Username or email", value = viewModel.user, onChange = viewModel::updateUser)
-        InputField(label = "Password", value = viewModel.password, onChange = viewModel::updatePassword)
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.top_bar),
+                contentDescription = "welcome_background",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .matchParentSize(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Button (
+                    onClick = back,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                ) {
+                    Image (
+                        painter = painterResource(id = R.drawable.back_arrow),
+                        contentDescription = "Back"
+                    )
+                }
+            }
+        }
+        Column (
+            modifier = Modifier
+                .padding(25.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Welcome back",
+                style = welcomeStyle,
+                fontSize = 25.sp
+            )
+            Spacer(
+                modifier = Modifier
+                    .height(30.dp)
+            )
+            InputField(
+                label = "Username or email",
+                value = viewModel.user,
+                onChange = viewModel::updateUser
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .height(25.dp)
+            )
+
+            InputField(
+                label = "Password",
+                value = viewModel.password,
+                onChange = viewModel::updatePassword
+            )
+
+            Spacer (
+                modifier = Modifier
+                    .weight(1f)
+            )
+
+            PrimaryButton(text = "Login", onClick = toHome)
+
+            Spacer(
+                modifier = Modifier
+                    .height(25.dp)
+            )
+
+        }
     }
 }
 
@@ -29,6 +126,5 @@ fun LoginScreen (
 @Composable
 fun LoginScreenPreview (
 ) {
-    LoginScreen(toHome = {}, viewModel = LoginViewModel())
-
+    LoginScreen(toHome = {}, viewModel = LoginViewModel(), back = {})
 }

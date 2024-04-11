@@ -29,6 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
 import stuba.fiit.sk.eventsphere.ui.components.SecondaryButton
@@ -37,12 +39,17 @@ import stuba.fiit.sk.eventsphere.ui.theme.EventSphereTheme
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
+import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
+import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModelFactory
+import stuba.fiit.sk.eventsphere.viewmodel.WelcomeViewModel
+import stuba.fiit.sk.eventsphere.viewmodel.WelcomeViewModelFactory
 
 @Composable
 fun WelcomeScreen (
     toLogin: () -> Unit,
     toRegister: () -> Unit,
-    toHome: () -> Unit
+    toHome: () -> Unit,
+    viewModel: WelcomeViewModel = viewModel(factory = WelcomeViewModelFactory())
 ) {
     Column (
         modifier = Modifier

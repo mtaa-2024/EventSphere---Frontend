@@ -1,17 +1,12 @@
-package stuba.fiit.sk.eventsphere.ui.activities.welcome
+package stuba.fiit.sk.eventsphere.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.ApiService
-import stuba.fiit.sk.eventsphere.api.CommentStruct
 import stuba.fiit.sk.eventsphere.api.Event
-import stuba.fiit.sk.eventsphere.api.EventStruct
-import stuba.fiit.sk.eventsphere.api.PerformerStruct
 import stuba.fiit.sk.eventsphere.api.apiService
 
 val gson = Gson()

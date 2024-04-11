@@ -1,6 +1,7 @@
 package stuba.fiit.sk.eventsphere.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -99,5 +100,13 @@ fun InputField(
         textStyle = TextStyle(color = grey),
         modifier = Modifier
             .onFocusChanged { isFocused = it.isFocused }
+            .fillMaxWidth()
     )
+}
+
+@Composable
+fun TopBar (
+
+) {
+
 }
