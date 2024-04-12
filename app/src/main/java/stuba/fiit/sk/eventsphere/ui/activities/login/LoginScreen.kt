@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.InputField
@@ -31,13 +30,12 @@ import stuba.fiit.sk.eventsphere.ui.components.InputPasswordField
 import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
-import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModelFactory
 
 @Composable
 fun LoginScreen (
     toHome: () -> Unit,
     back: () -> Unit,
-    viewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory())
+    viewModel: LoginViewModel
 ) {
     Column (
         modifier = Modifier

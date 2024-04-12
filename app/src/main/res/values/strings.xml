@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EventSphere</string>
+    <string name="welcome_message"></string>
 </resources>

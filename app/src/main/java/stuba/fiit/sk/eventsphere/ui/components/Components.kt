@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.grey
-import stuba.fiit.sk.eventsphere.ui.theme.inputStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 
 @Composable

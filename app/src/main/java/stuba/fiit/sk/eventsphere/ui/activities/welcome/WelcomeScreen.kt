@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,34 +20,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
 import stuba.fiit.sk.eventsphere.ui.components.SecondaryButton
-import stuba.fiit.sk.eventsphere.ui.navigation.EventSphereNavHost
-import stuba.fiit.sk.eventsphere.ui.theme.EventSphereTheme
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
-import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
-import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
-import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModelFactory
-import stuba.fiit.sk.eventsphere.viewmodel.WelcomeViewModel
-import stuba.fiit.sk.eventsphere.viewmodel.WelcomeViewModelFactory
+import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 @Composable
 fun WelcomeScreen (
     toLogin: () -> Unit,
     toRegister: () -> Unit,
     toHome: () -> Unit,
-    viewModel: WelcomeViewModel = viewModel(factory = WelcomeViewModelFactory())
+    viewModel: MainViewModel
 ) {
     Column (
         modifier = Modifier
@@ -141,22 +127,6 @@ fun WelcomeScreen (
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-        }
-    }
-}
-
-@Preview (showBackground = true, showSystemUi = true)
-@Composable
-fun WelcomeScreenPreview (
-
-) {
-    EventSphereTheme {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            WelcomeScreen(toLogin = {}, toRegister = {}, toHome = {})
         }
     }
 }
