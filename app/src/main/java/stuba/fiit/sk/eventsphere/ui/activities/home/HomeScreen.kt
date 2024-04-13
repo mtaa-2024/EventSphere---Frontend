@@ -1,7 +1,8 @@
 package stuba.fiit.sk.eventsphere.ui.activities.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -24,9 +26,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
-import stuba.fiit.sk.eventsphere.ui.components.HomeSelector
+import stuba.fiit.sk.eventsphere.ui.components.CategoryBoxSelected
+import stuba.fiit.sk.eventsphere.ui.components.CategoryBoxUnselected
+import stuba.fiit.sk.eventsphere.ui.components.EventBanner
+import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorSelected
+import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorUnselected
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
@@ -94,11 +101,11 @@ fun HomeScreen (
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                CategoryBox(R.drawable.book)
-                CategoryBox(R.drawable.music)
-                CategoryBox(R.drawable.brush_2)
-                CategoryBox(R.drawable.burger)
-                CategoryBox(R.drawable.dribbble)
+                CategoryBoxSelected(R.drawable.book_selected)
+                CategoryBoxUnselected(R.drawable.music_unselected)
+                CategoryBoxUnselected(R.drawable.brush_unselected)
+                CategoryBoxUnselected(R.drawable.food_unselected)
+                CategoryBoxUnselected(R.drawable.sport_unselected)
             }
             Spacer (
                 modifier = Modifier
@@ -109,15 +116,33 @@ fun HomeScreen (
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
-                HomeSelector("Upcoming")
-                HomeSelector("Attending")
-                HomeSelector("Invited")
+                HomeSelectorSelected("Upcoming")
+                HomeSelectorUnselected("Attending")
+                HomeSelectorUnselected("Invited")
             }
             Spacer (
                 modifier = Modifier
                     .height(40.dp)
             )
-
+        }
+        val scrollState = rememberScrollState()
+        Column (
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .fillMaxSize()
+        ) {
+            viewModel.upcoming.value?.events?.forEach { event ->
+                EventBanner (
+                    title = event.title,
+                    date = event.date,
+                    location = event.location,
+                    icon = R.drawable.book_icon
+                )
+                Spacer (
+                    modifier = Modifier
+                        .height(10.dp)
+                )
+            }
         }
     }
 }

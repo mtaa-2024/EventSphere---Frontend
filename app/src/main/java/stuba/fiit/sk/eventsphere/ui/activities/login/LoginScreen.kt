@@ -111,8 +111,11 @@ fun LoginScreen (
 
             PrimaryButton(text = "Login", onClick = {
                 viewModel.viewModelScope.launch {
-                    if (viewModel.authenticateUser(loginViewModel.user.value.toString(), loginViewModel.password.value.toString()))
+                    if (viewModel.authenticateUser(loginViewModel.user.value.toString(), loginViewModel.password.value.toString())) {
+                        viewModel.getUpcoming()
                         toHome()
+                    }
+
                 }
             })
 

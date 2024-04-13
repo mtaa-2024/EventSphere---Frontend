@@ -1,14 +1,21 @@
 package stuba.fiit.sk.eventsphere.viewmodel
+import androidx.compose.foundation.rememberScrollState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import stuba.fiit.sk.eventsphere.api.apiService
+import stuba.fiit.sk.eventsphere.model.EventStruct
+import stuba.fiit.sk.eventsphere.model.Upcoming
+import stuba.fiit.sk.eventsphere.model.UpcomingStruct
 import stuba.fiit.sk.eventsphere.model.User
 
 class MainViewModel() : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()
     val loggedUser: LiveData<User> = _loggedUser
+
+    private val _upcoming = MutableLiveData<Upcoming>()
+    val upcoming: LiveData<Upcoming> = _upcoming
 
     suspend fun authenticateUser(username: String, password: String): Boolean {
         if (username != "" && password != "") {
@@ -49,7 +56,25 @@ class MainViewModel() : ViewModel() {
     suspend fun getUpcoming() {
         try {
             val fetchedJson = apiService.getUpcoming()
-            println(fetchedJson)
+            if (fetchedJson.get("result").asBoolean) {
+                val eventArray = fetchedJson.getAsJsonArray("events").asJsonArray
+                val eventList = mutableListOf<UpcomingStruct>()
+                eventArray.forEach { eventElement ->
+                    val eventObject = eventElement.asJsonObject
+                    val event = UpcomingStruct(
+                        id = eventObject.get("id").asInt,
+                        title = if (eventObject.get("title").isJsonNull) { null } else { eventObject.get("title")?.asString },
+                        location = if (eventObject.get("location").isJsonNull) { null } else { eventObject.get("location")?.asString },
+                        date = if (eventObject.get("estimated_end").isJsonNull) { null } else { eventObject.get("estimated_end")?.asString }
+                    )
+                    eventList.add(event)
+                }
+                val upcomingEvents = Upcoming (
+                    events = eventList
+                )
+                _upcoming.value = upcomingEvents
+            }
+            println(_upcoming.value)
         } catch (e: Exception) {
             println("Error: $e")
         }

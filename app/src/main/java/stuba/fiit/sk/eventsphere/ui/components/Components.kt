@@ -6,13 +6,18 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
@@ -37,11 +42,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.green
+import androidx.core.graphics.luminance
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.grey
@@ -149,7 +158,7 @@ fun InputPasswordField (
 }
 
 @Composable
-fun CategoryBox (
+fun CategoryBoxSelected (
     icon: Int
 ) {
     Box (
@@ -187,20 +196,196 @@ fun CategoryBox (
 }
 
 @Composable
-fun HomeSelector (
+fun CategoryBoxUnselected (
+    icon: Int
+) {
+    Box (
+        modifier = Modifier
+            .width(50.dp)
+            .height(50.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 15.dp,
+                    topEnd = 15.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 15.dp
+                )
+            )
+            .border(
+                2.dp,
+                MaterialTheme.colorScheme.primaryContainer,
+                RoundedCornerShape(
+                    topStart = 15.dp,
+                    topEnd = 15.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 15.dp
+                )
+            )
+            .background(MaterialTheme.colorScheme.background)
+            .padding(2.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Image (
+            painter = painterResource(id = icon),
+            contentDescription = "education",
+            contentScale = ContentScale.Inside
+        )
+    }
+}
+
+@Composable
+fun HomeSelectorSelected (
     value: String
 ) {
     Box(
         modifier = Modifier
             .width(100.dp)
             .height(25.dp)
-            .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomStart = 15.dp, bottomEnd = 15.dp))
+            .clip(
+                RoundedCornerShape(
+                    topStart = 15.dp,
+                    topEnd = 15.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 15.dp
+                )
+            )
             .background(MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center
     ) {
         Text (
             text = value,
-            style = smallButton
+            style = TextStyle(
+                color = MaterialTheme.colorScheme.background, fontFamily = FontFamily(
+                    Font(R.font.urbanist_semibold)
+                )
+            )
         )
+    }
+}
+
+@Composable
+fun HomeSelectorUnselected (
+    value: String
+) {
+    Box(
+        modifier = Modifier
+            .width(100.dp)
+            .height(25.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 15.dp,
+                    topEnd = 15.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 15.dp
+                )
+            )
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.primary,
+                RoundedCornerShape(
+                    topStart = 15.dp,
+                    topEnd = 15.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 15.dp
+                )
+            )
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Text (
+            text = value,
+            style = TextStyle(
+                color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily(
+                    Font(R.font.urbanist_semibold)
+                )
+            )
+        )
+    }
+}
+
+@Composable
+fun EventBanner (
+    title: String?,
+    date: String?,
+    location: String?,
+    icon: Int
+) {
+    Box (
+        modifier = Modifier
+            .width(340.dp)
+    ) {
+        Box (
+            modifier = Modifier
+                .width(315.dp)
+                .height(80.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 0.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 0.dp,
+                        bottomEnd = 15.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primary)
+        ) {
+            Column (
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(8.dp)
+            ) {
+                Text (
+                    text = title ?: "",
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.background,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.urbanist_semibold)
+                        )
+                    )
+                )
+                Text (
+                    text = date ?: "",
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.background,
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.urbanist_semibold)
+                        )
+                    )
+                )
+                Text (
+                    text = location ?: "",
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.background,
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.urbanist_semibold)
+                        )
+                    )
+                )
+            }
+        }
+        Box (
+            modifier = Modifier
+                .width(60.dp)
+                .height(40.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 15.dp,
+                        bottomEnd = 15.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .align(Alignment.CenterEnd),
+            contentAlignment = Alignment.Center
+        ) {
+            Image (
+                painter = painterResource(id = icon),
+                contentDescription = "education",
+                contentScale = ContentScale.Inside
+            )
+        }
     }
 }
