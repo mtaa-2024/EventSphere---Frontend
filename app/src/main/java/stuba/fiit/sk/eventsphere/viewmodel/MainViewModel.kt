@@ -10,7 +10,7 @@ class MainViewModel() : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()
     val loggedUser: LiveData<User> = _loggedUser
 
-    suspend fun authenticateUser(username: String, password: String) {
+    suspend fun authenticateUser(username: String, password: String): Boolean {
         if (username != "" && password != "") {
             try {
                 val fetchedJson = apiService.getUser(username, password)
@@ -25,11 +25,15 @@ class MainViewModel() : ViewModel() {
                         profile_image = if (userObject.get("profile_image").isJsonNull) { null } else { userObject.get("profile_image")?.asString },
                     )
                     _loggedUser.value = loggedUser
+                    println(loggedUser)
+                    return true
                 }
             } catch (e: Exception) {
                 println("Error: $e")
+                return false
             }
         }
+        return false
     }
     suspend fun obtainFriends() {
         if (_loggedUser.isInitialized) {

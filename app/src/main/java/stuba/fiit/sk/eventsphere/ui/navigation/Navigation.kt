@@ -43,8 +43,7 @@ fun EventSphereNavHost(
                 },
                 onNavigationToHome = {
                     navController.navigate(HOME_SCREEN)
-                },
-                mainViewModel = mainViewModel
+                }
             )
         }
         composable(LOGIN_ROUTE) {
@@ -59,7 +58,7 @@ fun EventSphereNavHost(
             )
         }
         composable(REGISTER_ROUTE) {
-            /*LoginRoute(
+            /*RegisterRoute(
 
             )*/
         }
@@ -71,7 +70,8 @@ fun EventSphereNavHost(
                 },
                 onNavigationToBack = {
                     navController.navigate(WELCOME_ROUTE)
-                }
+                },
+                mainViewModel = mainViewModel
             )
         }
 

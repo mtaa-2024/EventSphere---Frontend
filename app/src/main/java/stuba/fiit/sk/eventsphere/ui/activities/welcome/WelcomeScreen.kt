@@ -34,8 +34,7 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun WelcomeScreen (
     toLogin: () -> Unit,
     toRegister: () -> Unit,
-    toHome: () -> Unit,
-    viewModel: MainViewModel
+    toHome: () -> Unit
 ) {
     Column (
         modifier = Modifier

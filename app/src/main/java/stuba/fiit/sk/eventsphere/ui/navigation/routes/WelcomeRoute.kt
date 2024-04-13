@@ -8,13 +8,11 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun WelcomeRoute(
     onNavigationToLogin: () -> Unit,
     onNavigationToRegister: () -> Unit,
-    onNavigationToHome: () -> Unit,
-    mainViewModel: MainViewModel
+    onNavigationToHome: () -> Unit
 ) {
     WelcomeScreen (
         toLogin = onNavigationToLogin,
         toRegister = onNavigationToRegister,
-        toHome = onNavigationToHome,
-        viewModel = mainViewModel
+        toHome = onNavigationToHome
     )
 }

@@ -13,6 +13,6 @@ fun LoginRoute(
     LoginScreen (
         toHome = onNavigationToHome,
         back = onNavigationToBack,
-        viewModel = mainViewModel
+        viewModel = mainViewModel,
     )
 }

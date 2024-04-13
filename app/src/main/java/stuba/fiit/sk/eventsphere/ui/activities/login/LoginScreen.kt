@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -30,13 +29,16 @@ import stuba.fiit.sk.eventsphere.ui.components.InputPasswordField
 import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
+import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 @Composable
 fun LoginScreen (
     toHome: () -> Unit,
     back: () -> Unit,
-    viewModel: LoginViewModel
+    viewModel: MainViewModel
 ) {
+    val loginViewModel = LoginViewModel()
+
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -48,7 +50,7 @@ fun LoginScreen (
             Image(
                 painter = painterResource(id = R.drawable.top_bar),
                 contentDescription = "welcome_background",
-                contentScale = ContentScale.FillWidth,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -85,10 +87,10 @@ fun LoginScreen (
                 modifier = Modifier
                     .height(30.dp)
             )
-            InputField(
+            InputField (
                 label = "Username or email",
-                value = viewModel.user,
-                onChange = viewModel::updateUser
+                value = loginViewModel.user.value.toString(),
+                onChange = loginViewModel::updateUser
             )
 
             Spacer(
@@ -96,10 +98,10 @@ fun LoginScreen (
                     .height(25.dp)
             )
 
-            InputPasswordField(
+            InputPasswordField (
                 label = "Password",
-                value = viewModel.password,
-                onChange = viewModel::updatePassword
+                value = loginViewModel.password.value.toString(),
+                onChange = loginViewModel::updatePassword
             )
 
             Spacer (
@@ -109,7 +111,8 @@ fun LoginScreen (
 
             PrimaryButton(text = "Login", onClick = {
                 viewModel.viewModelScope.launch {
-                    viewModel.onLogin()
+                    if (viewModel.authenticateUser(loginViewModel.user.value.toString(), loginViewModel.password.value.toString()))
+                        toHome()
                 }
             })
 
@@ -120,11 +123,4 @@ fun LoginScreen (
 
         }
     }
-}
-
-@Preview
-@Composable
-fun LoginScreenPreview (
-) {
-    LoginScreen(toHome = {}, viewModel = LoginViewModel(), back = {})
 }
