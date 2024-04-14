@@ -1,9 +1,5 @@
 package stuba.fiit.sk.eventsphere.ui.components
 
-import android.app.PendingIntent.getActivity
-import android.app.PendingIntent.getService
-import android.content.Context
-import android.graphics.ColorFilter
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,13 +27,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -48,7 +44,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.ui.activities.home.HomeViewModel
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.grey
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
@@ -159,69 +158,44 @@ fun CategoryBox (
     onClick: (Boolean) -> Unit
 ) {
     var isSelected by remember { mutableStateOf(value) }
-    
-    Column (
+    Box(
         modifier = Modifier
             .width(50.dp)
-            .height(58.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-        
+            .height(50.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 15.dp,
+                    topEnd = 15.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 15.dp
+                )
+            )
+            .border(
+                2.dp,
+                if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+                RoundedCornerShape(
+                    topStart = 15.dp,
+                    topEnd = 15.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 15.dp
+                )
+            )
+            .background(MaterialTheme.colorScheme.background)
+            .padding(2.dp)
+            .clickable(onClick = {
+                onClick(isSelected)
+                isSelected = !isSelected
+            }),
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .width(50.dp)
-                .height(50.dp)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 15.dp,
-                        topEnd = 15.dp,
-                        bottomStart = 15.dp,
-                        bottomEnd = 15.dp
-                    )
-                )
-                .border(
-                    2.dp,
-                    if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
-                    RoundedCornerShape(
-                        topStart = 15.dp,
-                        topEnd = 15.dp,
-                        bottomStart = 15.dp,
-                        bottomEnd = 15.dp
-                    )
-                )
-                .background(MaterialTheme.colorScheme.background)
-                .padding(2.dp)
-                .clickable(onClick = {
-                    onClick(isSelected)
-                    isSelected = !isSelected
-                }),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(
-                    id = icon
-                ),
-                contentDescription = "education",
-                contentScale = ContentScale.Inside,
-                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
-            )
-        }
-        Spacer(modifier = Modifier.height(6.dp))
-        if (isSelected) {
-            Box(modifier = Modifier
-                .height(2.dp)
-                .width(40.dp)
-                .background(MaterialTheme.colorScheme.primary)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 15.dp,
-                        topEnd = 15.dp,
-                        bottomStart = 15.dp,
-                        bottomEnd = 15.dp
-                    )
-                )
-            )
-        }
+        Image(
+            painter = painterResource(
+                id = icon
+            ),
+            contentDescription = "education",
+            contentScale = ContentScale.Inside,
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
+        )
     }
 }
 
@@ -258,8 +232,10 @@ fun HomeSelectorSelected (
 @Composable
 fun HomeSelectorUnselected (
     value: String,
-    onSelect: () -> Unit
+    onSelect: () -> Unit,
+    onClick: suspend () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .width(100.dp)
@@ -283,7 +259,12 @@ fun HomeSelectorUnselected (
                 )
             )
             .background(MaterialTheme.colorScheme.background)
-            .clickable(onClick = onSelect),
+            .clickable {
+                coroutineScope.launch {
+                    onClick()
+                }
+                onSelect()
+            },
         contentAlignment = Alignment.Center
     ) {
         Text (
@@ -386,9 +367,9 @@ fun EventBanner (
 
 @Composable
 fun EventSelector (
-    upComingSelected: () -> Unit,
-    attendingSelected: () -> Unit,
-    invitedSelected: () -> Unit
+    upComingSelected: suspend () -> Unit,
+    attendingSelected: suspend () -> Unit,
+    invitedSelected: suspend () -> Unit
 
 ) {
     Row (
@@ -408,7 +389,8 @@ fun EventSelector (
                 isSelectedUpComing = !isSelectedUpComing
                 isSelectedAttending = false
                 isSelectedInvited = false
-            }
+            },
+            onClick = upComingSelected
         )
         if (isSelectedAttending) HomeSelectorSelected(
             value = "Attending"
@@ -418,7 +400,8 @@ fun EventSelector (
                 isSelectedUpComing = false
                 isSelectedAttending = !isSelectedAttending
                 isSelectedInvited = false
-            }
+            },
+            onClick = attendingSelected
         )
         if (isSelectedInvited) HomeSelectorSelected(
             value = "Invited"
@@ -428,7 +411,8 @@ fun EventSelector (
                 isSelectedUpComing = false
                 isSelectedAttending = false
                 isSelectedInvited = !isSelectedInvited
-            }
+            },
+            onClick = invitedSelected
         )
     }
 }

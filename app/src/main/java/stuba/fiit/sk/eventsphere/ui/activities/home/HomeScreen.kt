@@ -15,32 +15,35 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
 import stuba.fiit.sk.eventsphere.ui.components.EventSelector
-import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorSelected
-import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorUnselected
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
+
 
 @Composable
 fun HomeScreen (
     profile: () -> Unit,
     back: () -> Unit,
     viewModel: MainViewModel,
+    homeViewModel: HomeViewModel
 ) {
-    val homeViewModel = HomeViewModel()
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -76,7 +79,7 @@ fun HomeScreen (
                 Text(text = "notifications")
             }
         }
-        Column (
+        Column(
             modifier = Modifier
                 .padding(25.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -92,69 +95,87 @@ fun HomeScreen (
                 modifier = Modifier
                     .height(50.dp)
             )
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                CategoryBox (
+                CategoryBox(
                     icon = R.drawable.book_icon,
                     value = homeViewModel.getEducationState(),
                     onClick = homeViewModel::onClickEducation
                 )
-                CategoryBox (
+                CategoryBox(
                     icon = R.drawable.brush_icon,
                     value = homeViewModel.getArtState(),
                     onClick = homeViewModel::onClickArt
                 )
-                CategoryBox (
+                CategoryBox(
                     icon = R.drawable.burger_icon,
                     value = homeViewModel.getFoodState(),
                     onClick = homeViewModel::onClickFood
                 )
-                CategoryBox (
+                CategoryBox(
                     icon = R.drawable.music_icon,
                     value = homeViewModel.getMusicState(),
                     onClick = homeViewModel::onClickMusic
                 )
-                CategoryBox (
+                CategoryBox(
                     icon = R.drawable.dribbble_icon,
                     value = homeViewModel.getSportState(),
                     onClick = homeViewModel::onClickSport
                 )
             }
-            Spacer (
+            Spacer(
                 modifier = Modifier
                     .height(50.dp)
             )
-            EventSelector (
-                upComingSelected = homeViewModel::onUpcomingSelect,
-                attendingSelected = homeViewModel::onAttendingSelect,
-                invitedSelected = homeViewModel::onInvitedSelect
+            EventSelector(
+                upComingSelected = suspend { homeViewModel.onUpcomingSelect() },
+                attendingSelected = suspend { homeViewModel.onAttendingSelect(viewModel) },
+                invitedSelected = suspend { homeViewModel.onInvitedSelect(viewModel) },
             )
-            Spacer (
+            Spacer(
                 modifier = Modifier
                     .height(40.dp)
             )
         }
         val scrollState = rememberScrollState()
-        Column (
+        Column(
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .fillMaxSize()
         ) {
-            viewModel.upcoming.value?.events?.forEach { event ->
-                EventBanner (
+            val eventsState = observeLiveData(homeViewModel.events)
+
+            eventsState?.events?.forEach { event ->
+                EventBanner(
                     title = event.title,
                     date = event.date,
                     location = event.location,
                     icon = R.drawable.book_icon
                 )
-                Spacer (
+                Spacer(
                     modifier = Modifier
                         .height(10.dp)
                 )
             }
         }
     }
+}
+
+@Composable
+fun <T> observeLiveData(liveData: LiveData<T>): T? {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var result by remember { mutableStateOf<T?>(null) }
+
+    LaunchedEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.Observer<T> { newValue ->
+            result = newValue
+        }
+        liveData.observe(lifecycleOwner, observer)
+    }
+
+    return result
 }

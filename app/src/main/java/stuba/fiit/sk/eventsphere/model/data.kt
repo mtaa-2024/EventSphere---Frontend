@@ -39,15 +39,15 @@ data class Event (
     val comments: List<CommentStruct>
 )
 
-data class UpcomingStruct (
+data class BannerStruct (
     val id: Int,
     val title: String?,
     val location: String?,
     val date: String?
 )
 
-data class Upcoming(
-    val events: List<UpcomingStruct>?
+data class Events (
+    val events: List<BannerStruct>?
 )
 
 data class Category (
