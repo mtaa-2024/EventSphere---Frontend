@@ -49,3 +49,11 @@ data class UpcomingStruct (
 data class Upcoming(
     val events: List<UpcomingStruct>?
 )
+
+data class Category (
+    var education: Boolean,
+    var music: Boolean,
+    var art: Boolean,
+    var food: Boolean,
+    var sport: Boolean
+)

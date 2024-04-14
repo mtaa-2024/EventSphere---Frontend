@@ -17,8 +17,10 @@ class LoginViewModel() : ViewModel() {
 
     fun updateUser(input: String) {
         _user.value = input
+        _user.postValue(_user.value)
     }
     fun updatePassword(input: String) {
         _password.value = input
+        _user.postValue(_user.value)
     }
 }

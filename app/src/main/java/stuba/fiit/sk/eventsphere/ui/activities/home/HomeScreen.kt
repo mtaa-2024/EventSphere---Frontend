@@ -1,8 +1,6 @@
 package stuba.fiit.sk.eventsphere.ui.activities.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,11 +24,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.components.CategoryBoxSelected
-import stuba.fiit.sk.eventsphere.ui.components.CategoryBoxUnselected
+import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
 import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorSelected
 import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorUnselected
@@ -101,11 +96,31 @@ fun HomeScreen (
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                CategoryBoxSelected(R.drawable.book_selected)
-                CategoryBoxUnselected(R.drawable.music_unselected)
-                CategoryBoxUnselected(R.drawable.brush_unselected)
-                CategoryBoxUnselected(R.drawable.food_unselected)
-                CategoryBoxUnselected(R.drawable.sport_unselected)
+                CategoryBox (
+                    icon = R.drawable.book_icon,
+                    value = homeViewModel.getEducationState(),
+                    onClick = homeViewModel::onClickEducation
+                )
+                CategoryBox (
+                    icon = R.drawable.brush_icon,
+                    value = homeViewModel.getArtState(),
+                    onClick = homeViewModel::onClickArt
+                )
+                CategoryBox (
+                    icon = R.drawable.burger_icon,
+                    value = homeViewModel.getFoodState(),
+                    onClick = homeViewModel::onClickFood
+                )
+                CategoryBox (
+                    icon = R.drawable.music_icon,
+                    value = homeViewModel.getMusicState(),
+                    onClick = homeViewModel::onClickMusic
+                )
+                CategoryBox (
+                    icon = R.drawable.dribbble_icon,
+                    value = homeViewModel.getSportState(),
+                    onClick = homeViewModel::onClickSport
+                )
             }
             Spacer (
                 modifier = Modifier
