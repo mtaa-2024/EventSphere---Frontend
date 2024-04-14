@@ -4,10 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import stuba.fiit.sk.eventsphere.model.Category
+import stuba.fiit.sk.eventsphere.model.SelectedHome
 
 class HomeViewModel() : ViewModel() {
     private val _categories = MutableLiveData<Category>()
     val categories: LiveData<Category> = _categories
+
+    private val _selected = MutableLiveData<SelectedHome>()
+    val selected: LiveData<SelectedHome> = _selected
 
     init {
         _categories.value = Category(
@@ -17,6 +21,30 @@ class HomeViewModel() : ViewModel() {
             food = false,
             sport = false
         )
+        _selected.value = SelectedHome(
+            selectedUpcoming = true,
+            selectedAttending = false,
+            selectedInvited = false
+        )
+    }
+
+    fun onUpcomingSelect() {
+        _selected.value?.selectedUpcoming = true
+        _selected.value?.selectedAttending = false
+        _selected.value?.selectedInvited = false
+        _selected.postValue(_selected.value)
+    }
+    fun onAttendingSelect() {
+        _selected.value?.selectedUpcoming = false
+        _selected.value?.selectedAttending = true
+        _selected.value?.selectedInvited = false
+        _selected.postValue(_selected.value)
+    }
+    fun onInvitedSelect() {
+        _selected.value?.selectedUpcoming = false
+        _selected.value?.selectedAttending = false
+        _selected.value?.selectedInvited = true
+        _selected.postValue(_selected.value)
     }
 
     fun onClickEducation(value: Boolean) {

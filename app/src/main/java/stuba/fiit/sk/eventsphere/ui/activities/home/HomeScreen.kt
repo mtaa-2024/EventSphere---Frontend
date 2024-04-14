@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
+import stuba.fiit.sk.eventsphere.ui.components.EventSelector
 import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorSelected
 import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorUnselected
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
@@ -126,15 +127,11 @@ fun HomeScreen (
                 modifier = Modifier
                     .height(50.dp)
             )
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround,
-            ) {
-                HomeSelectorSelected("Upcoming")
-                HomeSelectorUnselected("Attending")
-                HomeSelectorUnselected("Invited")
-            }
+            EventSelector (
+                upComingSelected = homeViewModel::onUpcomingSelect,
+                attendingSelected = homeViewModel::onAttendingSelect,
+                invitedSelected = homeViewModel::onInvitedSelect
+            )
             Spacer (
                 modifier = Modifier
                     .height(40.dp)

@@ -57,3 +57,9 @@ data class Category (
     var food: Boolean,
     var sport: Boolean
 )
+
+data class SelectedHome (
+    var selectedUpcoming: Boolean,
+    var selectedAttending: Boolean,
+    var selectedInvited: Boolean
+)

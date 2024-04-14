@@ -9,8 +9,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -210,11 +212,12 @@ fun CategoryBox (
                 .height(2.dp)
                 .width(40.dp)
                 .background(MaterialTheme.colorScheme.primary)
-                .clip(RoundedCornerShape(
-                    topStart = 15.dp,
-                    topEnd = 15.dp,
-                    bottomStart = 15.dp,
-                    bottomEnd = 15.dp
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 15.dp,
+                        bottomEnd = 15.dp
                     )
                 )
             )
@@ -229,7 +232,7 @@ fun HomeSelectorSelected (
     Box(
         modifier = Modifier
             .width(100.dp)
-            .height(25.dp)
+            .height(30.dp)
             .clip(
                 RoundedCornerShape(
                     topStart = 15.dp,
@@ -254,12 +257,13 @@ fun HomeSelectorSelected (
 
 @Composable
 fun HomeSelectorUnselected (
-    value: String
+    value: String,
+    onSelect: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .width(100.dp)
-            .height(25.dp)
+            .height(30.dp)
             .clip(
                 RoundedCornerShape(
                     topStart = 15.dp,
@@ -278,7 +282,8 @@ fun HomeSelectorUnselected (
                     bottomEnd = 15.dp
                 )
             )
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .clickable(onClick = onSelect),
         contentAlignment = Alignment.Center
     ) {
         Text (
@@ -376,5 +381,54 @@ fun EventBanner (
                 contentScale = ContentScale.Inside
             )
         }
+    }
+}
+
+@Composable
+fun EventSelector (
+    upComingSelected: () -> Unit,
+    attendingSelected: () -> Unit,
+    invitedSelected: () -> Unit
+
+) {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround,
+    ) {
+        var isSelectedUpComing by remember { mutableStateOf(true) }
+        var isSelectedAttending by remember { mutableStateOf(false) }
+        var isSelectedInvited by remember { mutableStateOf(false) }
+
+        if (isSelectedUpComing) HomeSelectorSelected(
+            value = "Upcoming"
+        ) else HomeSelectorUnselected(
+            value = "Upcoming",
+            onSelect = {
+                isSelectedUpComing = !isSelectedUpComing
+                isSelectedAttending = false
+                isSelectedInvited = false
+            }
+        )
+        if (isSelectedAttending) HomeSelectorSelected(
+            value = "Attending"
+        ) else HomeSelectorUnselected(
+            value = "Attending",
+            onSelect = {
+                isSelectedUpComing = false
+                isSelectedAttending = !isSelectedAttending
+                isSelectedInvited = false
+            }
+        )
+        if (isSelectedInvited) HomeSelectorSelected(
+            value = "Invited"
+        ) else HomeSelectorUnselected(
+            value = "Invited",
+            onSelect = {
+                isSelectedUpComing = false
+                isSelectedAttending = false
+                isSelectedInvited = !isSelectedInvited
+            }
+        )
     }
 }
