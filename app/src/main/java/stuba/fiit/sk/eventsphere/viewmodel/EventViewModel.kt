@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.http.Body
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.BannerStruct
 import stuba.fiit.sk.eventsphere.model.Category
@@ -15,6 +16,10 @@ import stuba.fiit.sk.eventsphere.model.User
 class EventViewModel(id: Int) : ViewModel() {
     private val _event = MutableLiveData<EventView>()
     val event: LiveData<EventView> = _event
+
+    private val _performers = MutableLiveData<EventView>()
+    val performers: LiveData<EventView> = _performers
+
     init {
         viewModelScope.launch{
             getEventData(id)
@@ -24,7 +29,37 @@ class EventViewModel(id: Int) : ViewModel() {
     suspend fun getEventData(id: Int) {
         try {
             val fetchedJson = apiService.getEvent(id)
-            println(fetchedJson)
+            val performersList = mutableListOf<PerformersView>()
+            val commentsList = mutableListOf<CommentsView>()
+
+            if (!fetchedJson.get("performers").isJsonNull) {
+                val performersArray = fetchedJson.getAsJsonArray("performers").asJsonArray
+                performersArray.forEach { performerElement ->
+                    val performerObject = performerElement.asJsonObject
+                    val performerView = PerformersView (
+                        id = if (performerObject.get("id").isJsonNull) null else performerObject.get("id").asInt,
+                        firstname = if (performerObject.get("firstname").isJsonNull) null else performerObject.get("firstname").asString,
+                        lastname = if (performerObject.get("lastname").isJsonNull) null else performerObject.get("lastname").asString,
+                        profile_picture = if (performerObject.get("profile_image").isJsonNull) null else performerObject.get("profile_image").asString,
+                    )
+                    performersList.add(performerView)
+                }
+            }
+
+            if (!fetchedJson.get("comments").isJsonNull) {
+                val commentsArray = fetchedJson.getAsJsonArray("comments").asJsonArray
+                commentsArray.forEach { commentElement ->
+                    val commentObject = commentElement.asJsonObject
+                    val commentView = CommentsView (
+                        firstname = if (commentObject.get("firstname").isJsonNull) null else commentObject.get("firstname").asString,
+                        lastname = if (commentObject.get("lastname").isJsonNull) null else commentObject.get("lastname").asString,
+                        profile_picture = if (commentObject.get("profile_image").isJsonNull) null else commentObject.get("profile_image").asString,
+                        text = if (commentObject.get("text").isJsonNull) null else commentObject.get("text").asString,
+                    )
+                    commentsList.add(commentView)
+                }
+            }
+
             val eventObject = fetchedJson.getAsJsonArray("event").get(0).asJsonObject
             val event = EventView(
                 title = eventObject.get("title")?.asString,
@@ -33,10 +68,11 @@ class EventViewModel(id: Int) : ViewModel() {
                 estimated_end = eventObject.get("estimated_end")?.asString,
                 owner_firstname = eventObject.get("firstname")?.asString,
                 owner_lastname = eventObject.get("lastname")?.asString,
-                owner_picture = eventObject.get("profile_picture")?.asString
+                owner_picture = eventObject.get("profile_picture")?.asString,
+                performers = performersList,
+                comments = commentsList
             )
             _event.value = event
-            println(_event.value)
         } catch (e: Exception) {
             println("Error: $e")
         }
@@ -50,7 +86,23 @@ data class EventView (
     var estimated_end: String?,
     var owner_firstname: String?,
     var owner_lastname: String?,
-    var owner_picture: String?
+    var owner_picture: String?,
+    var performers: List<PerformersView>?,
+    var comments: List<CommentsView>?
+)
+
+data class PerformersView (
+    var id: Int?,
+    var firstname: String?,
+    var lastname: String?,
+    var profile_picture: String?
+)
+
+data class CommentsView (
+    var firstname: String?,
+    var lastname: String?,
+    var profile_picture: String?,
+    var text: String?
 )
 
 class EventViewModelFactory(private val id: Int) : ViewModelProvider.Factory {

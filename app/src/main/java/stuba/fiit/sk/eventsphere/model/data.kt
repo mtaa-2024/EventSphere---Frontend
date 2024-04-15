@@ -1,5 +1,15 @@
 package stuba.fiit.sk.eventsphere.model
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+
 data class User (
     val id: Int,
     val username: String,
@@ -63,3 +73,19 @@ data class SelectedHome (
     var selectedAttending: Boolean,
     var selectedInvited: Boolean
 )
+
+@Composable
+fun <T> observeLiveData(liveData: LiveData<T>): T? {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var result by remember { mutableStateOf<T?>(null) }
+
+    LaunchedEffect(lifecycleOwner) {
+        val observer = Observer<T> { newValue ->
+            result = newValue
+        }
+        liveData.observe(lifecycleOwner, observer)
+    }
+
+    return result
+}
