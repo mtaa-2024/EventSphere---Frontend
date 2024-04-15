@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,13 +43,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.activities.home.HomeViewModel
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.grey
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
+import stuba.fiit.sk.eventsphere.viewmodel.EventSelectStates
 
 @Composable
 fun PrimaryButton (
@@ -154,10 +154,11 @@ fun InputPasswordField (
 @Composable
 fun CategoryBox (
     icon: Int,
-    value: Boolean,
-    onClick: (Boolean) -> Unit
+    onClick: (Boolean) -> Unit,
+    state: Boolean
 ) {
-    var isSelected by remember { mutableStateOf(value) }
+    var isSelected by remember { mutableStateOf(state) }
+
     Box(
         modifier = Modifier
             .width(50.dp)
@@ -183,8 +184,8 @@ fun CategoryBox (
             .background(MaterialTheme.colorScheme.background)
             .padding(2.dp)
             .clickable(onClick = {
-                onClick(isSelected)
                 isSelected = !isSelected
+                onClick(isSelected)
             }),
         contentAlignment = Alignment.Center
     ) {
@@ -280,14 +281,19 @@ fun HomeSelectorUnselected (
 
 @Composable
 fun EventBanner (
+    id: Int,
     title: String?,
     date: String?,
     location: String?,
-    icon: Int
+    icon: Int,
+    toEvent: (Int) -> Unit
 ) {
     Box (
         modifier = Modifier
             .width(340.dp)
+            .clickable {
+                toEvent(id)
+            }
     ) {
         Box (
             modifier = Modifier
@@ -369,7 +375,8 @@ fun EventBanner (
 fun EventSelector (
     upComingSelected: suspend () -> Unit,
     attendingSelected: suspend () -> Unit,
-    invitedSelected: suspend () -> Unit
+    invitedSelected: suspend () -> Unit,
+    buttonState: LiveData<EventSelectStates>
 
 ) {
     Row (
@@ -377,9 +384,9 @@ fun EventSelector (
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
-        var isSelectedUpComing by remember { mutableStateOf(true) }
-        var isSelectedAttending by remember { mutableStateOf(false) }
-        var isSelectedInvited by remember { mutableStateOf(false) }
+        var isSelectedUpComing by remember { mutableStateOf(buttonState.value?.upcoming ?: false) }
+        var isSelectedAttending by remember { mutableStateOf(buttonState.value?.attending ?: false) }
+        var isSelectedInvited by remember { mutableStateOf(buttonState.value?.invited ?: false ) }
 
         if (isSelectedUpComing) HomeSelectorSelected(
             value = "Upcoming"

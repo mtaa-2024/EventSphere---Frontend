@@ -35,9 +35,9 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun LoginScreen (
     toHome: () -> Unit,
     back: () -> Unit,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    loginViewModel: LoginViewModel
 ) {
-    val loginViewModel = LoginViewModel()
 
     Column (
         modifier = Modifier

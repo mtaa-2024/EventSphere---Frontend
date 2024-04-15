@@ -1,4 +1,4 @@
-package stuba.fiit.sk.eventsphere.ui.activities.home
+package stuba.fiit.sk.eventsphere.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,12 +10,13 @@ import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.BannerStruct
 import stuba.fiit.sk.eventsphere.model.Category
 import stuba.fiit.sk.eventsphere.model.Events
-import stuba.fiit.sk.eventsphere.model.SelectedHome
-import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 class HomeViewModel() : ViewModel() {
     private val _categories = MutableLiveData<Category>()
     val categories: LiveData<Category> = _categories
+
+    private val _eventSelectedStates = MutableLiveData<EventSelectStates>()
+    val eventSelectStates: LiveData<EventSelectStates> = _eventSelectedStates
 
     private val _events = MutableLiveData<Events>()
     val events: LiveData<Events>
@@ -25,6 +26,12 @@ class HomeViewModel() : ViewModel() {
         viewModelScope.launch{
             getUpcoming()
         }
+
+        _eventSelectedStates.value = EventSelectStates (
+            upcoming = true,
+            attending = false,
+            invited = false
+        )
 
         _categories.value = Category(
             education = false,
@@ -156,60 +163,54 @@ class HomeViewModel() : ViewModel() {
         viewModelScope.launch{
             getUpcoming()
         }
+        _eventSelectedStates.value?.upcoming = true
+        _eventSelectedStates.value?.attending = false
+        _eventSelectedStates.value?.invited = false
     }
     fun onAttendingSelect(viewModel: MainViewModel) {
         viewModelScope.launch{
             getAttending(viewModel)
         }
+        _eventSelectedStates.value?.upcoming = false
+        _eventSelectedStates.value?.attending = true
+        _eventSelectedStates.value?.invited = false
     }
     fun onInvitedSelect(viewModel: MainViewModel) {
         viewModelScope.launch{
             getInvited(viewModel)
         }
+        _eventSelectedStates.value?.upcoming = false
+        _eventSelectedStates.value?.attending = false
+        _eventSelectedStates.value?.invited = true
     }
 
     fun onClickEducation(value: Boolean) {
+        println(value)
         _categories.value?.education = value
-        _categories.postValue(_categories.value)
     }
 
     fun onClickMusic(value: Boolean) {
         _categories.value?.music = value
-        _categories.postValue(_categories.value)
     }
 
     fun onClickArt(value: Boolean) {
         _categories.value?.art = value
-        _categories.postValue(_categories.value)
     }
 
     fun onClickFood(value: Boolean) {
         _categories.value?.food = value
-        _categories.postValue(_categories.value)
     }
 
     fun onClickSport(value: Boolean) {
         _categories.value?.sport = value
-        _categories.postValue(_categories.value)
     }
-
-    fun getEducationState(): Boolean {
-        return _categories.value?.education ?: false
-    }
-    fun getArtState(): Boolean {
-        return _categories.value?.art ?: false
-    }
-    fun getMusicState(): Boolean {
-        return _categories.value?.music ?: false
-    }
-    fun getFoodState(): Boolean {
-        return _categories.value?.food ?: false
-    }
-    fun getSportState(): Boolean {
-        return _categories.value?.sport ?: false
-    }
-
 }
+
+data class EventSelectStates (
+    var upcoming: Boolean,
+    var attending: Boolean,
+    var invited: Boolean
+)
 
 class HomeViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

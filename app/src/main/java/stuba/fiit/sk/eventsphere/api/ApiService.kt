@@ -28,6 +28,11 @@ interface ApiService {
     suspend fun getAttending(
         @Query("id") id: Int?
     ): JsonObject
+
+    @GET("event")
+    suspend fun getEvent(
+        @Query("id") id: Int
+    ): JsonObject
 }
 
 val retrofit = Retrofit.Builder()

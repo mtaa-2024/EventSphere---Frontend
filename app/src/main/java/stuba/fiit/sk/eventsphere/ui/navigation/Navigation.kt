@@ -6,10 +6,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENT_SCREEN
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.HOME_SCREEN
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.LOGIN_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.REGISTER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.WELCOME_ROUTE
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.HomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.LoginRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.WelcomeRoute
@@ -21,6 +23,7 @@ object Destinations {
     const val LOGIN_ROUTE = "login"
     const val REGISTER_ROUTE = "register"
     const val HOME_SCREEN = "home"
+    const val EVENT_SCREEN = "event"
 }
 
 @Composable
@@ -71,7 +74,21 @@ fun EventSphereNavHost(
                 onNavigationToBack = {
                     navController.navigate(WELCOME_ROUTE)
                 },
+                onNavigationToEvent = { eventId: Int ->
+                    navController.navigate("$EVENT_SCREEN/$eventId")
+                },
                 mainViewModel = mainViewModel
+            )
+        }
+
+        composable("$EVENT_SCREEN/{eventId}") { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId")?.toIntOrNull() ?: -1
+            EventRoute(
+                eventId,
+                mainViewModel = mainViewModel,
+                onNavigationBack = {
+                    navController.navigate(HOME_SCREEN)
+                }
             )
         }
 

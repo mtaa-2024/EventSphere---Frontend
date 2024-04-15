@@ -25,14 +25,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
 import stuba.fiit.sk.eventsphere.ui.components.EventSelector
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
+import stuba.fiit.sk.eventsphere.viewmodel.HomeViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 
@@ -41,6 +40,7 @@ fun HomeScreen (
     profile: () -> Unit,
     back: () -> Unit,
     viewModel: MainViewModel,
+    toEvent: (Int) -> Unit,
     homeViewModel: HomeViewModel
 ) {
     Column(
@@ -102,27 +102,27 @@ fun HomeScreen (
             ) {
                 CategoryBox(
                     icon = R.drawable.book_icon,
-                    value = homeViewModel.getEducationState(),
+                    state = homeViewModel.categories.value?.education ?: false,
                     onClick = homeViewModel::onClickEducation
                 )
                 CategoryBox(
                     icon = R.drawable.brush_icon,
-                    value = homeViewModel.getArtState(),
+                    state = homeViewModel.categories.value?.art ?: false,
                     onClick = homeViewModel::onClickArt
                 )
                 CategoryBox(
                     icon = R.drawable.burger_icon,
-                    value = homeViewModel.getFoodState(),
+                    state = homeViewModel.categories.value?.food ?: false,
                     onClick = homeViewModel::onClickFood
                 )
                 CategoryBox(
                     icon = R.drawable.music_icon,
-                    value = homeViewModel.getMusicState(),
+                    state = homeViewModel.categories.value?.music ?: false,
                     onClick = homeViewModel::onClickMusic
                 )
                 CategoryBox(
                     icon = R.drawable.dribbble_icon,
-                    value = homeViewModel.getSportState(),
+                    state = homeViewModel.categories.value?.sport ?: false,
                     onClick = homeViewModel::onClickSport
                 )
             }
@@ -134,6 +134,7 @@ fun HomeScreen (
                 upComingSelected = suspend { homeViewModel.onUpcomingSelect() },
                 attendingSelected = suspend { homeViewModel.onAttendingSelect(viewModel) },
                 invitedSelected = suspend { homeViewModel.onInvitedSelect(viewModel) },
+                buttonState = homeViewModel.eventSelectStates
             )
             Spacer(
                 modifier = Modifier
@@ -150,10 +151,12 @@ fun HomeScreen (
 
             eventsState?.events?.forEach { event ->
                 EventBanner(
+                    id = event.id,
                     title = event.title,
                     date = event.date,
                     location = event.location,
-                    icon = R.drawable.book_icon
+                    icon = R.drawable.book_icon,
+                    toEvent = toEvent
                 )
                 Spacer(
                     modifier = Modifier
