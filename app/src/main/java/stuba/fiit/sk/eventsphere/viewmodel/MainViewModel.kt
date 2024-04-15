@@ -3,6 +3,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.JsonObject
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.User
 
@@ -36,6 +37,30 @@ class MainViewModel() : ViewModel() {
         }
         return false
     }
+
+    suspend fun registerNewUser(username: String, email: String, password: String, repeatPassword: String): Boolean {
+        if (username != "" && password != "" && email != "" && repeatPassword != "") {
+            if (password != repeatPassword)
+                return false
+            try {
+                val registrationData = JsonObject()
+                registrationData.addProperty("username", username)
+                registrationData.addProperty("email", email)
+                registrationData.addProperty("password", password)
+                println(registrationData)
+                val fetchedJson = apiService.registerNewUser(registrationData)
+                println(fetchedJson)
+                return !fetchedJson.get("result").asBoolean
+            } catch (e: Exception) {
+                println("Error: $e")
+                return false
+            }
+        }
+        return false
+    }
+
+
+
     suspend fun obtainFriends() {
         if (_loggedUser.isInitialized) {
             val id = _loggedUser.value?.id

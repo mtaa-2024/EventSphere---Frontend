@@ -3,7 +3,9 @@ package stuba.fiit.sk.eventsphere.api
 import com.google.gson.JsonObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
@@ -14,6 +16,11 @@ interface ApiService {
     suspend fun getUser(
         @Query("username") username: String,
         @Query("password") password: String
+    ): JsonObject
+
+    @POST("register")
+    suspend fun registerNewUser(
+        @Body registrationData: JsonObject
     ): JsonObject
 
     @GET("friends")
@@ -36,7 +43,7 @@ interface ApiService {
 }
 
 val retrofit = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:4000/")
+    .baseUrl("http://10.0.2.2:3000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 

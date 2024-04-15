@@ -15,6 +15,7 @@ import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.HomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.LoginRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.WelcomeRoute
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.RegisterRoute
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModelFactory
 
@@ -61,9 +62,15 @@ fun EventSphereNavHost(
             )
         }
         composable(REGISTER_ROUTE) {
-            /*RegisterRoute(
-
-            )*/
+            RegisterRoute(
+                onNavigationToHome = {
+                    navController.navigate(HOME_SCREEN)
+                },
+                onNavigationToBack = {
+                    navController.navigate(WELCOME_ROUTE)
+                },
+                mainViewModel = mainViewModel
+            )
         }
 
         composable(HOME_SCREEN) {

@@ -11,6 +11,7 @@ class LoginViewModel() : ViewModel() {
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> = _password
 
+
     init {
         _user.value = "Username or email"
         _password.value = "Password"
