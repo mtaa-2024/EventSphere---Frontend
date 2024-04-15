@@ -11,7 +11,6 @@ class MainViewModel() : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()
     val loggedUser: LiveData<User> = _loggedUser
 
-
     suspend fun authenticateUser(username: String, password: String): Boolean {
         if (username != "" && password != "") {
             try {
@@ -47,10 +46,22 @@ class MainViewModel() : ViewModel() {
                 registrationData.addProperty("username", username)
                 registrationData.addProperty("email", email)
                 registrationData.addProperty("password", password)
-                println(registrationData)
                 val fetchedJson = apiService.registerNewUser(registrationData)
                 println(fetchedJson)
-                return !fetchedJson.get("result").asBoolean
+                if (fetchedJson.get("result").asBoolean) {
+                    val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
+                    val loggedUser = User(
+                        id = userObject.get("id").asInt,
+                        username = userObject.get("username").asString,
+                        email = userObject.get("email").asString,
+                        firstname = if (userObject.get("firstname").isJsonNull) { null } else { userObject.get("firstname")?.asString },
+                        lastname = if (userObject.get("lastname").isJsonNull) { null } else { userObject.get("lastname")?.asString },
+                        profile_image = if (userObject.get("profile_image").isJsonNull) { null } else { userObject.get("profile_image")?.asString },
+                    )
+                    _loggedUser.value = loggedUser
+                    println(loggedUser)
+                    return true
+                }
             } catch (e: Exception) {
                 println("Error: $e")
                 return false
