@@ -20,13 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
 import stuba.fiit.sk.eventsphere.ui.components.EventSelector
@@ -165,20 +164,4 @@ fun HomeScreen (
             }
         }
     }
-}
-
-@Composable
-fun <T> observeLiveData(liveData: LiveData<T>): T? {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    var result by remember { mutableStateOf<T?>(null) }
-
-    LaunchedEffect(lifecycleOwner) {
-        val observer = androidx.lifecycle.Observer<T> { newValue ->
-            result = newValue
-        }
-        liveData.observe(lifecycleOwner, observer)
-    }
-
-    return result
 }

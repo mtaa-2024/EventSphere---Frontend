@@ -7,8 +7,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("event")
-    suspend fun getEvent(): JsonObject
 
     @GET("login")
     suspend fun getUser(
