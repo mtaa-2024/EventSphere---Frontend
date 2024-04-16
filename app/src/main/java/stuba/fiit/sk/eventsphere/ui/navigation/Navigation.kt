@@ -9,11 +9,13 @@ import androidx.navigation.compose.rememberNavController
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENT_SCREEN
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.HOME_SCREEN
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.LOGIN_ROUTE
+import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.PROFILE_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.REGISTER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.WELCOME_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.HomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.LoginRoute
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.ProfileRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.WelcomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.RegisterRoute
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
@@ -25,6 +27,8 @@ object Destinations {
     const val REGISTER_ROUTE = "register"
     const val HOME_SCREEN = "home"
     const val EVENT_SCREEN = "event"
+    const val PROFILE_ROUTE = "profile"
+
 }
 
 @Composable
@@ -76,7 +80,7 @@ fun EventSphereNavHost(
         composable(HOME_SCREEN) {
             HomeRoute(
                 onNavigationToProfile = {
-                    navController.navigate(HOME_SCREEN)
+                    navController.navigate(PROFILE_ROUTE)
                 },
                 onNavigationToBack = {
                     navController.navigate(WELCOME_ROUTE)
@@ -96,6 +100,18 @@ fun EventSphereNavHost(
                 onNavigationBack = {
                     navController.navigate(HOME_SCREEN)
                 }
+            )
+        }
+
+        composable(PROFILE_ROUTE) {
+            ProfileRoute(
+                onNavigationToHome = {
+                    navController.navigate(HOME_SCREEN)
+                },
+                onNavigationToBack = {
+                    navController.navigate(WELCOME_ROUTE)
+                },
+                mainViewModel = mainViewModel
             )
         }
 

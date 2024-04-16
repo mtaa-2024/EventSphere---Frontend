@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -114,13 +115,20 @@ fun LoginScreen (
                     if (viewModel.authenticateUser(loginViewModel.user.value.toString(), loginViewModel.password.value.toString())) {
                         toHome()
                     }
-
                 }
             })
 
             Spacer(
                 modifier = Modifier
                     .height(25.dp)
+            )
+
+            Text(
+                text = "",
+                style = welcomeStyle,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
 
         }

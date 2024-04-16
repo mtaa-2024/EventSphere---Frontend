@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -74,8 +75,29 @@ fun HomeScreen (
                         contentDescription = "Back"
                     )
                 }
-                Text(text = "Profile")
+
+                Spacer(
+                    modifier = Modifier
+                        .width(60.dp)
+                )
+
                 Text(text = "notifications")
+
+                Spacer(
+                    modifier = Modifier
+                        .width(10.dp)
+                )
+
+                Button(
+                    onClick = profile,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent)
+                ) {
+
+                    Image(
+                        painter = painterResource(id = R.drawable.burger_icon),
+                        contentDescription = "Back"
+                    )
+                }
             }
         }
         Column(
