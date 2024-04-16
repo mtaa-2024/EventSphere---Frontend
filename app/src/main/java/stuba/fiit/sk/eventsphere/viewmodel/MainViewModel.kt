@@ -47,7 +47,6 @@ class MainViewModel() : ViewModel() {
                 registrationData.addProperty("email", email)
                 registrationData.addProperty("password", password)
                 val fetchedJson = apiService.registerNewUser(registrationData)
-                println(fetchedJson)
                 if (fetchedJson.get("result").asBoolean) {
                     val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
                     val loggedUser = User(
