@@ -69,6 +69,28 @@ class MainViewModel() : ViewModel() {
         }
         return false
     }
+
+    suspend fun updateUser(){
+        try {
+            val fetchedJson = apiService.getUserData(loggedUser.value?.id?: 0)
+            println(fetchedJson)
+            if (fetchedJson.get("result").asBoolean) {
+                val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
+                val loggedUser = User(
+                    id = userObject.get("id").asInt,
+                    username = userObject.get("username").asString,
+                    email = userObject.get("email").asString,
+                    firstname = if (userObject.get("firstname").isJsonNull) { null } else { userObject.get("firstname")?.asString },
+                    lastname = if (userObject.get("lastname").isJsonNull) { null } else { userObject.get("lastname")?.asString },
+                    profile_image = if (userObject.get("profile_image").isJsonNull) { null } else { userObject.get("profile_image")?.asString },
+                )
+                _loggedUser.value = loggedUser
+                println(loggedUser)
+            }
+        } catch (e: Exception) {
+            println("Error: $e")
+        }
+    }
 }
 
 class MainViewModelFactory : ViewModelProvider.Factory {

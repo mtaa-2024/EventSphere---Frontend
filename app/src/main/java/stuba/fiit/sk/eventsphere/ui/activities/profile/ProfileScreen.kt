@@ -89,13 +89,7 @@ fun ProfileScreen (
                 }
             }
         }
-        /*Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "profile_icon",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxWidth()
-        )*/
+
         Spacer(
             modifier = Modifier
                 .height(30.dp)

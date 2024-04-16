@@ -16,6 +16,11 @@ interface ApiService {
         @Query("password") password: String
     ): JsonObject
 
+    @GET("user")
+    suspend fun getUserData(
+        @Query("id") id: Int
+    ): JsonObject
+
     @POST("register")
     suspend fun registerNewUser(
         @Body registrationData: JsonObject
@@ -24,6 +29,11 @@ interface ApiService {
     @GET("friends")
     suspend fun getFriends(
         @Query("id") id: Int?
+    ): JsonObject
+
+    @POST("user/edit")
+    suspend fun editUser(
+        @Body editUserData: JsonObject
     ): JsonObject
 
     @GET("upcoming")
@@ -51,7 +61,7 @@ interface ApiService {
 }
 
 val retrofit = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:8000/")
+    .baseUrl("http://10.0.2.2:3000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
