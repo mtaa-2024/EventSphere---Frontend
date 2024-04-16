@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -41,10 +44,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
@@ -277,6 +280,78 @@ fun HomeSelectorUnselected (
             )
         )
     }
+}
+
+@Composable
+fun CommentBanner (
+    image: String?,
+    firstname: String?,
+    lastname: String?,
+    text: String?
+) {
+    Box (
+        modifier = Modifier
+            .width(310.dp)
+
+        ) {
+        Box(
+            modifier = Modifier
+                .width(280.dp)
+                .height(110.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 8.dp,
+                        topEnd = 8.dp,
+                        bottomStart = 8.dp,
+                        bottomEnd = 8.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primary)
+                .align(Alignment.CenterEnd)
+        ) {
+            val scrollState = rememberScrollState()
+            Column (
+                modifier = Modifier
+                    .matchParentSize()
+                    .verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "$firstname $lastname",
+                    style = labelStyle,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.background
+                )
+                Spacer (
+                    modifier = Modifier.height(10.dp)
+                )
+                Text(text = text ?: "", style = labelStyle, fontSize = 14.sp, color=MaterialTheme.colorScheme.background)
+            }
+        }
+        Box(
+            modifier = Modifier
+                .width(71.dp)
+                .height(50.0224723815918.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 15.dp,
+                        bottomEnd = 15.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .align(Alignment.TopStart)
+        )
+    }
+
+}
+
+@Preview
+@Composable
+fun CommentBannerPreview() {
+    CommentBanner(image = null, firstname = "Norbert", lastname = "Kokot", text = "sadasdasddsadddddddddasdasd")
 }
 
 @Composable

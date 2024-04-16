@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">EventSphere</string>
     <string name="welcome_message"></string>
+    <string name="google_maps_api_key">AIzaSyC3m1KgANhFGH07fSmdlcEEoiQrZKJlszU</string>
 </resources>
