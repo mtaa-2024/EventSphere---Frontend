@@ -10,14 +10,12 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 @Composable
 fun HomeRoute (
     onNavigationToProfile: () -> Unit,
-    onNavigationToBack: () -> Unit,
     onNavigationToEvent: (Int) -> Unit,
     mainViewModel: MainViewModel
 ) {
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory())
     HomeScreen (
         profile = onNavigationToProfile,
-        back = onNavigationToBack,
         viewModel = mainViewModel,
         toEvent = onNavigationToEvent,
         homeViewModel = homeViewModel

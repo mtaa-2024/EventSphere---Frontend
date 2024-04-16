@@ -38,13 +38,14 @@ object Destinations {
 fun EventSphereNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
-    val mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
+    var mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
 
     NavHost(
         navController = navController,
         startDestination = WELCOME_ROUTE
     ) {
         composable(WELCOME_ROUTE) {
+            mainViewModel = viewModel(factory = MainViewModelFactory())
             WelcomeRoute(
                 onNavigationToLogin = {
                     navController.navigate(LOGIN_ROUTE)
@@ -84,9 +85,6 @@ fun EventSphereNavHost(
             HomeRoute(
                 onNavigationToProfile = {
                     navController.navigate(PROFILE_ROUTE)
-                },
-                onNavigationToBack = {
-                    navController.navigate(WELCOME_ROUTE)
                 },
                 onNavigationToEvent = { eventId: Int ->
                     navController.navigate("$EVENT_SCREEN/$eventId/$HOME_SCREEN")
@@ -129,6 +127,9 @@ fun EventSphereNavHost(
                 },
                 onNavigationToBack = {
                     navController.navigate(WELCOME_ROUTE)
+                },
+                onNavigationToEventCenter = {
+                    navController.navigate(EVENTCENTER_SCREEN)
                 },
                 mainViewModel = mainViewModel
             )

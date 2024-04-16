@@ -1,6 +1,7 @@
 package stuba.fiit.sk.eventsphere.ui.activities.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +39,6 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 @Composable
 fun HomeScreen (
     profile: () -> Unit,
-    back: () -> Unit,
     viewModel: MainViewModel,
     toEvent: (Int) -> Unit,
     homeViewModel: HomeViewModel
@@ -62,40 +62,36 @@ fun HomeScreen (
                 modifier = Modifier
                     .padding(10.dp)
                     .matchParentSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Button(
-                    onClick = back,
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                Box() {}
+
+                Box(
+                    modifier = Modifier.clickable(
+                        onClick = profile
+                    )
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "Back"
+                        painter = painterResource(id = R.drawable.profile_background),
+                        contentDescription = "bac"
                     )
+                    if (viewModel.loggedUser.value?.profile_image.isNullOrEmpty()) {
+                        Image (
+                            painter = painterResource(id = R.drawable.profile_default),
+                            contentDescription = "bac"
+                        )
+                    } else {
+
+                    }
                 }
 
-                Spacer(
-                    modifier = Modifier
-                        .width(60.dp)
-                )
-
-                Text(text = "notifications")
-
-                Spacer(
-                    modifier = Modifier
-                        .width(10.dp)
-                )
-
-                Button(
-                    onClick = profile,
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent)
+                Box(
                 ) {
-
                     Image(
-                        painter = painterResource(id = R.drawable.burger_icon),
-                        contentDescription = "Back"
+                        painter = painterResource(id = R.drawable.notification),
+                        contentDescription = "notification"
                     )
                 }
             }

@@ -1,6 +1,7 @@
 package stuba.fiit.sk.eventsphere.ui.activities.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,7 +39,8 @@ import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModel
 @Composable
 fun ProfileScreen (
     home: () -> Unit,
-    toWelcomeScreen: ()->Unit,
+    toWelcomeScreen: () -> Unit,
+    toEventCenter: () -> Unit,
     viewModel: MainViewModel,
     profileViewModel: ProfileViewModel
 ) {
@@ -128,7 +130,9 @@ fun ProfileScreen (
                 modifier = Modifier
                     .width(150.dp)
             )
-            Text(//toto bude button
+            Text (
+                modifier = Modifier
+                    .clickable(onClick = toEventCenter),
                 text = "EventCenter",
                 style = welcomeStyle,
                 fontSize = 20.sp
