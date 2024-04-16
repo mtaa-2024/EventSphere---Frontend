@@ -6,12 +6,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENTCENTER_SCREEN
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENT_SCREEN
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.HOME_SCREEN
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.LOGIN_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.PROFILE_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.REGISTER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.WELCOME_ROUTE
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventCenterRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.HomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.LoginRoute
@@ -27,6 +29,7 @@ object Destinations {
     const val REGISTER_ROUTE = "register"
     const val HOME_SCREEN = "home"
     const val EVENT_SCREEN = "event"
+    const val EVENTCENTER_SCREEN = "eventcenter"
     const val PROFILE_ROUTE = "profile"
 
 }
@@ -86,20 +89,36 @@ fun EventSphereNavHost(
                     navController.navigate(WELCOME_ROUTE)
                 },
                 onNavigationToEvent = { eventId: Int ->
-                    navController.navigate("$EVENT_SCREEN/$eventId")
+                    navController.navigate("$EVENT_SCREEN/$eventId/$HOME_SCREEN")
                 },
                 mainViewModel = mainViewModel
             )
         }
 
-        composable("$EVENT_SCREEN/{eventId}") { backStackEntry ->
+        composable("$EVENT_SCREEN/{eventId}/{route}") { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId")?.toIntOrNull() ?: -1
+            val route = backStackEntry.arguments?.getString("route")
             EventRoute(
                 eventId,
                 mainViewModel = mainViewModel,
                 onNavigationBack = {
-                    navController.navigate(HOME_SCREEN)
+                    if (route == "home")
+                        navController.navigate(HOME_SCREEN)
+                    else
+                        navController.navigate(EVENTCENTER_SCREEN)
                 }
+            )
+        }
+
+        composable(EVENTCENTER_SCREEN) {
+            EventCenterRoute (
+                mainViewModel = mainViewModel,
+                onNavigationBack = {
+                    navController.navigate(PROFILE_ROUTE)
+                },
+                onNavigationToEvent = { eventId: Int ->
+                    navController.navigate("$EVENT_SCREEN/$eventId/$EVENTCENTER_SCREEN")
+                },
             )
         }
 

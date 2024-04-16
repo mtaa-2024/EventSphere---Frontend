@@ -11,7 +11,7 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun EventCenterRoute (
     mainViewModel: MainViewModel,
     onNavigationBack: () -> Unit,
-    onNavigationToEvent: (id: Int) -> Unit
+    onNavigationToEvent: (Int) -> Unit
 ) {
     val eventCenterViewModel: EventCenterViewModel = viewModel(factory = EventCenterViewModelFactory(mainViewModel))
 

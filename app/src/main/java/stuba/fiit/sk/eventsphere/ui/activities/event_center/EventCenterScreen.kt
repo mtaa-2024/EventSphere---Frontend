@@ -37,7 +37,7 @@ fun EventCenterScreen (
     viewModel: MainViewModel,
     eventCenterViewModel: EventCenterViewModel,
     toBack: () -> Unit,
-    toEvent: (id: Int) -> Unit
+    toEvent: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
