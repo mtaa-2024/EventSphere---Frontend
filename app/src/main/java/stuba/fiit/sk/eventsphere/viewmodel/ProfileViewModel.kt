@@ -29,11 +29,9 @@ class ProfileViewModel(id:Int) : ViewModel() {
         try {
             val fetchedJson = apiService.getFriends(id)
             val friendsList = mutableListOf<FriendsView>()
-            println(fetchedJson)
 
             if (fetchedJson.get("result").asBoolean) {
                 val friendsArray = fetchedJson.getAsJsonArray("friends").asJsonArray
-                println(friendsArray)
                 friendsArray.forEach { friendsElement ->
                     val friendsObject = friendsElement.asJsonObject
                     val friendsView = FriendsView(

@@ -1,11 +1,16 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.provider.MediaStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.JsonObject
 import stuba.fiit.sk.eventsphere.api.apiService
+import java.io.ByteArrayOutputStream
 
 
 class EditProfileViewModel() : ViewModel() {
@@ -71,6 +76,16 @@ class EditProfileViewModel() : ViewModel() {
         }
 
         return false
+    }
+
+    fun serializeImage(bitmap: Bitmap): ByteArray {
+        ByteArrayOutputStream().apply {
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100, this)
+            return toByteArray()
+        }
+    }
+    fun deserializeImage(byteArray: ByteArray): Bitmap {
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
 }
 
