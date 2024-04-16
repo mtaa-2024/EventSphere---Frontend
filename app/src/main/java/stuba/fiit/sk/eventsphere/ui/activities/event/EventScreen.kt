@@ -1,11 +1,8 @@
 package stuba.fiit.sk.eventsphere.ui.activities.event
 
-import android.graphics.fonts.Font
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,13 +29,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.widget.ContentLoadingProgressBar
+import androidx.viewbinding.BuildConfig
+import com.google.android.gms.maps.GoogleMapOptions
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.model.observeLiveData
+import stuba.fiit.sk.eventsphere.ui.components.CommentBanner
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
@@ -226,22 +233,20 @@ fun EventScreen (
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(text = "Comments", style= labelStyle, fontSize = 24.sp)
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    // Comments
                     Column (
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.End
                     ) {
                         eventViewModel.event.value?.comments?.forEach { comment ->
-                            Column (
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.End
-                            ) {
-                                Text(text = comment.firstname.toString() + " " + comment.lastname.toString(), style = labelStyle, color= MaterialTheme.colorScheme.onBackground)
-                                Text(text = comment.text.toString())
-                            }
-                            Spacer(modifier = Modifier.height(20.dp))
+                            CommentBanner(image = null, firstname = comment.firstname, lastname = comment.lastname, text = comment.text)
+                            Spacer(modifier = Modifier.height(30.dp))
                         }
                     }
+
+                    Text(text="Where to find us", style = labelStyle, fontSize = 24.sp)
+
 
                 }
             }

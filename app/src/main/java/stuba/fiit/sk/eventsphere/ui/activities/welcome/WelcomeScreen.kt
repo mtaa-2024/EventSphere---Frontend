@@ -28,7 +28,6 @@ import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
 import stuba.fiit.sk.eventsphere.ui.components.SecondaryButton
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
-import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 @Composable
 fun WelcomeScreen (

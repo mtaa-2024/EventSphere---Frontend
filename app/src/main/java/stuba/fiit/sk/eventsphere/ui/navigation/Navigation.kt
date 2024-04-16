@@ -14,8 +14,8 @@ import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.WELCOME_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.HomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.LoginRoute
-import stuba.fiit.sk.eventsphere.ui.navigation.routes.WelcomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.RegisterRoute
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.WelcomeRoute
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModelFactory
 

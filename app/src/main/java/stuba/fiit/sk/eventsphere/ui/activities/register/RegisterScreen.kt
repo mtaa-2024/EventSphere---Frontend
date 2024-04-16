@@ -131,7 +131,7 @@ fun RegisterScreen (
             )
 
 
-            PrimaryButton(text = "Register", onClick = {
+            PrimaryButton (text = "Register", onClick = {
                 viewModel.viewModelScope.launch {
                     if (viewModel.registerNewUser(registerViewModel.registerData.value?.username.toString(), registerViewModel.registerData.value?.email.toString(), registerViewModel.registerData.value?.password.toString(),registerViewModel.registerData.value?.repeatPassword.toString())) {
                         toHome()
@@ -140,7 +140,7 @@ fun RegisterScreen (
                 }
             })
 
-            Spacer(
+            Spacer (
                 modifier = Modifier
                     .height(25.dp)
             )

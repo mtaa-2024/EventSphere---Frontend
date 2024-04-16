@@ -6,12 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import retrofit2.http.Body
 import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.BannerStruct
-import stuba.fiit.sk.eventsphere.model.Category
-import stuba.fiit.sk.eventsphere.model.Events
-import stuba.fiit.sk.eventsphere.model.User
 
 class EventViewModel(id: Int) : ViewModel() {
     private val _event = MutableLiveData<EventView>()
