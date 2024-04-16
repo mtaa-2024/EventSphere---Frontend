@@ -94,9 +94,9 @@ data class EventView (
 data class EventCreate (
     var title: String?,
     var description: String?,
+    var user_id: Int?,
     var location: String?,
-    var estimated_end: String?,
-    var performers: List<PerformerStruct>?
+    var estimated_end: String?
 )
 
 data class PerformersView (
@@ -141,6 +141,15 @@ data class LoginClass(
     var user: String?,
     var password: String?
 )
+
+data class DateStructure (
+    var day: Int,
+    var month: Int,
+    var year: Int,
+    var hour: Int,
+    var minutes: Int,
+)
+
 @Composable
 fun <T> observeLiveData(liveData: LiveData<T>): T? {
     val lifecycleOwner = LocalLifecycleOwner.current

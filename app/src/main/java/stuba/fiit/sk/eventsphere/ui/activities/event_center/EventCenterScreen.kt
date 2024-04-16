@@ -37,7 +37,8 @@ fun EventCenterScreen (
     viewModel: MainViewModel,
     eventCenterViewModel: EventCenterViewModel,
     toBack: () -> Unit,
-    toEvent: (Int) -> Unit
+    toEvent: (Int) -> Unit,
+    toCreateEvent: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -81,7 +82,7 @@ fun EventCenterScreen (
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(50.dp))
-            PrimaryButton(text = "Create your event", onClick = {} )
+            PrimaryButton(text = "Create your event", onClick = toCreateEvent )
             Spacer(modifier = Modifier.height(50.dp))
             Row (
                 modifier = Modifier

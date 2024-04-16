@@ -1,5 +1,7 @@
 package stuba.fiit.sk.eventsphere.ui.components
 
+import android.app.TimePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -50,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.DateStructure
 import stuba.fiit.sk.eventsphere.model.EventSelectStates
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.grey
@@ -491,5 +495,45 @@ fun EventSelector (
             },
             onClick = invitedSelected
         )
+    }
+}
+
+@Composable
+fun DateCalendar (
+    dateStructure: LiveData<DateStructure>,
+    updateEstimatedEnd: (String) -> Unit
+) {
+
+    val context = LocalContext.current
+    var selectedDateText by remember { mutableStateOf("") }
+    var selectedTimeText by remember { mutableStateOf("") }
+
+    val datePicker = android.app.DatePickerDialog(
+        context,
+        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
+            selectedDateText =
+                "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
+        }, dateStructure.value?.year ?: 1, dateStructure.value?.month ?: 1, dateStructure.value?.day ?: 1
+    )
+
+    val timePicker = TimePickerDialog(
+        context,
+        { _, selectedHour: Int, selectedMinute: Int ->
+            selectedTimeText = "$selectedHour:$selectedMinute"
+        }, dateStructure.value?.hour ?: 1, dateStructure.value?.minutes ?: 1, false
+    )
+
+    if (selectedDateText.isNotEmpty() && selectedTimeText.isNotEmpty()) {
+        updateEstimatedEnd("$selectedDateText $selectedTimeText")
+    }
+    Box (
+        modifier = Modifier
+            .clickable(onClick = {
+                timePicker.show()
+                datePicker.show()
+                }
+            )
+    ) {
+        Image(painter = painterResource(id = R.drawable.icon), contentDescription = "datepicker")
     }
 }
