@@ -38,10 +38,20 @@ interface ApiService {
     suspend fun getEvent(
         @Query("id") id: Int
     ): JsonObject
+
+    @GET("upcoming/owner")
+    suspend fun getUpcomingOwner(
+        @Query("id") id: Int?
+    ): JsonObject
+
+    @GET("expired/owner")
+    suspend fun getExpiredOwner(
+        @Query("id") id: Int?
+    ): JsonObject
 }
 
 val retrofit = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:3000/")
+    .baseUrl("http://10.0.2.2:8000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 

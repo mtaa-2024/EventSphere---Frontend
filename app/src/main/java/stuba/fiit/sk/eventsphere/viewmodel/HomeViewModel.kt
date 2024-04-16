@@ -78,7 +78,6 @@ class HomeViewModel() : ViewModel() {
         } catch (e: Exception) {
             println("Error: $e")
         }
-        println(_events.value)
     }
 
     private suspend fun getAttending(viewModel: MainViewModel) {
@@ -117,7 +116,6 @@ class HomeViewModel() : ViewModel() {
         } catch (e: Exception) {
             println("Error: $e")
         }
-        println(_events.value)
     }
 
     private suspend fun getInvited(viewModel: MainViewModel) {

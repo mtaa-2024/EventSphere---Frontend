@@ -348,12 +348,6 @@ fun CommentBanner (
 
 }
 
-@Preview
-@Composable
-fun CommentBannerPreview() {
-    CommentBanner(image = null, firstname = "Norbert", lastname = "Kokot", text = "sadasdasddsadddddddddasdasd")
-}
-
 @Composable
 fun EventBanner (
     id: Int,
@@ -361,7 +355,7 @@ fun EventBanner (
     date: String?,
     location: String?,
     icon: Int,
-    toEvent: (Int) -> Unit
+    toEvent: (id: Int) -> Unit
 ) {
     Box (
         modifier = Modifier
@@ -421,6 +415,7 @@ fun EventBanner (
                 )
             }
         }
+
         Box (
             modifier = Modifier
                 .width(60.dp)
