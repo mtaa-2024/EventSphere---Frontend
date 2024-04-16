@@ -1,7 +1,6 @@
 package stuba.fiit.sk.eventsphere.ui.activities.profile
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
+import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
@@ -41,8 +43,9 @@ fun ProfileScreen (
     home: () -> Unit,
     toWelcomeScreen: () -> Unit,
     toEventCenter: () -> Unit,
-    viewModel: MainViewModel,
     toEditProfile: () -> Unit,
+    toFriends: () -> Unit,
+    viewModel: MainViewModel,
     profileViewModel: ProfileViewModel
 ) {
     Column (
@@ -117,13 +120,9 @@ fun ProfileScreen (
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
-            //horizontalArrangement = Arrangement.Center
+                .padding(20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(
-                modifier = Modifier
-                    .width(30.dp)
-            )
 
             Text(
                 text = "Friends",
@@ -131,24 +130,26 @@ fun ProfileScreen (
                 fontSize = 20.sp
             )
 
-            Spacer(
-                modifier = Modifier
-                    .width(150.dp)
-            )
-            Text (
-                modifier = Modifier
-                    .clickable(onClick = toEventCenter),
-                text = "EventCenter",
-                style = welcomeStyle,
-                fontSize = 20.sp
-            )
+            TextButton(
+                onClick = toEditProfile
+            ) {
+                Text(
+                    text = "Search user",
+                    style = buttonStyle,
+                            fontSize = 20.sp
+                )
+            }
         }
         val friendsState = rememberScrollState()
-
+        Column(
+            modifier = Modifier
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(90.dp)
+                .height(80.dp)
                 .padding(10.dp)
                 .horizontalScroll(friendsState),
             horizontalArrangement = Arrangement.Start
@@ -170,21 +171,28 @@ fun ProfileScreen (
                         color = MaterialTheme.colorScheme.onSecondary
                     )
                 }
-
-                Spacer(
-                    modifier = Modifier
-                        .width(10.dp)
-                )
             }
         }
+        val scroll = rememberScrollState()
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+            .verticalScroll(scroll),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                .padding(20.dp),
+                horizontalArrangement = Arrangement.Center
+            ){
+                PrimaryButton(text = "Event Center", onClick = toEventCenter)
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ){
 
                 Spacer(
@@ -217,7 +225,7 @@ fun ProfileScreen (
 
             Column(
                 modifier = Modifier
-                    .padding (15.dp)
+                    .padding(15.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
@@ -243,72 +251,73 @@ fun ProfileScreen (
             }
             Column(
                 modifier = Modifier
-                    .padding (15.dp)
+                    .padding(15.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
-                    Text(
-                        text = "Color mode",
-                        style = welcomeStyle,
-                        fontSize = 20.sp
-                    )
+                        Text(
+                            text = "Color mode",
+                            style = welcomeStyle,
+                            fontSize = 20.sp
+                        )
 
-                    Text(
-                        text = "Color mode",
-                        style = welcomeStyle,
-                        fontSize = 20.sp
-                    )
+                        Text(
+                            text = "Color mode",
+                            style = welcomeStyle,
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        Text(
+                            text = "Language",
+                            style = welcomeStyle,
+                            fontSize = 20.sp
+                        )
+
+                        Text(
+                            text = "Language",
+                            style = welcomeStyle,
+                            fontSize = 20.sp
+                        )
+                    }
                 }
             }
-            Column(
+
+            Spacer(
                 modifier = Modifier
-                    .padding (15.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    Text(
-                        text = "Language",
-                        style = welcomeStyle,
-                        fontSize = 20.sp
-                    )
-
-                    Text(
-                        text = "Language",
-                        style = welcomeStyle,
-                        fontSize = 20.sp
-                    )
-                }
-            }
-        }
-
-        Spacer(
-            modifier = Modifier
-                .height(20.dp)
-        )
-
-        TextButton(
-            onClick = toWelcomeScreen
-        ) {
-            Text(
-                text = "Logout",
-                style = labelStyle,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary
+                    .height(20.dp)
             )
+
+            TextButton(
+                onClick = toWelcomeScreen
+            ) {
+                Text(
+                    text = "Logout",
+                    style = labelStyle,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

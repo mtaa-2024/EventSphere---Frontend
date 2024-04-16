@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EDITPROFILE_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENTCENTER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENT_ROUTE
+import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.FRIENDS_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.HOME_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.LOGIN_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.PROFILE_ROUTE
@@ -17,6 +18,7 @@ import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.WELCOME_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EditProfileRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventCenterRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventRoute
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.FriendsRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.HomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.LoginRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.ProfileRoute
@@ -34,6 +36,7 @@ object Destinations {
     const val EVENTCENTER_ROUTE = "eventcenter"
     const val PROFILE_ROUTE = "profile"
     const val EDITPROFILE_ROUTE = "editprofile"
+    const val  FRIENDS_ROUTE = "friends"
 }
 
 @Composable
@@ -136,6 +139,9 @@ fun EventSphereNavHost(
                 onNavigationToEditProfile = {
                     navController.navigate(EDITPROFILE_ROUTE)
                 },
+                onNavigationToFriendsScreen = {
+                    navController.navigate(FRIENDS_ROUTE)
+                },
                 mainViewModel = mainViewModel
             )
         }
@@ -149,5 +155,13 @@ fun EventSphereNavHost(
             )
         }
 
+        composable(FRIENDS_ROUTE) {
+            FriendsRoute(
+                onNavigationToProfile = {
+                    navController.navigate(PROFILE_ROUTE)
+                },
+                mainViewModel = mainViewModel
+            )
+        }
     }
 }
