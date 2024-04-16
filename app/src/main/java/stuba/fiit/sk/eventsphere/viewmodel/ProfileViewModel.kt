@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.Events
+import stuba.fiit.sk.eventsphere.model.FriendsView
+import stuba.fiit.sk.eventsphere.model.ListFriendsView
 import stuba.fiit.sk.eventsphere.model.User
 
 
@@ -67,14 +69,3 @@ class ProfileViewModelFactory(private val id: Int) : ViewModelProvider.Factory {
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
-data class FriendsView (
-    var id: Int?,
-    var firstname: String?,
-    var lastname: String?,
-    var profile_picture: String?
-)
-
-data class ListFriendsView (
-    var listFriends: List<FriendsView>?
-)

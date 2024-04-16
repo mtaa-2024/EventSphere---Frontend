@@ -1,16 +1,14 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.BannerStruct
-import stuba.fiit.sk.eventsphere.model.Category
+import stuba.fiit.sk.eventsphere.model.EventSelectStatesCenter
 import stuba.fiit.sk.eventsphere.model.Events
 
 class EventCenterViewModel(viewModel: MainViewModel) : ViewModel() {
@@ -130,10 +128,6 @@ class EventCenterViewModel(viewModel: MainViewModel) : ViewModel() {
     }
 }
 
-data class EventSelectStatesCenter (
-    var upcoming: Boolean,
-    var expired: Boolean
-)
 class EventCenterViewModelFactory(private val mainViewModel: MainViewModel) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

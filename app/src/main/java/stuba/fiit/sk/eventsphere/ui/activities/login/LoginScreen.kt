@@ -90,7 +90,7 @@ fun LoginScreen (
             )
             InputField (
                 label = "Username or email",
-                value = loginViewModel.user.value.toString(),
+                value = loginViewModel.loginData.value?.user.toString(),
                 onChange = loginViewModel::updateUser
             )
 
@@ -101,7 +101,7 @@ fun LoginScreen (
 
             InputPasswordField (
                 label = "Password",
-                value = loginViewModel.password.value.toString(),
+                value = loginViewModel.loginData.value?.password.toString(),
                 onChange = loginViewModel::updatePassword
             )
 
@@ -112,7 +112,7 @@ fun LoginScreen (
 
             PrimaryButton(text = "Login", onClick = {
                 viewModel.viewModelScope.launch {
-                    if (viewModel.authenticateUser(loginViewModel.user.value.toString(), loginViewModel.password.value.toString())) {
+                    if (viewModel.authenticateUser(loginViewModel.loginData.value?.user.toString(), loginViewModel.loginData.value?.password.toString())) {
                         toHome()
                     }
                 }

@@ -69,20 +69,6 @@ class MainViewModel() : ViewModel() {
         }
         return false
     }
-
-
-
-    suspend fun obtainFriends() {
-        if (_loggedUser.isInitialized) {
-            val id = _loggedUser.value?.id
-            try {
-                val fetchedJson = apiService.getFriends(id)
-                println(fetchedJson)
-            } catch (e: Exception) {
-                println("Error: $e")
-            }
-        }
-    }
 }
 
 class MainViewModelFactory : ViewModelProvider.Factory {

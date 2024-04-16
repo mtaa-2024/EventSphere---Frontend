@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.BannerStruct
 import stuba.fiit.sk.eventsphere.model.Category
+import stuba.fiit.sk.eventsphere.model.EventSelectStates
 import stuba.fiit.sk.eventsphere.model.Events
 
 class HomeViewModel() : ViewModel() {
@@ -203,12 +204,6 @@ class HomeViewModel() : ViewModel() {
         _categories.value?.sport = value
     }
 }
-
-data class EventSelectStates (
-    var upcoming: Boolean,
-    var attending: Boolean,
-    var invited: Boolean
-)
 
 class HomeViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

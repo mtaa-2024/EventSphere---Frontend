@@ -50,10 +50,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.EventSelectStates
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.grey
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
-import stuba.fiit.sk.eventsphere.viewmodel.EventSelectStates
 
 @Composable
 fun PrimaryButton (

@@ -74,6 +74,65 @@ data class SelectedHome (
     var selectedInvited: Boolean
 )
 
+data class EventSelectStatesCenter (
+    var upcoming: Boolean,
+    var expired: Boolean
+)
+
+data class EventView (
+    var title: String?,
+    var description: String?,
+    var location: String?,
+    var estimated_end: String?,
+    var owner_firstname: String?,
+    var owner_lastname: String?,
+    var owner_picture: String?,
+    var performers: List<PerformersView>?,
+    var comments: List<CommentsView>?
+)
+
+data class PerformersView (
+    var id: Int?,
+    var firstname: String?,
+    var lastname: String?,
+    var profile_picture: String?
+)
+
+data class CommentsView (
+    var firstname: String?,
+    var lastname: String?,
+    var profile_picture: String?,
+    var text: String?
+)
+
+data class EventSelectStates (
+    var upcoming: Boolean,
+    var attending: Boolean,
+    var invited: Boolean
+)
+
+data class FriendsView (
+    var id: Int?,
+    var firstname: String?,
+    var lastname: String?,
+    var profile_picture: String?
+)
+
+data class ListFriendsView (
+    var listFriends: List<FriendsView>?
+)
+
+data class RegisterClass(
+    var username: String?,
+    var email: String?,
+    var password: String?,
+    var repeatPassword: String?
+)
+
+data class LoginClass(
+    var user: String?,
+    var password: String?
+)
 @Composable
 fun <T> observeLiveData(liveData: LiveData<T>): T? {
     val lifecycleOwner = LocalLifecycleOwner.current

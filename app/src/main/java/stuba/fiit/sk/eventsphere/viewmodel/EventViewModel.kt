@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
+import stuba.fiit.sk.eventsphere.model.CommentsView
+import stuba.fiit.sk.eventsphere.model.EventView
+import stuba.fiit.sk.eventsphere.model.PerformersView
 
 class EventViewModel(id: Int) : ViewModel() {
     private val _event = MutableLiveData<EventView>()
@@ -74,31 +77,6 @@ class EventViewModel(id: Int) : ViewModel() {
     }
 
 }
-data class EventView (
-    var title: String?,
-    var description: String?,
-    var location: String?,
-    var estimated_end: String?,
-    var owner_firstname: String?,
-    var owner_lastname: String?,
-    var owner_picture: String?,
-    var performers: List<PerformersView>?,
-    var comments: List<CommentsView>?
-)
-
-data class PerformersView (
-    var id: Int?,
-    var firstname: String?,
-    var lastname: String?,
-    var profile_picture: String?
-)
-
-data class CommentsView (
-    var firstname: String?,
-    var lastname: String?,
-    var profile_picture: String?,
-    var text: String?
-)
 
 class EventViewModelFactory(private val id: Int) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
