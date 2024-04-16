@@ -58,6 +58,11 @@ interface ApiService {
     suspend fun getExpiredOwner(
         @Query("id") id: Int?
     ): JsonObject
+
+    @POST
+    fun createEvent(
+        @Body eventData: JsonObject
+    ): JsonObject
 }
 
 val retrofit = Retrofit.Builder()

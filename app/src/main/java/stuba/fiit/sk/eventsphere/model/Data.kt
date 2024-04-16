@@ -91,6 +91,14 @@ data class EventView (
     var comments: List<CommentsView>?
 )
 
+data class EventCreate (
+    var title: String?,
+    var description: String?,
+    var location: String?,
+    var estimated_end: String?,
+    var performers: List<PerformerStruct>?
+)
+
 data class PerformersView (
     var id: Int?,
     var firstname: String?,
