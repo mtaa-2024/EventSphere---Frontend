@@ -12,16 +12,18 @@ import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModelFactory
 @Composable
 fun ProfileRoute(
     onNavigationToHome: () -> Unit,
-    onNavigationToBack: ()-> Unit,
     onNavigationToEventCenter: () -> Unit,
+    onNavigationToBack: ()-> Unit,
+    onNavigationToEditProfile: () -> Unit,
     mainViewModel: MainViewModel
 ) {
     val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(mainViewModel.loggedUser.value?.id ?:0))
     ProfileScreen (
         home = onNavigationToHome,
-        viewModel = mainViewModel,
         toEventCenter = onNavigationToEventCenter,
         toWelcomeScreen = onNavigationToBack,
+        toEditProfile = onNavigationToEditProfile,
+        viewModel = mainViewModel,
         profileViewModel = profileViewModel
     )
 }

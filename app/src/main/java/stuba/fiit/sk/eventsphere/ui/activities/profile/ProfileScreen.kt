@@ -42,6 +42,7 @@ fun ProfileScreen (
     toWelcomeScreen: () -> Unit,
     toEventCenter: () -> Unit,
     viewModel: MainViewModel,
+    toEditProfile: () -> Unit,
     profileViewModel: ProfileViewModel
 ) {
     Column (
@@ -74,6 +75,16 @@ fun ProfileScreen (
                     Image(
                         painter = painterResource(id = R.drawable.back_arrow),
                         contentDescription = "Back"
+                    )
+                }
+                TextButton(
+                    onClick = toEditProfile
+                ) {
+                    Text(
+                        text = "Edit Profile",
+                        style = labelStyle,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
