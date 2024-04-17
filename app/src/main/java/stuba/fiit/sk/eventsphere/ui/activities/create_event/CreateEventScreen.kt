@@ -24,8 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.DateCalendar
+import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorSelected
 import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorUnselected
 import stuba.fiit.sk.eventsphere.ui.components.InputField
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldCreateEvent
@@ -175,7 +178,8 @@ fun CreateEventScreen(
         ) {
             Text(text = "Performers", style = labelStyle, fontSize = 24.sp)
             val performersState = rememberScrollState()
-            Row(
+            var addingPerformer by remember { mutableStateOf(false) }
+            Row (
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
@@ -183,7 +187,8 @@ fun CreateEventScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Box ( 
-                    modifier = Modifier.clickable(onClick = {}),
+                    modifier = Modifier
+                        .clickable(onClick = { addingPerformer = true } ),
                 ) {
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -195,8 +200,45 @@ fun CreateEventScreen(
                         Text(text = "Add performer")
                     }
                 }
-
             }
+
+            if (addingPerformer) {
+                Column (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                    ) {
+                        var isSelectedByFriends by remember { mutableStateOf(createEventViewModel.addPerformerState.value?.friend ?: false) }
+                        var isSelectedByInput by remember { mutableStateOf(createEventViewModel.addPerformerState.value?.input ?: false) }
+
+                        if (isSelectedByFriends) HomeSelectorSelected(
+                            value = "Select friend"
+                        ) else HomeSelectorUnselected(
+                            value = "Select friend",
+                            onSelect = {
+                                isSelectedByFriends = !isSelectedByFriends
+                                isSelectedByInput = false
+                            },
+                            onClick = { createEventViewModel.onFriendSelect() }
+                        )
+                        if (isSelectedByInput) HomeSelectorSelected(
+                            value = "Input name"
+                        ) else HomeSelectorUnselected(
+                            value = "Input name",
+                            onSelect = {
+                                isSelectedByFriends = false
+                                isSelectedByInput = !isSelectedByInput
+                            },
+                            onClick = { createEventViewModel.onInputSelect() }
+                        )
+                    }
+                }
+            }
+
         }
     }
 }
