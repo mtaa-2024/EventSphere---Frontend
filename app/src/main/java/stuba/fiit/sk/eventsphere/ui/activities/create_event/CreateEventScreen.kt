@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -36,12 +37,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.FriendsView
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.DateCalendar
 import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorSelected
 import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorUnselected
 import stuba.fiit.sk.eventsphere.ui.components.InputField
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldCreateEvent
+import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
@@ -91,7 +97,11 @@ fun CreateEventScreen(
                         )
                     }
                     Box() {}
-                    HomeSelectorUnselected(value = "Save", onSelect = {  }, onClick = {} )
+                    HomeSelectorUnselected(value = "Save", onSelect = {  }, onClick = { createEventViewModel.viewModelScope.launch {
+                        val id = createEventViewModel.createEvent()
+                    }
+                    toBack()
+                    } )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
                 Column(
@@ -100,23 +110,6 @@ fun CreateEventScreen(
                         .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-/*
-                    InputField(
-                        label = "Title",
-                        value = createEventViewModel.eventData.value?.title.toString(),
-                        onChange = createEventViewModel::updateTitle
-                    )
-
-                    InputField(
-                        label = "Location",
-                        value = createEventViewModel.eventData.value?.location.toString(),
-                        onChange = createEventViewModel::updateLocation
-                    )
-
-*/
-
-
                     InputFieldCreateEvent(
                         label = "Title",
                         value = createEventViewModel.eventData.value?.title.toString(),
@@ -207,14 +200,13 @@ fun CreateEventScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
+                    var isSelectedByFriends by remember { mutableStateOf(createEventViewModel.addPerformerState.value?.friend ?: false) }
+                    var isSelectedByInput by remember { mutableStateOf(createEventViewModel.addPerformerState.value?.input ?: false) }
                     Row (
                         modifier = Modifier
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround,
                     ) {
-                        var isSelectedByFriends by remember { mutableStateOf(createEventViewModel.addPerformerState.value?.friend ?: false) }
-                        var isSelectedByInput by remember { mutableStateOf(createEventViewModel.addPerformerState.value?.input ?: false) }
-
                         if (isSelectedByFriends) HomeSelectorSelected(
                             value = "Select friend"
                         ) else HomeSelectorUnselected(
@@ -236,9 +228,118 @@ fun CreateEventScreen(
                             onClick = { createEventViewModel.onInputSelect() }
                         )
                     }
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    if (isSelectedByFriends) {
+                        val rowState = rememberScrollState()
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp)
+                                .padding(10.dp)
+                                .horizontalScroll(rowState),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            createEventViewModel.friends.value?.listFriends?.forEach { friend ->
+                                if (!createEventViewModel.performerList.contains(friend)) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxHeight(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Box(
+                                            modifier = Modifier.clickable(onClick = {
+                                                createEventViewModel.addPerformer(
+                                                    friend
+                                                )
+                                            })
+                                        ) {
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxHeight(),
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            ) {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.baseline_circle_24),
+                                                    contentDescription = ""
+                                                )
+                                                Text(
+                                                    text = friend.firstname.toString() + " " + friend.lastname.toString(),
+                                                    style = smallButton,
+                                                    fontSize = 15.sp,
+                                                    color = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if (isSelectedByInput) {
+                        Column (
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            val (firstname, setFirstname) = remember { mutableStateOf("Firstname") }
+                            val (lastname, setLastname) = remember { mutableStateOf("Lastname") }
+
+                            InputField(label = "Firstname", value = firstname, onChange = { newValue ->
+                                setFirstname(newValue) } )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            InputField(label = "Lastname", value = lastname, onChange = { newValue ->
+                                setLastname(newValue)} )
+
+                            PrimaryButton(text = "Add", onClick = {
+                                createEventViewModel.addPerformer(FriendsView(id = null, firstname = firstname, lastname = lastname, profile_picture = null))
+                                createEventViewModel.onFriendSelect()
+                                isSelectedByFriends = true
+                                isSelectedByInput = false
+                            })
+                        }
+                    }
                 }
+
             }
 
+        }
+        val descriptionState = rememberScrollState()
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 15.dp,
+                        bottomEnd = 15.dp
+                    )
+                )
+                .border(
+                    1.dp,
+                    Color(
+                        red = 0.917129635810852f,
+                        green = 0.917129635810852f,
+                        blue = 0.917129635810852f,
+                        alpha = 1f
+                    ),
+                    RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 15.dp,
+                        bottomEnd = 15.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.background)
+                .padding(10.dp)
+                .verticalScroll(descriptionState)
+        ) {
+            Text(text = "Description", style= labelStyle, fontSize = 24.sp)
+            Spacer(modifier = Modifier.height(10.dp))
+            InputField(label = "Description", value = createEventViewModel.eventData.value?.description ?: "Description", onChange = createEventViewModel::updateDescription)
         }
     }
 }

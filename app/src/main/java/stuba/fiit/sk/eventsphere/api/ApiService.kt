@@ -59,8 +59,8 @@ interface ApiService {
         @Query("id") id: Int?
     ): JsonObject
 
-    @POST
-    fun createEvent(
+    @POST("create/event")
+    suspend fun createEvent(
         @Body eventData: JsonObject
     ): JsonObject
 
