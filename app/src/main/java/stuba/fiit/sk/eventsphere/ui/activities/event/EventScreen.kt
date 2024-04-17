@@ -268,9 +268,9 @@ fun EventScreen (
                             ) {
                                 CommentEditBanner (
                                     image = null,
-                                    firstname = comment?.firstname,
-                                    lastname = comment?.lastname,
-                                    text = comment?.text
+                                    firstname = comment.firstname,
+                                    lastname = comment.lastname,
+                                    text = comment.text
                                 )
                                 Spacer(modifier = Modifier.height(30.dp))
                             }
