@@ -42,16 +42,17 @@ class MainViewModel() : ViewModel() {
 
     suspend fun registerNewUser(username: String, email: String, password: String, repeatPassword: String): Boolean {
         if (username != "" && password != "" && email != "" && repeatPassword != "") {
-
-            if (password != repeatPassword)
-
+            if (password != repeatPassword){
+                _errorRegister.value = "wrong password"
                 return false
+            }
             try {
                 val registrationData = JsonObject()
                 registrationData.addProperty("username", username)
                 registrationData.addProperty("email", email)
                 registrationData.addProperty("password", password)
-                val fetchedJson = apiService.registerNewUser(registrationData)
+                val fetchedJson = apiService.register(registrationData)
+                println(fetchedJson)
                 if (fetchedJson.get("result").asBoolean) {
                     val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
                     val loggedUser = User(
@@ -66,6 +67,7 @@ class MainViewModel() : ViewModel() {
                     println(loggedUser)
                     return true
                 }else{
+                    println(fetchedJson.get("text"))
                     _errorRegister.value = if (fetchedJson.get("text").isJsonNull) { null } else { fetchedJson.get("text")?.asString }
                 }
 

@@ -22,7 +22,7 @@ interface ApiService {
     ): JsonObject
 
     @POST("register")
-    suspend fun registerNewUser(
+    suspend fun register(
         @Body registrationData: JsonObject
     ): JsonObject
 
@@ -71,7 +71,7 @@ interface ApiService {
 }
 
 val retrofit = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:8000/")
+    .baseUrl("http://10.0.2.2:3000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
