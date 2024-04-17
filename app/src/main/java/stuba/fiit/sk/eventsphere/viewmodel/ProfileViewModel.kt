@@ -1,6 +1,5 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
-import android.service.autofill.UserData
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,10 +7,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.Events
 import stuba.fiit.sk.eventsphere.model.FriendsView
 import stuba.fiit.sk.eventsphere.model.ListFriendsView
-import stuba.fiit.sk.eventsphere.model.User
 
 
 class ProfileViewModel(id:Int) : ViewModel() {

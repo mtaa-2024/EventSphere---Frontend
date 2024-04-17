@@ -93,191 +93,97 @@ fun ProfileScreen (
             }
         }
 
-        Spacer(
-            modifier = Modifier
-                .height(30.dp)
-        )
-        Text(text = "profile_img")
+        val profileScroll = rememberScrollState()
 
-        Spacer(
+        Column (
             modifier = Modifier
-                .height(15.dp)
-        )
-        val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
-        val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
-
-        Text(
-            text = "$firstName $lastName",
-            style = welcomeStyle,
-            fontSize = 20.sp,
-        )
-
-        Spacer(
-            modifier = Modifier
-                .height(20.dp)
-        )
-
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .verticalScroll(profileScroll),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Spacer(
+                modifier = Modifier
+                    .height(30.dp)
+            )
+            Text(text = "profile_img")
+
+            Spacer(
+                modifier = Modifier
+                    .height(15.dp)
+            )
+            val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
+            val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
 
             Text(
-                text = "Friends",
+                text = "$firstName $lastName",
                 style = welcomeStyle,
-                fontSize = 20.sp
+                fontSize = 20.sp,
             )
-
-            TextButton(
-                onClick = toEditProfile
-            ) {
-                Text(
-                    text = "Search user",
-                    style = buttonStyle,
-                            fontSize = 20.sp
-                )
-            }
-        }
-        val friendsState = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(10.dp)
-                .horizontalScroll(friendsState),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            profileViewModel.friends.value?.listFriends?.forEach() { friend ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_circle_24),
-                        contentDescription = ""
-                    )
-                    Text(
-                        text = friend.firstname.toString() + " " + friend.lastname.toString(),
-                        style = smallButton,
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSecondary
-                    )
-                }
-            }
-        }
-        val scroll = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-            .verticalScroll(scroll),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                .padding(20.dp),
-                horizontalArrangement = Arrangement.Center
-            ){
-                PrimaryButton(text = "Event Center", onClick = toEventCenter)
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ){
-
-                Spacer(
-                    modifier = Modifier
-                        .width(30.dp)
-                )
-
-                Text(
-                    text = "Settings",
-                    style = welcomeStyle,
-                    fontSize = 20.sp
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .width(5.dp)
-                )
-
-                Image(
-                    painter = painterResource(id = R.drawable.setting_icon),
-                    contentDescription = "Settings",
-                    contentScale = ContentScale.FillBounds,
-                )
-            }
 
             Spacer(
                 modifier = Modifier
                     .height(20.dp)
             )
 
-            Column(
+            Row(
                 modifier = Modifier
-                    .padding(15.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                ){
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
-                    Text(
-                        text = "Notifications",
-                        style = welcomeStyle,
-                        fontSize = 20.sp
-                    )
+                Text(
+                    text = "Friends",
+                    style = welcomeStyle,
+                    fontSize = 20.sp
+                )
 
+                TextButton(
+                    onClick = toEditProfile
+                ) {
                     Text(
-                        text = "Notifications",
-                        style = welcomeStyle,
+                        text = "Search user",
+                        style = buttonStyle,
                         fontSize = 20.sp
                     )
                 }
             }
+            val friendsState = rememberScrollState()
             Column(
                 modifier = Modifier
-                    .padding(15.dp)
-                    .fillMaxWidth(),
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .padding(10.dp)
+                        .horizontalScroll(friendsState),
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-
-                        Text(
-                            text = "Color mode",
-                            style = welcomeStyle,
-                            fontSize = 20.sp
-                        )
-
-                        Text(
-                            text = "Color mode",
-                            style = welcomeStyle,
-                            fontSize = 20.sp
-                        )
+                    profileViewModel.friends.value?.listFriends?.forEach() { friend ->
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_circle_24),
+                                contentDescription = ""
+                            )
+                            Text(
+                                text = friend.firstname.toString() + " " + friend.lastname.toString(),
+                                style = smallButton,
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
                     }
                 }
                 Column(
                     modifier = Modifier
-                        .padding(15.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -285,38 +191,140 @@ fun ProfileScreen (
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        PrimaryButton(text = "Event Center", onClick = toEventCenter)
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
 
+                        Spacer(
+                            modifier = Modifier
+                                .width(30.dp)
+                        )
+
                         Text(
-                            text = "Language",
+                            text = "Settings",
                             style = welcomeStyle,
                             fontSize = 20.sp
                         )
 
-                        Text(
-                            text = "Language",
-                            style = welcomeStyle,
-                            fontSize = 20.sp
+                        Spacer(
+                            modifier = Modifier
+                                .width(5.dp)
+                        )
+
+                        Image(
+                            painter = painterResource(id = R.drawable.setting_icon),
+                            contentDescription = "Settings",
+                            contentScale = ContentScale.FillBounds,
                         )
                     }
+
+                    Spacer(
+                        modifier = Modifier
+                            .height(20.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            Text(
+                                text = "Notifications",
+                                style = welcomeStyle,
+                                fontSize = 20.sp
+                            )
+
+                            Text(
+                                text = "Notifications",
+                                style = welcomeStyle,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            Text(
+                                text = "Color mode",
+                                style = welcomeStyle,
+                                fontSize = 20.sp
+                            )
+
+                            Text(
+                                text = "Color mode",
+                                style = welcomeStyle,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            Text(
+                                text = "Language",
+                                style = welcomeStyle,
+                                fontSize = 20.sp
+                            )
+
+                            Text(
+                                text = "Language",
+                                style = welcomeStyle,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
                 }
-            }
 
-            Spacer(
-                modifier = Modifier
-                    .height(20.dp)
-            )
-
-            TextButton(
-                onClick = toWelcomeScreen
-            ) {
-                Text(
-                    text = "Logout",
-                    style = labelStyle,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.primary
+                Spacer(
+                    modifier = Modifier
+                        .height(20.dp)
                 )
+
+                TextButton(
+                    onClick = toWelcomeScreen
+                ) {
+                    Text(
+                        text = "Logout",
+                        style = labelStyle,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }

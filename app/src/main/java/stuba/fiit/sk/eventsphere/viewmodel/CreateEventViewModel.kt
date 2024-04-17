@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.BannerStruct
 import stuba.fiit.sk.eventsphere.model.DateStructure
 import stuba.fiit.sk.eventsphere.model.EventCreate
 import stuba.fiit.sk.eventsphere.model.PerformerStruct
