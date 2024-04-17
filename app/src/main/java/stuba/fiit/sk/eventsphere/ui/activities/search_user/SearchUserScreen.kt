@@ -1,4 +1,4 @@
-package stuba.fiit.sk.eventsphere.ui.activities.friends
+package stuba.fiit.sk.eventsphere.ui.activities.search_user
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -23,14 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
-import stuba.fiit.sk.eventsphere.viewmodel.FriendsViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
+import stuba.fiit.sk.eventsphere.viewmodel.SearchUserViewModel
 
 @Composable
-fun FriendsScreen (
+fun SearchUserScreen (
     toProfile: () -> Unit,
+    toFriends: () -> Unit,
     viewModel: MainViewModel,
-    friendsViewModel: FriendsViewModel
+    searchUserViewModel: SearchUserViewModel
 ) {
     Column (
         modifier = Modifier
@@ -72,7 +73,7 @@ fun FriendsScreen (
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(
-                text = "My friend",
+                text = "Search User",
                 style = welcomeStyle,
                 fontSize = 25.sp
             )

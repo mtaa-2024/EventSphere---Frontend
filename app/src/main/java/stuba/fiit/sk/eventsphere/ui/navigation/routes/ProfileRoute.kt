@@ -14,6 +14,7 @@ fun ProfileRoute(
     onNavigationToBack: ()-> Unit,
     onNavigationToEditProfile: () -> Unit,
     onNavigationToFriendsScreen: () -> Unit,
+    onNavigationToSearchUserScreen: () -> Unit,
     mainViewModel: MainViewModel
 ) {
     val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(mainViewModel.loggedUser.value?.id ?:0))
@@ -23,6 +24,7 @@ fun ProfileRoute(
         toWelcomeScreen = onNavigationToBack,
         toEditProfile = onNavigationToEditProfile,
         toFriends = onNavigationToFriendsScreen,
+        toSearchUser = onNavigationToSearchUserScreen,
         viewModel = mainViewModel,
         profileViewModel = profileViewModel
     )

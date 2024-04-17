@@ -1,6 +1,7 @@
 package stuba.fiit.sk.eventsphere.ui.activities.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +46,7 @@ fun ProfileScreen (
     toEventCenter: () -> Unit,
     toEditProfile: () -> Unit,
     toFriends: () -> Unit,
+    toSearchUser: ()-> Unit,
     viewModel: MainViewModel,
     profileViewModel: ProfileViewModel
 ) {
@@ -129,7 +131,7 @@ fun ProfileScreen (
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
 
@@ -140,7 +142,7 @@ fun ProfileScreen (
                 )
 
                 TextButton(
-                    onClick = toEditProfile
+                    onClick = toSearchUser
                 ) {
                     Text(
                         text = "Search user",
@@ -169,16 +171,26 @@ fun ProfileScreen (
                                 .fillMaxHeight(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_circle_24),
-                                contentDescription = ""
-                            )
-                            Text(
-                                text = friend.firstname.toString() + " " + friend.lastname.toString(),
-                                style = smallButton,
-                                fontSize = 15.sp,
-                                color = MaterialTheme.colorScheme.onSecondary
-                            )
+                            Box(
+                                modifier = Modifier.clickable(onClick = toFriends)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.baseline_circle_24),
+                                        contentDescription = ""
+                                    )
+                                    Text(
+                                        text = friend.firstname.toString() + " " + friend.lastname.toString(),
+                                        style = smallButton,
+                                        fontSize = 15.sp,
+                                        color = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
                         }
                     }
                 }

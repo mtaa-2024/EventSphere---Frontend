@@ -15,6 +15,7 @@ import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.HOME_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.LOGIN_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.PROFILE_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.REGISTER_ROUTE
+import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.SEARCHUSER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.WELCOME_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.CreateEventRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EditProfileRoute
@@ -25,6 +26,7 @@ import stuba.fiit.sk.eventsphere.ui.navigation.routes.HomeRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.LoginRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.ProfileRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.RegisterRoute
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.SearchUserRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.WelcomeRoute
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModelFactory
@@ -40,6 +42,7 @@ object Destinations {
     const val EDITPROFILE_ROUTE = "editprofile"
     const val FRIENDS_ROUTE = "friends"
     const val CREATEEVENT_ROUTE = "createevent"
+    const val SEARCHUSER_ROUTE = "searchuser"
 }
 
 @Composable
@@ -148,6 +151,9 @@ fun EventSphereNavHost(
                 onNavigationToFriendsScreen = {
                     navController.navigate(FRIENDS_ROUTE)
                 },
+                onNavigationToSearchUserScreen = {
+                    navController.navigate(SEARCHUSER_ROUTE)
+                },
                 mainViewModel = mainViewModel
             )
         }
@@ -174,6 +180,18 @@ fun EventSphereNavHost(
             CreateEventRoute(
                 onNavigationToBack = {
                     navController.navigate(EVENTCENTER_ROUTE)
+                },
+                mainViewModel = mainViewModel
+            )
+        }
+
+        composable(SEARCHUSER_ROUTE) {
+            SearchUserRoute(
+                onNavigationToProfile = {
+                    navController.navigate(PROFILE_ROUTE)
+                },
+                onNavigationToFriendsScreen = {
+                    navController.navigate(FRIENDS_ROUTE)
                 },
                 mainViewModel = mainViewModel
             )
