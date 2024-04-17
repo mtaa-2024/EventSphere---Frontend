@@ -100,6 +100,9 @@ fun EventSphereNavHost(
                 onNavigationToEvent = { eventId: Int ->
                     navController.navigate("$EVENT_ROUTE/$eventId/$HOME_ROUTE")
                 },
+                onNavigationToBack = {
+                    navController.navigate(WELCOME_ROUTE)
+                },
                 mainViewModel = mainViewModel
             )
         }

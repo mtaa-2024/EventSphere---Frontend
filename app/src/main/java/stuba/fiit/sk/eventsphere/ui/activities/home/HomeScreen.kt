@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
+import stuba.fiit.sk.eventsphere.ui.components.AlertDialog
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
 import stuba.fiit.sk.eventsphere.ui.components.EventSelector
@@ -34,9 +38,10 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 @Composable
 fun HomeScreen (
-    profile: () -> Unit,
+    toProfile: () -> Unit,
     viewModel: MainViewModel,
     toEvent: (Int) -> Unit,
+    toBack:() -> Unit,
     homeViewModel: HomeViewModel
 ) {
     Column(
@@ -63,10 +68,16 @@ fun HomeScreen (
             ) {
 
                 Box() {}
-
+                val openAlertDialog = remember { mutableStateOf(false) }
                 Box(
                     modifier = Modifier.clickable(
-                        onClick = profile
+                        onClick = {
+                            if(viewModel.loggedUser.value?.id != null){
+                                toProfile()
+                            }else{
+                                openAlertDialog.value = true
+                            }
+                        }
                     )
                 ) {
                     Image(
@@ -82,6 +93,18 @@ fun HomeScreen (
 
                     }
                 }
+                if(openAlertDialog.value) {
+                    AlertDialog(
+                        onDismissRequest = { openAlertDialog.value = false },
+                        onConfirmation = {
+                            openAlertDialog.value = false
+                            toBack()
+                        },
+                        dialogTitle = "Alert Dialog",
+                        dialogText = "You have to be logged, please login or register as new user",
+                    )
+                }
+
 
                 Box(
                 ) {

@@ -11,13 +11,15 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun HomeRoute (
     onNavigationToProfile: () -> Unit,
     onNavigationToEvent: (Int) -> Unit,
+    onNavigationToBack: () -> Unit,
     mainViewModel: MainViewModel
 ) {
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory())
     HomeScreen (
-        profile = onNavigationToProfile,
+        toProfile = onNavigationToProfile,
         viewModel = mainViewModel,
         toEvent = onNavigationToEvent,
+        toBack = onNavigationToBack,
         homeViewModel = homeViewModel
     )
 }
