@@ -9,10 +9,11 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 @Composable
 fun FriendsRoute (
+    friendId: Int,
     onNavigationToProfile: () -> Unit,
     mainViewModel: MainViewModel
 ) {
-    val friendsViewModel: FriendsViewModel = viewModel(factory = FriendsViewModelFactory())
+    val friendsViewModel: FriendsViewModel = viewModel(factory = FriendsViewModelFactory(friendId))
     FriendsScreen (
         toProfile = onNavigationToProfile,
         viewModel = mainViewModel,

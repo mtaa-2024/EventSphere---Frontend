@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.ui.components.InputField
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.SearchUserViewModel
@@ -80,10 +81,11 @@ fun SearchUserScreen (
             Spacer(
                 modifier = Modifier
                     .height(30.dp)
-            )/*
+            )
+/*
             InputField (
-                label = "enter to find"
-                value = loginViewModel.loginData.value?.user.toString(),
+                label = "enter to find",
+                value = searchUserViewModel.sea,
                 onChange = loginViewModel::updateUser
             )*/
         }

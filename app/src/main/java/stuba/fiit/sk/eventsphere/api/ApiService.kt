@@ -26,6 +26,11 @@ interface ApiService {
         @Body registrationData: JsonObject
     ): JsonObject
 
+    @POST("friend/add")
+    suspend fun addFriend(
+        @Body addFriendData: JsonObject
+    ): JsonObject
+
     @GET("friends")
     suspend fun getFriends(
         @Query("id") id: Int?

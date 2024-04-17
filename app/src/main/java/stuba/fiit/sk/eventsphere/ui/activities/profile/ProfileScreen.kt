@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.FriendsView
 import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
@@ -45,7 +46,7 @@ fun ProfileScreen (
     toWelcomeScreen: () -> Unit,
     toEventCenter: () -> Unit,
     toEditProfile: () -> Unit,
-    toFriends: () -> Unit,
+    toFriends: (id:Int?) -> Unit,
     toSearchUser: ()-> Unit,
     viewModel: MainViewModel,
     profileViewModel: ProfileViewModel
@@ -165,15 +166,18 @@ fun ProfileScreen (
                         .horizontalScroll(friendsState),
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    profileViewModel.friends.value?.listFriends?.forEach() { friend ->
+                    profileViewModel.friends.value?.listFriends?.forEach { friend ->
                         Column(
                             modifier = Modifier
                                 .fillMaxHeight(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Box(
-                                modifier = Modifier.clickable(onClick = toFriends)
-                            ) {
+                                modifier = Modifier.clickable{
+                                    toFriends(friend.id)
+                                }
+                            )
+                            {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxHeight(),
