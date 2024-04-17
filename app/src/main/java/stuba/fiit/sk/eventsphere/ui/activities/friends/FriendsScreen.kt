@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -71,15 +72,33 @@ fun FriendsScreen (
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Text(
-                text = "My friend",
-                style = welcomeStyle,
-                fontSize = 25.sp
-            )
-            Spacer(
+            Column (
                 modifier = Modifier
-                    .height(30.dp)
-            )/*
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Spacer(
+                    modifier = Modifier
+                        .height(30.dp)
+                )
+                Text(text = "profile_img")
+
+                Spacer(
+                    modifier = Modifier
+                        .height(15.dp)
+                )
+                val firstName = friendsViewModel.friend.value?.firstname ?: "Firstname"
+                val lastName = friendsViewModel.friend.value?.lastname ?: "Lastname"
+
+                Text(
+                    text = "$firstName $lastName",
+                    style = welcomeStyle,
+                    fontSize = 20.sp,
+                )
+            }
+
+            /*
             InputField (
                 label = "enter to find"
                 value = loginViewModel.loginData.value?.user.toString(),

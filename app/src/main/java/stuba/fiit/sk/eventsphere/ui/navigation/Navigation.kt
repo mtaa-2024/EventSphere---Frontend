@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import stuba.fiit.sk.eventsphere.model.FriendsView
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.CREATEEVENT_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EDITPROFILE_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENTCENTER_ROUTE
@@ -151,8 +152,8 @@ fun EventSphereNavHost(
                 onNavigationToEditProfile = {
                     navController.navigate(EDITPROFILE_ROUTE)
                 },
-                onNavigationToFriendsScreen = {
-                    navController.navigate(FRIENDS_ROUTE)
+                onNavigationToFriendsScreen = { friendId: Int? ->
+                    navController.navigate("$FRIENDS_ROUTE/$friendId")
                 },
                 onNavigationToSearchUserScreen = {
                     navController.navigate(SEARCHUSER_ROUTE)
@@ -170,8 +171,11 @@ fun EventSphereNavHost(
             )
         }
 
-        composable(FRIENDS_ROUTE) {
+        composable("$FRIENDS_ROUTE/{friend}") {backStackEntry ->
+            val friend = backStackEntry.arguments?.getString("friend")?.toIntOrNull()?: -1
+
             FriendsRoute(
+                friendId = friend,
                 onNavigationToProfile = {
                     navController.navigate(PROFILE_ROUTE)
                 },
