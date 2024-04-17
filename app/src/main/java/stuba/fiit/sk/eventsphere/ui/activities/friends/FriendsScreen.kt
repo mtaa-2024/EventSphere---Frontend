@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +22,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
+import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.FriendsViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
@@ -96,14 +100,30 @@ fun FriendsScreen (
                     style = welcomeStyle,
                     fontSize = 20.sp,
                 )
+
+                //doobre tak toto treba porobit xDD
+                TextButton(
+                    onClick = {
+                        viewModel.viewModelScope.launch {
+                            friendsViewModel.addFriend( friendsViewModel.friend.value?.id ?:0, viewModel.loggedUser.value?.id ?:0)
+                        }
+                    }
+                ) {
+                    Text(
+                        text = "Add friend",
+                        style = buttonStyle,
+                        fontSize = 20.sp
+                    )
+                }
+
             }
 
-            /*
-            InputField (
-                label = "enter to find"
-                value = loginViewModel.loginData.value?.user.toString(),
-                onChange = loginViewModel::updateUser
-            )*/
+/*
+            PrimaryButton (text = "addFriend", onClick = {
+                viewModel.viewModelScope.launch {
+                    friendsViewModel.addFriend( friendsViewModel.friend.value?.id ?:0, viewModel.loggedUser.value?.id ?:0)
+                }
+            })*/
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.User
@@ -49,6 +50,22 @@ class FriendsViewModel(id:Int) : ViewModel() {
         } catch (e: Exception) {
                 println("Error: $e")
 
+        }
+    }
+
+    suspend fun addFriend (id:Int, userId: Int){
+        try {
+            val addFriendData = JsonObject()
+            addFriendData.addProperty("id",id)
+            addFriendData.addProperty("userId",userId)
+            val fetchedJson = apiService.addFriend(addFriendData)
+
+            if (fetchedJson.get("result").asBoolean) {
+                println(fetchedJson)
+            }
+
+        } catch (e: Exception) {
+            println("Error: $e")
         }
     }
 }
