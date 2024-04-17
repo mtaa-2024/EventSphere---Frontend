@@ -639,3 +639,28 @@ fun SaveDialog(
         }
     )
 }
+
+@Composable
+fun RegisterAlertDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String
+) {
+    AlertDialog(
+        title = {
+            Text(text = dialogTitle)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text("OK")
+            }
+        }
+    )
+}

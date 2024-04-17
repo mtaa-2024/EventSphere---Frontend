@@ -11,6 +11,9 @@ class MainViewModel() : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()
     val loggedUser: LiveData<User> = _loggedUser
 
+    private val _errorRegister = MutableLiveData<String>()
+    val errorRegister: LiveData<String> = _errorRegister
+
     suspend fun authenticateUser(username: String, password: String): Boolean {
         if (username != "" && password != "") {
             try {
@@ -39,7 +42,9 @@ class MainViewModel() : ViewModel() {
 
     suspend fun registerNewUser(username: String, email: String, password: String, repeatPassword: String): Boolean {
         if (username != "" && password != "" && email != "" && repeatPassword != "") {
+
             if (password != repeatPassword)
+
                 return false
             try {
                 val registrationData = JsonObject()
@@ -60,7 +65,10 @@ class MainViewModel() : ViewModel() {
                     _loggedUser.value = loggedUser
                     println(loggedUser)
                     return true
+                }else{
+                    _errorRegister.value = if (fetchedJson.get("text").isJsonNull) { null } else { fetchedJson.get("text")?.asString }
                 }
+
             } catch (e: Exception) {
                 println("Error: $e")
                 return false

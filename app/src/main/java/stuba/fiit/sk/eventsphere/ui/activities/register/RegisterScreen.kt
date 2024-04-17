@@ -14,6 +14,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +29,7 @@ import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.InputField
 import stuba.fiit.sk.eventsphere.ui.components.InputPasswordField
 import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
+import stuba.fiit.sk.eventsphere.ui.components.SaveDialog
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.RegisterViewModel
@@ -130,15 +133,26 @@ fun RegisterScreen (
                     .weight(1f)
             )
 
+            val openRegisterAlertDialog = remember { mutableStateOf(false) }
 
             PrimaryButton (text = "Register", onClick = {
                 viewModel.viewModelScope.launch {
                     if (viewModel.registerNewUser(registerViewModel.registerData.value?.username.toString(), registerViewModel.registerData.value?.email.toString(), registerViewModel.registerData.value?.password.toString(),registerViewModel.registerData.value?.repeatPassword.toString())) {
                         toHome()
+                    }else{
+                        openRegisterAlertDialog.value = true
                     }
-
                 }
             })
+
+            if(openRegisterAlertDialog.value) {
+                SaveDialog(
+                    onDismissRequest = { openRegisterAlertDialog.value = false },
+                    onConfirmation = {
+                        openRegisterAlertDialog.value = false
+                    },
+                    dialogTitle = viewModel.errorRegister.value.toString())
+            }
 
             Spacer (
                 modifier = Modifier
