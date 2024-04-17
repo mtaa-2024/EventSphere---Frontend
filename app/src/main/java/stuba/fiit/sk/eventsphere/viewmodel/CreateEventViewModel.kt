@@ -22,6 +22,9 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     private val performerList = mutableListOf<PerformerStruct>()
     val calendar = Calendar.getInstance()
 
+    private val _addPerformerState = MutableLiveData<AddPerformerState>()
+    val addPerformerState: LiveData<AddPerformerState> = _addPerformerState
+
     init {
         _eventData.value = EventCreate (
             title = "Title",
@@ -37,6 +40,11 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             year = calendar[Calendar.YEAR],
             hour = calendar[Calendar.HOUR_OF_DAY],
             minutes = calendar[Calendar.MINUTE]
+        )
+
+        _addPerformerState.value = AddPerformerState(
+            friend = true,
+            input = false
         )
     }
 
@@ -112,7 +120,22 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
         }
         return -1
     }
+
+    fun onFriendSelect() {
+        _addPerformerState.value?.friend = true
+        _addPerformerState.value?.input = false
+    }
+
+    fun onInputSelect() {
+        _addPerformerState.value?.friend = false
+        _addPerformerState.value?.input = true
+    }
 }
+
+data class AddPerformerState(
+    var friend: Boolean,
+    var input: Boolean
+)
 
 class CreateEventViewModelFactory(private val mainViewModel: MainViewModel) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
