@@ -41,9 +41,9 @@ class MainViewModel() : ViewModel() {
     }
 
     suspend fun registerNewUser(username: String, email: String, password: String, repeatPassword: String): Boolean {
-        if (username != "" && password != "" && email != "" && repeatPassword != "") {
-            if (password != repeatPassword){
-                _errorRegister.value = "wrong password"
+        if (username != "Username" && password != "Password" && email != "Email" && repeatPassword != "Password") {
+            if (password != repeatPassword) {
+                _errorRegister.value = "Password doesnt match"
                 return false
             }
             try {
@@ -52,7 +52,7 @@ class MainViewModel() : ViewModel() {
                 registrationData.addProperty("email", email)
                 registrationData.addProperty("password", password)
                 val fetchedJson = apiService.register(registrationData)
-                println(fetchedJson)
+
                 if (fetchedJson.get("result").asBoolean) {
                     val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
                     val loggedUser = User(
@@ -64,11 +64,10 @@ class MainViewModel() : ViewModel() {
                         profile_image = if (userObject.get("profile_image").isJsonNull) { null } else { userObject.get("profile_image")?.asString },
                     )
                     _loggedUser.value = loggedUser
-                    println(loggedUser)
                     return true
-                }else{
-                    println(fetchedJson.get("text"))
-                    _errorRegister.value = if (fetchedJson.get("text").isJsonNull) { null } else { fetchedJson.get("text")?.asString }
+                } else {
+                    _errorRegister.value = fetchedJson.get("text").asString
+                    return false
                 }
 
             } catch (e: Exception) {
@@ -76,6 +75,7 @@ class MainViewModel() : ViewModel() {
                 return false
             }
         }
+        _errorRegister.value = "Required data not idk inputed xd"
         return false
     }
 
