@@ -32,6 +32,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -113,6 +114,37 @@ fun SecondaryButton (
             color = MaterialTheme.colorScheme.onSecondary,
         )
     }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InputFieldCreateEvent (
+    label: String,
+    value: String,
+    onChange: (String) -> Unit
+) {
+    var text by rememberSaveable { mutableStateOf(value) }
+    var isFocused by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = if (isFocused && text == label) "" else text,
+        onValueChange = {
+            text = it
+            onChange(it)
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MaterialTheme.colorScheme.background,
+            unfocusedBorderColor = MaterialTheme.colorScheme.background,
+            focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+            cursorColor = MaterialTheme.colorScheme.onBackground
+        ),
+        label = { Text(text = label, style = labelStyle, color = MaterialTheme.colorScheme.background) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
+        modifier = Modifier
+            .onFocusChanged { isFocused = it.isFocused }
+            .width(300.dp)
+            .height(60.dp)
+    )
 }
 
 @Composable
