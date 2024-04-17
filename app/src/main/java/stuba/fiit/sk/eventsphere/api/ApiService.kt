@@ -63,6 +63,11 @@ interface ApiService {
     fun createEvent(
         @Body eventData: JsonObject
     ): JsonObject
+
+    @POST("comment")
+    suspend fun insertComment(
+        @Body body: JsonObject
+    ): JsonObject
 }
 
 val retrofit = Retrofit.Builder()

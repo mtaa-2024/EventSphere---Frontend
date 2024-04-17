@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.CommentsView
@@ -12,11 +13,16 @@ import stuba.fiit.sk.eventsphere.model.EventView
 import stuba.fiit.sk.eventsphere.model.PerformersView
 
 class EventViewModel(id: Int) : ViewModel() {
+    private val eventId = id
+
     private val _event = MutableLiveData<EventView>()
     val event: LiveData<EventView> = _event
 
     private val _performers = MutableLiveData<EventView>()
     val performers: LiveData<EventView> = _performers
+
+    private val _comment = MutableLiveData<String>()
+    val comment: LiveData<String> = _comment
 
     init {
         viewModelScope.launch{
@@ -49,6 +55,7 @@ class EventViewModel(id: Int) : ViewModel() {
                 commentsArray.forEach { commentElement ->
                     val commentObject = commentElement.asJsonObject
                     val commentView = CommentsView (
+                        id = if (commentObject.get("id").isJsonNull) null else commentObject.get("id").asInt,
                         firstname = if (commentObject.get("firstname").isJsonNull) null else commentObject.get("firstname").asString,
                         lastname = if (commentObject.get("lastname").isJsonNull) null else commentObject.get("lastname").asString,
                         profile_picture = if (commentObject.get("profile_image").isJsonNull) null else commentObject.get("profile_image").asString,
@@ -75,6 +82,38 @@ class EventViewModel(id: Int) : ViewModel() {
             println("Error: $e")
         }
     }
+
+    fun existsComment(id: Int?): CommentsView? {
+        event.value?.comments?.forEach{ comment ->
+            if (comment.id == id) {
+                return comment
+            }
+        }
+        return null
+    }
+
+    fun updateComment(input: String) {
+        _comment.value = input
+    }
+
+    suspend fun publishComment(id: Int?) {
+        try {
+            val body = JsonObject()
+            body.addProperty("id", id)
+            body.addProperty("event_id", eventId)
+            body.addProperty("commentValue", _comment.value)
+
+            val fetchedJson = apiService.insertComment(body)
+            if (fetchedJson.get("result").asBoolean) {
+                viewModelScope.launch {
+                    getEventData(eventId)
+                }
+            }
+        } catch (e: Exception) {
+            println("Error: $e")
+        }
+    }
+
 
 }
 

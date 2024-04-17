@@ -325,6 +325,152 @@ fun HomeSelectorUnselected (
 }
 
 @Composable
+fun CommentEditBanner (
+    image: String?,
+    firstname: String?,
+    lastname: String?,
+    text: String?,
+) {
+    Box (
+        modifier = Modifier
+            .width(310.dp)
+
+    ) {
+        Box(
+            modifier = Modifier
+                .width(280.dp)
+                .height(110.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 8.dp,
+                        topEnd = 8.dp,
+                        bottomStart = 8.dp,
+                        bottomEnd = 8.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primary)
+                .align(Alignment.CenterEnd)
+        ) {
+            val scrollState = rememberScrollState()
+            Column (
+                modifier = Modifier
+                    .matchParentSize()
+                    .verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(5.dp))
+                HomeSelectorUnselected(value = "Edit", onSelect = {  }) {
+
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "$firstname $lastname",
+                    style = labelStyle,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.background
+                )
+                Spacer (
+                    modifier = Modifier.height(10.dp)
+                )
+                Text(text = text ?: "", style = labelStyle, fontSize = 14.sp, color=MaterialTheme.colorScheme.background)
+            }
+        }
+        Box(
+            modifier = Modifier
+                .width(71.dp)
+                .height(50.0224723815918.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 15.dp,
+                        bottomEnd = 15.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .align(Alignment.TopStart)
+        )
+    }
+}
+@Composable
+fun CommentInputBanner(
+    image: String?,
+    firstname: String?,
+    lastname: String?,
+    text: String?,
+    onChange: (String) -> Unit,
+    onPublish: () -> Unit
+) {
+    Box (
+        modifier = Modifier
+            .width(310.dp)
+
+    ) {
+        Box(
+            modifier = Modifier
+                .width(280.dp)
+                .height(110.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 8.dp,
+                        topEnd = 8.dp,
+                        bottomStart = 8.dp,
+                        bottomEnd = 8.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primary)
+                .align(Alignment.CenterEnd)
+        ) {
+            val scrollState = rememberScrollState()
+            Column (
+                modifier = Modifier
+                    .matchParentSize()
+                    .verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "$firstname $lastname",
+                    style = labelStyle,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.background
+                )
+                Spacer (
+                    modifier = Modifier.height(10.dp)
+                )
+                InputField(label = text ?: "", value = "", onChange= onChange)
+                Column (
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        HomeSelectorUnselected(value = "Publish", onSelect = {}, onClick = onPublish)
+                    }
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .width(71.dp)
+                .height(50.0224723815918.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp,
+                        bottomStart = 15.dp,
+                        bottomEnd = 15.dp
+                    )
+                )
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .align(Alignment.TopStart)
+        )
+    }
+}
+
+@Composable
 fun CommentBanner (
     image: String?,
     firstname: String?,
@@ -387,7 +533,6 @@ fun CommentBanner (
                 .align(Alignment.TopStart)
         )
     }
-
 }
 
 @Composable

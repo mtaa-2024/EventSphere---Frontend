@@ -23,6 +23,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,8 +36,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.CommentsView
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.CommentBanner
+import stuba.fiit.sk.eventsphere.ui.components.CommentEditBanner
+import stuba.fiit.sk.eventsphere.ui.components.CommentInputBanner
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
@@ -180,6 +190,7 @@ fun EventScreen (
                         }
 
                     }
+
                     Spacer(modifier = Modifier.height(20.dp))
 
                     val descriptionState = rememberScrollState()
@@ -223,13 +234,67 @@ fun EventScreen (
                     Text(text = "Comments", style= labelStyle, fontSize = 24.sp)
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    val commentState = observeLiveData(eventViewModel.event)
+
                     Column (
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.End
                     ) {
-                        eventViewModel.event.value?.comments?.forEach { comment ->
-                            CommentBanner(image = null, firstname = comment.firstname, lastname = comment.lastname, text = comment.text)
-                            Spacer(modifier = Modifier.height(30.dp))
+                        commentState?.comments?.forEach { comment ->
+                            if (comment.id != viewModel.loggedUser.value?.id) {
+                                CommentBanner(
+                                    image = null,
+                                    firstname = comment.firstname,
+                                    lastname = comment.lastname,
+                                    text = comment.text
+                                )
+                                Spacer(modifier = Modifier.height(30.dp))
+                            }
+                        }
+                    }
+                    
+                    Text(text = "Your comment", style= labelStyle, fontSize = 17.sp)
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+
+                    var isComment by remember { mutableStateOf(false) }
+
+                    commentState?.comments?.forEach { comment ->
+                        if (comment.id == viewModel.loggedUser.value?.id) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                CommentEditBanner (
+                                    image = null,
+                                    firstname = comment?.firstname,
+                                    lastname = comment?.lastname,
+                                    text = comment?.text
+                                )
+                                Spacer(modifier = Modifier.height(30.dp))
+                            }
+                            isComment = true
+                        }
+                    }
+
+                    if (!isComment) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            CommentInputBanner(
+                                image = viewModel.loggedUser.value?.profile_image,
+                                firstname = viewModel.loggedUser.value?.firstname,
+                                lastname = viewModel.loggedUser.value?.lastname,
+                                text = "Insert your comment",
+                                onChange = eventViewModel::updateComment,
+                                onPublish = {
+                                    eventViewModel.viewModelScope.launch {
+                                        eventViewModel.publishComment(viewModel.loggedUser.value?.id)
+                                    }
+                                }
+                            )
                         }
                     }
 

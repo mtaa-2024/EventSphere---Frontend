@@ -107,6 +107,7 @@ data class PerformersView (
 )
 
 data class CommentsView (
+    var id: Int?,
     var firstname: String?,
     var lastname: String?,
     var profile_picture: String?,
