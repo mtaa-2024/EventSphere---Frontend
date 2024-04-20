@@ -678,7 +678,9 @@ fun CommentBanner (
                         text = "Publish",
                         isSelected = false,
                         onClick = {
-                            onPublish(value)
+                            if (id != 0) {
+                                onPublish(value)
+                            }
                         }
                     )
                 }

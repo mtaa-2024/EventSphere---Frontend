@@ -18,7 +18,7 @@ class FriendsViewModel(friendId: Int, userId: Int) : ViewModel() {
     private val _friend = MutableLiveData<User>()
     val friend: LiveData<User> = _friend
 
-    var isFriendValue = false
+    var canBeAdded = true
     private val friend_id = friendId
     private val user_id = userId
 
@@ -31,7 +31,7 @@ class FriendsViewModel(friendId: Int, userId: Int) : ViewModel() {
 
     suspend fun isFriend() {
         try {
-            isFriendValue = apiService.isFriend(user_id, friend_id).get("result").asBoolean
+            canBeAdded = !apiService.isFriend(user_id, friend_id).get("result").asBoolean
         } catch (e: Exception) {
             println(e)
         }
@@ -77,20 +77,16 @@ class FriendsViewModel(friendId: Int, userId: Int) : ViewModel() {
     }
 
     suspend fun addFriend () {
-        try {
-            val addFriendData = JsonObject()
-            addFriendData.addProperty("user_id", user_id)
-            addFriendData.addProperty("friend_id", friend_id)
-            val fetchedJson = apiService.add(addFriendData)
-            println(fetchedJson)
-            if (fetchedJson.get("result").asBoolean) {
-                isFriendValue = true
-            } else {
-                isFriendValue = false
-            }
+        if (canBeAdded) {
+            try {
+                val addFriendData = JsonObject()
+                addFriendData.addProperty("user_id", user_id)
+                addFriendData.addProperty("friend_id", friend_id)
+                canBeAdded = !apiService.add(addFriendData).get("result").asBoolean
 
-        } catch (e: Exception) {
-            println("Error: $e")
+            } catch (e: Exception) {
+                println("Error: $e")
+            }
         }
     }
 }

@@ -125,17 +125,13 @@ fun ProfileScreen (
                     style = welcomeStyle,
                     fontSize = 20.sp
                 )
-                //idk why to nefunguje ale opravis<3
-                 /*
-                SmallButtonComponent (
-                    text = "Search friend",
-                    isSelected = true,
-                    onClick = { toSearchUser() }
-                )*/
-                Button(
-                    onClick = { toSearchUser() }) {
 
-                    Text(text = "search" )                 }
+                SmallButtonComponent (
+                    text = "Find friend",
+                    isSelected = false,
+                    onClick = { toSearchUser() }
+                )
+
             }
 
             val friendScrollState = rememberScrollState()
@@ -159,7 +155,6 @@ fun ProfileScreen (
                         textAlign = TextAlign.Center
                     )
                 } else {
-
                     friends?.listFriends?.forEach { friend ->
                         if (friend.firstname != null && friend.lastname != null) {
                             FriendBox(

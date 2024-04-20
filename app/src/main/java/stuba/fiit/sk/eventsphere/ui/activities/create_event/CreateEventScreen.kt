@@ -19,7 +19,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -312,7 +320,7 @@ fun EventDetailInput (
                 .height(30.dp)
         )
 
-        Row(
+        Row (
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
@@ -370,6 +378,7 @@ fun EventDetailInput (
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEventTopBar (
     back: () -> Unit,
@@ -403,11 +412,52 @@ fun CreateEventTopBar (
                     contentDescription = "Back"
                 )
             }
+
+            val menu = arrayOf("Music", "Sport", "Education", "Art", "Food")
+            var expanded by remember { mutableStateOf(false) }
+            var selectedItem by remember { mutableStateOf(menu[0]) }
+
+            createEventViewModel.selectedCategory = selectedItem
+
+            ExposedDropdownMenuBox (
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+            ) {
+                TextField (
+                    modifier = Modifier.width(150.dp).menuAnchor(),
+                    value = selectedItem,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {  ExposedDropdownMenuDefaults.TrailingIcon( expanded = expanded) },
+                    colors = TextFieldDefaults.textFieldColors(unfocusedTextColor = LightColorScheme.onBackground, focusedTextColor = LightColorScheme.primary),
+
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    for (item in menu) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = item
+                                )
+                            },
+                            onClick = {
+                                selectedItem = item
+                                createEventViewModel.selectedCategory = item
+                            }
+                        )
+                    }
+
+                }
+            }
+
             val openSaveDialog = remember { mutableStateOf(false) }
             SmallButtonComponent(
                 onClick = {
                     createEventViewModel.viewModelScope.launch {
-
+                        createEventViewModel.createEvent()
                     }
                     openSaveDialog.value = true
                 },

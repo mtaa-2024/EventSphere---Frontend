@@ -1,5 +1,6 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.ui.graphics.ImageBitmap
@@ -20,11 +21,11 @@ class SearchUserViewModel(id: Int) : ViewModel() {
 
     private val id = id
 
-
     fun updateSearch(input: String) {
-        if (input.isNotEmpty() && input != "Search" && input.length > 1)
-        viewModelScope.launch {
-            getFriendsSearch(input)
+        if (input.isNotEmpty() && input != "Search" && input.length > 1) {
+            viewModelScope.launch {
+                getFriendsSearch(input)
+            }
         }
     }
 

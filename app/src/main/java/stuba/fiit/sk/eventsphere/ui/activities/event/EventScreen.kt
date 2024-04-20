@@ -222,8 +222,8 @@ fun CommentsViewWidget(
                 .height(10.dp)
         )
 
-        CommentBanner(
-            id = mainViewModel.loggedUser.value?.id!!,
+        CommentBanner (
+            id = mainViewModel.loggedUser.value?.id ?: 0,
             firstname = mainViewModel.loggedUser.value?.firstname ?: "Firstname",
             lastname = mainViewModel.loggedUser.value?.firstname ?: "Lastname",
             text = "Insert your comment",
@@ -231,7 +231,6 @@ fun CommentsViewWidget(
             isForPublish = true,
             onPublish = { comment ->
                 eventViewModel.viewModelScope.launch {
-                    println(comment)
                     eventViewModel.insertCommentNew(comment, mainViewModel.loggedUser)
                 }
             }

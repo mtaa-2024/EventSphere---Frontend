@@ -113,26 +113,20 @@ fun FriendsScreen (
                     modifier = Modifier.height(25.dp)
                 )
 
-                var canBeAdded by remember { mutableStateOf(friendsViewModel.isFriendValue) }
+                var canBeAdded by remember { mutableStateOf(friendsViewModel.canBeAdded) }
 
                 SmallButtonComponent (
-                    text = if (!canBeAdded) "Add friend" else "You are friends",
-                    isSelected = canBeAdded,
+                    text = if (canBeAdded) "Add friend" else "You are friends",
+                    isSelected = !canBeAdded,
                     onClick = {
-                        if (!canBeAdded) {
+                        if (canBeAdded) {
                             friendsViewModel.viewModelScope.launch {
                                 friendsViewModel.addFriend()
-                                canBeAdded = friendsViewModel.isFriendValue
-                            }
-                            if (canBeAdded) {
-                                viewModel.viewModelScope.launch {
-
-                                }
+                                canBeAdded = friendsViewModel.canBeAdded
                             }
                         }
                     }
                 )
-
             }
         }
     }

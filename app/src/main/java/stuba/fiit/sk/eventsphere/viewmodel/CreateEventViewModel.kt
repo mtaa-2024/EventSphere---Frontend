@@ -25,6 +25,11 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     private val performersList: MutableList<FriendPerformer> = mutableListOf()
     val friendsList: MutableList<FriendPerformer> = mutableListOf()
 
+    var selectedCategory: String = ""
+
+    fun updateSelectedCategory(input: String) {
+        selectedCategory = input
+    }
 
     init {
         viewModelScope.launch {
@@ -110,6 +115,8 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
 
     suspend fun createEvent(): Int {
         try {
+            val categoryId = if (selectedCategory == "Music") 1 else if (selectedCategory == "Education") 2 else if (selectedCategory == "Food") 3 else if (selectedCategory == "Sport") 4 else  5
+
             val jsonBody = JsonObject()
             jsonBody.addProperty("title", _event.value?.title)
             jsonBody.addProperty("user_id", _event.value?.user_id)
@@ -117,6 +124,7 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             jsonBody.addProperty("location", _event.value?.location?.address)
             jsonBody.addProperty("latitude", _event.value?.location?.latitude)
             jsonBody.addProperty("longitude", _event.value?.location?.longitude)
+            jsonBody.addProperty("category", categoryId)
 
             val timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
             jsonBody.addProperty("estimated_end", timestamp)
@@ -128,10 +136,6 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             performersList.forEach { performer ->
                 val performerObject = JsonObject()
                 performerObject.addProperty("id", performer.id)
-                performerObject.addProperty("firstname", performer.firstname)
-                performerObject.addProperty("lastname", performer.lastname)
-                //performerObject.addProperty("profile_img", performer.lastname)
-
                 performersArray.add(performerObject)
             }
             jsonBody.add("performers", performersArray)
