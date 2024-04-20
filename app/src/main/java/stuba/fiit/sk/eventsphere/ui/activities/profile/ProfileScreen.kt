@@ -24,6 +24,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,12 +51,7 @@ import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModel
-
-@Preview(showBackground = true)
-@Composable
-fun Preview () {
-    ProfileScreen(toLogout = {}, back = {}, toEditProfile = {}, toEventCenter = {}, toFriend = {}, toSearchUser = {}, viewModel = MainViewModel(), profileViewModel = ProfileViewModel(1))
-}
+import java.util.Locale
 
 
 @Composable
@@ -63,7 +63,8 @@ fun ProfileScreen (
     toFriend: (id:Int?) -> Unit,
     toSearchUser: ()-> Unit,
     viewModel: MainViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    onLanguageChange: (Locale) -> Unit
 ) {
 
     Column (
@@ -235,7 +236,7 @@ fun ProfileScreen (
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "Notifications",
+                                    text = stringResource(id = R.string.notification_text),
                                     style = labelStyle,
                                     fontSize = 18.sp
                                 )
@@ -244,7 +245,7 @@ fun ProfileScreen (
                                         .height(10.dp)
                                 )
                                 Text(
-                                    text = "Dark mode",
+                                    text = stringResource(id = R.string.darkmode_text),
                                     style = labelStyle,
                                     fontSize = 18.sp
                                 )
@@ -253,7 +254,7 @@ fun ProfileScreen (
                                         .height(10.dp)
                                 )
                                 Text(
-                                    text = "Language",
+                                    text = stringResource(id = R.string.language_text),
                                     style = labelStyle,
                                     fontSize = 18.sp,
                                 )
@@ -282,12 +283,17 @@ fun ProfileScreen (
                                     modifier = Modifier
                                         .height(10.dp)
                                 )
-                                Text(
-                                    text = "Set",
-                                    style = labelStyle,
-                                    fontSize = 18.sp
-                                )
 
+                                var language by remember { mutableStateOf("en") }
+                                SmallButtonComponent(
+                                    text = if (language == "en") "English" else "Slovak",
+                                    isSelected = false,
+                                    onClick = {
+                                        onLanguageChange(Locale(language))
+                                        if (language == "en") language = "sk" else
+                                        if (language == "sk") language = "en"
+                                    }
+                                )
                             }
                         }
                     }

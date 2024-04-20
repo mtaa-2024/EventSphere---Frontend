@@ -30,6 +30,7 @@ import stuba.fiit.sk.eventsphere.ui.navigation.routes.SearchUserRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.WelcomeRoute
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModelFactory
+import java.util.Locale
 
 object Destinations {
     const val WELCOME_ROUTE = "welcome"
@@ -48,6 +49,7 @@ object Destinations {
 @Composable
 fun EventSphereNavHost(
     navController: NavHostController = rememberNavController(),
+    setLanguage: (locale: Locale) -> Unit
 ) {
     var mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
 
@@ -157,6 +159,7 @@ fun EventSphereNavHost(
                 onNavigationToSearchUserScreen = {
                     navController.navigate(SEARCHUSER_ROUTE)
                 },
+                setLanguage = { setLanguage(it)},
                 mainViewModel = mainViewModel
             )
         }

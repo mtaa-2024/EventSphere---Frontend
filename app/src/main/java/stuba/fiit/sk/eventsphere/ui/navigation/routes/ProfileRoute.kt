@@ -6,6 +6,7 @@ import stuba.fiit.sk.eventsphere.ui.activities.profile.ProfileScreen
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModelFactory
+import java.util.Locale
 
 @Composable
 fun ProfileRoute(
@@ -15,6 +16,7 @@ fun ProfileRoute(
     onNavigationToEditProfile: () -> Unit,
     onNavigationToFriendsScreen: (id:Int?) -> Unit,
     onNavigationToSearchUserScreen: () -> Unit,
+    setLanguage: (Locale) -> Unit,
     mainViewModel: MainViewModel
 ) {
     val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(mainViewModel.loggedUser.value?.id ?:0))
@@ -26,6 +28,7 @@ fun ProfileRoute(
         toFriend = onNavigationToFriendsScreen,
         toSearchUser = onNavigationToSearchUserScreen,
         viewModel = mainViewModel,
-        profileViewModel = profileViewModel
+        profileViewModel = profileViewModel,
+        onLanguageChange = setLanguage
     )
 }

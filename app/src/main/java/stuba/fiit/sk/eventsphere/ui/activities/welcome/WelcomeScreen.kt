@@ -61,7 +61,7 @@ fun WelcomeScreen (
                 onClick = toLogin,
                 fillColor = LightColorScheme.primary,
                 textColor = LightColorScheme.background,
-                text = "Login",
+                text = stringResource(id = R.string.login_button),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
@@ -76,7 +76,7 @@ fun WelcomeScreen (
                 onClick = toRegister,
                 fillColor = LightColorScheme.background,
                 textColor = LightColorScheme.primary,
-                text = "Register",
+                text = stringResource(id = R.string.register_button),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
@@ -125,7 +125,7 @@ fun WelcomeTopBar (
                     .height(35.dp)
             )
             Text(
-                text = stringResource(id = R.string.welcome),
+                text = stringResource(id = R.string.welcome_text),
                 style = welcomeStyle,
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
@@ -153,7 +153,7 @@ fun GuestButton (
             onClick = toHome
         ) {
             Text(
-                text = "Continue as",
+                text = stringResource(id = R.string.guest_continue),
                 style = labelStyle,
                 textAlign = TextAlign.Center,
                 color = LightColorScheme.onBackground
@@ -162,7 +162,7 @@ fun GuestButton (
             Spacer(modifier = Modifier.padding(3.dp))
 
             Text(
-                text = "guest",
+                text = stringResource(id = R.string.guest),
                 style = labelStyle,
                 textAlign = TextAlign.Center,
                 color = LightColorScheme.primary

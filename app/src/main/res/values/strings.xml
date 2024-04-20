@@ -1,5 +1,107 @@
 <resources>
     <string name="app_name">EventSphere</string>
-    <string name="welcome">Unlock the Gateway to Unforgettable Moments!</string>
-    <string name="login">Login</string>
+
+    <string name="login_button">Login</string>
+    <string name="register_button">Register</string>
+
+
+    <string name="welcome_text">Unlock the Gateway to !Unforgettable Moments</string>
+    <string name="login_welcome_text">Welcome back</string>
+    <string name="register_welcome_text">Step into tomorrow’s world of events, effortlessly!</string>
+    <string name="home_welcome_text">Let’s explore events you might like</string>
+
+
+    <string name="guest_continue">Continue as</string>
+    <string name="guest">guest</string>
+
+
+    <string name="username_or_email_label">Username or email</string>
+    <string name="password_label">Password</string>
+    <string name="username_label">Username</string>
+    <string name="email_label">Email</string>
+    <string name="verify_password_label">Verify Password</string>
+
+
+
+    <string name="enter_username_or_email_input_text">Enter your username or email</string>
+    <string name="password_input_text">Enter your password</string>
+    <string name="enter_username_input_text">Enter your username</string>
+    <string name="verify_password_input_text">Enter your email</string>
+
+
+    <string name="alert_on_confirm_text">Login or register</string>
+    <string name="alert_dismiss_text">Close</string>
+    <string name="alert_dialog_text">You have to be logged to access profile, you can continue as guest or login to your existing account or create new account</string>
+    <string name="alert_dialog_title">Guest</string>
+
+
+    <string name="upcoming">Upcoming</string>
+    <string name="attending">Attending</string>
+    <string name="invited">Invited</string>
+    <string name="expired">Expired</string>
+
+
+    <string name="friends_text">Friends</string>
+    <string name="search_users_button">Search Users</string>
+    <string name="event_center_button">Event center</string>
+    <string name="settings_text">Settings</string>
+    <string name="notification_text">Notifications</string>
+    <string name="darkmode_text">Dark mode</string>
+    <string name="language_text">Language</string>
+    <string name="longout_text">Logout</string>
+    <string name="editprofile_button">Edit profile</string>
+
+
+    <string name="firstname_label">Firstname</string>
+    <string name="lastname_label">Lastname</string>
+
+    <string name="old_email_label">Old email</string>
+    <string name="new_email_label">New email</string>
+    <string name="old_password_label">Old password</string>
+    <string name="new_password_label">New password</string>
+
+    <string name="firstname_input">Language</string>
+    <string name="lastname_input">Logout</string>
+    <string name="old_email_input">Edit profile</string>
+    <string name="new_email_input">Language</string>
+    <string name="old_password_input">Logout</string>
+    <string name="new_password_input">Edit profile</string>
+
+    <string name="save_button">Save</string>
+    <string name="save_dialog_label">Saved</string>
+    <string name="save_dialog_on_confirm_text">OK</string>
+
+    <string name="create_your_evetn_text">Create your event</string>
+
+    <string name="search_user_welcome_text">Search User</string>
+    <string name="search_label">Search</string>
+    <string name="search_input">Search</string>
+    <string name="friends_not_found">Friends not found</string>
+
+
+    <string name="tittle_label">Title</string>
+    <string name="tittle_input">Title</string>
+    <string name="description_label">Description</string>
+    <string name="description_input">Description</string>
+
+    <string name="description">Description</string>
+    <string name="no_description">No description</string>
+
+    <string name="location_button">Location</string>
+    <string name="performers">Performers</string>
+    <string name="remove">Remove</string>
+    <string name="you_dont_have_friends_text">You don’t have friends to add :(</string>
+
+    <string name="add_performers_button">Add performers</string>
+
+    <string name="add_friend_button">Add friend</string>
+
+    <string name="where_to_find_us_text">Where to find us</string>
+    <string name="comments_text">Comments</string>
+    <string name="publish_your_comment_text">Publish your comment</string>
+    <string name="insert_your_comment_text">Insert your comment</string>
+    <string name="organizator_text">Organizator</string>
+    <string name="notify_me_text">Notify me</string>
+    <string name="somewhere_text">Somewhere</string>
+    <string name="over_the_rainbow_text">Over the rainbow</string>
 </resources>

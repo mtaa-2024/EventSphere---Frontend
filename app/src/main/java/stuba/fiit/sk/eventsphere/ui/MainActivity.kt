@@ -18,6 +18,8 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        
         setContent {
             EventSphereTheme {
                 Surface(
@@ -25,9 +27,26 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    EventSphereNavHost()
+                    EventSphereNavHost(
+                        setLanguage = { SetLocale(it) }
+                    )
                 }
             }
         }
+    }
+
+    private fun SetLocale (
+        locale: Locale
+    ) {
+        val config = resources.configuration
+        Locale.setDefault(locale)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+            config.setLocale(locale)
+        else
+            config.locale = locale
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            createConfigurationContext(config)
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }
