@@ -79,7 +79,7 @@
     <string name="search_user_welcome_text">Hľadať užívateľa</string>
     <string name="search_label">Hľadaj</string>
     <string name="search_input">Hľadaj</string>
-    <string name="friends_not_found">Priatelia nenájdení 😢</string>
+    <string name="friends_not_found">Priatelia nenájdení</string>
 
 
     <string name="tittle_label">Titul</string>
@@ -93,7 +93,7 @@
     <string name="location_button">Lokalita</string>
     <string name="performers">Účinkujúci</string>
     <string name="remove">Odstrániť</string>
-    <string name="you_dont_have_friends_text">Nemáš pridaných priateľov 😿</string>
+    <string name="you_dont_have_friends_text">Nemáš pridaných priateľov</string>
 
     <string name="add_performers_button">Pridať účinkujúcich</string>
 

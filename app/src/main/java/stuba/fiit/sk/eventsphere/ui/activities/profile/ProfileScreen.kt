@@ -100,8 +100,8 @@ fun ProfileScreen (
                     .height(10.dp)
             )
 
-            val firstName = viewModel.loggedUser.value?.firstname ?: stringResource(id = R.string.username_label)
-            val lastName = viewModel.loggedUser.value?.lastname ?: stringResource(id = R.string.lastname_label)
+            val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
+            val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
 
             Text(
                 text = "$firstName $lastName",
@@ -123,13 +123,13 @@ fun ProfileScreen (
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text (
-                    text = stringResource(id = R.string.friends_text),
+                    text = "Friends",
                     style = welcomeStyle,
                     fontSize = 20.sp
                 )
 
                 SmallButtonComponent (
-                    text = stringResource(id = R.string.find_friends_text),
+                    text = "Find friend",
                     isSelected = false,
                     onClick = { toSearchUser() }
                 )
@@ -150,7 +150,7 @@ fun ProfileScreen (
 
                 if (friends?.listFriends?.isEmpty() == true) {
                     Text (
-                        text = stringResource(id = R.string.friends_not_found),
+                        text = "No friends :(",
                         style = welcomeStyle,
                         fontSize = 18.sp,
                         modifier = Modifier.fillMaxWidth(),
@@ -186,7 +186,7 @@ fun ProfileScreen (
                     onClick = { toEventCenter() },
                     fillColor = MaterialTheme.colorScheme.primary,
                     textColor = MaterialTheme.colorScheme.background,
-                    text = stringResource(id = R.string.event_center_button),
+                    text = "Event center",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
@@ -215,7 +215,7 @@ fun ProfileScreen (
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text (
-                            text = stringResource(id = R.string.settings_text),
+                            text = "Settings",
                             style = labelStyle,
                             fontSize = 24.sp
                         )
@@ -317,7 +317,7 @@ fun ProfileScreen (
             )
 
             SmallButtonComponent (
-                text = stringResource(id = R.string.logout_text),
+                text = "Logout",
                 isSelected = false,
                 onClick = toLogout,
             )
@@ -364,7 +364,7 @@ fun ProfileTopBar (
                 )
             }
             SmallButtonComponent (
-                text = stringResource(id = R.string.editprofile_button),
+                text = "Edit profile",
                 isSelected = false,
                 onClick = { toEditProfile() }
             )

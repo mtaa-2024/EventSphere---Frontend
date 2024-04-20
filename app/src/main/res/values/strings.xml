@@ -78,7 +78,7 @@
     <string name="search_user_welcome_text">Search User</string>
     <string name="search_label">Search</string>
     <string name="search_input">Search</string>
-    <string name="friends_not_found">Friends not found 😢</string>
+    <string name="friends_not_found">Friends not found</string>
 
 
     <string name="tittle_label">Title</string>
@@ -92,7 +92,7 @@
     <string name="location_button">Location</string>
     <string name="performers">Performers</string>
     <string name="remove">Remove</string>
-    <string name="you_dont_have_friends_text">You don’t have friends to add 😿</string>
+    <string name="you_dont_have_friends_text">You don’t have friends to add</string>
 
     <string name="add_performers_button">Add performers</string>
 
