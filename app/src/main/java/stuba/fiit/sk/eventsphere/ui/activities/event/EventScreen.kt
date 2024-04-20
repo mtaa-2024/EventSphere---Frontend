@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,7 +46,6 @@ import stuba.fiit.sk.eventsphere.ui.components.CommentBanner
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
@@ -261,7 +258,7 @@ fun DescriptionViewWidget (
         Box (
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, LightColorScheme.primary, RoundedCornerShape(15.dp))
+                .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(15.dp))
         ) {
             Text(
                 text = eventViewModel.event.value?.description ?: "No description",
@@ -345,13 +342,13 @@ fun OrganizatorViewWidget (
                 text = "Organizator",
                 style = welcomeStyle,
                 fontSize = 17.sp,
-                color = LightColorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = "${eventViewModel.event.value?.owner_firstname.toString()}  ${eventViewModel.event.value?.owner_lastname.toString()}",
                 style = welcomeStyle,
                 fontSize = 15.sp,
-                color = LightColorScheme.primary
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }

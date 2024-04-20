@@ -23,12 +23,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,17 +50,13 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.model.DateInput
 import stuba.fiit.sk.eventsphere.model.FriendPerformer
-import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.activities.profile.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
-import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.paragraph
@@ -146,7 +141,7 @@ fun PerformersRow(
         Text(
             text = "Performers",
             style = buttonStyle,
-            color = LightColorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -231,8 +226,8 @@ fun PerformersRow(
         ) {
             ButtonComponent(
                 onClick = { addPerformer = true },
-                fillColor = LightColorScheme.primary,
-                textColor = LightColorScheme.background,
+                fillColor = MaterialTheme.colorScheme.primary,
+                textColor = MaterialTheme.colorScheme.background,
                 text = "Add performer",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -353,7 +348,7 @@ fun EventDetailInput (
                 .fillMaxWidth()
                 .height(100.dp)
                 .clip(RoundedCornerShape(15.dp))
-                .background(LightColorScheme.primary),
+                .background(MaterialTheme.colorScheme.primary),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -381,6 +376,7 @@ fun EventDetailInput (
 
                 val timePicker = TimePickerDialog(
                     context,
+
                     { _, selectedHour: Int, selectedMinute: Int ->
                         estimatedEnd?.let {
                             it.hour = selectedHour
@@ -388,6 +384,14 @@ fun EventDetailInput (
                         }
                     },
                     createEventViewModel.event.value?.estimated_end?.hour ?: 0, createEventViewModel.event.value?.estimated_end?.minutes ?: 0, false
+                )
+
+
+                Text (
+                    text = createEventViewModel.timestamp,
+                    style = paragraph,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.background
                 )
 
                 Box(
@@ -446,10 +450,10 @@ fun SelectBoxesView(
             )
             .border(
                 3.dp,
-                if (isSelectedEducation) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                if (isSelectedEducation) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                 RoundedCornerShape(15.dp)
             )
-            .background(LightColorScheme.background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(2.dp)
             .clickable(
                 onClick = {
@@ -469,7 +473,7 @@ fun SelectBoxesView(
             ),
             contentDescription = "icon",
             contentScale = ContentScale.Inside,
-            colorFilter = ColorFilter.tint(if (isSelectedEducation) LightColorScheme.primary else LightColorScheme.primaryContainer)
+            colorFilter = ColorFilter.tint(if (isSelectedEducation) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
         )
     }
 
@@ -482,10 +486,10 @@ fun SelectBoxesView(
             )
             .border(
                 3.dp,
-                if (isSelectedMusic) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                if (isSelectedMusic) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                 RoundedCornerShape(15.dp)
             )
-            .background(LightColorScheme.background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(2.dp)
             .clickable(
                 onClick = {
@@ -505,7 +509,7 @@ fun SelectBoxesView(
             ),
             contentDescription = "icon",
             contentScale = ContentScale.Inside,
-            colorFilter = ColorFilter.tint(if (isSelectedMusic) LightColorScheme.primary else LightColorScheme.primaryContainer)
+            colorFilter = ColorFilter.tint(if (isSelectedMusic) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
         )
     }
 
@@ -519,10 +523,10 @@ fun SelectBoxesView(
             )
             .border(
                 3.dp,
-                if (isSelectedFood) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                if (isSelectedFood) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                 RoundedCornerShape(15.dp)
             )
-            .background(LightColorScheme.background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(2.dp)
             .clickable(
                 onClick = {
@@ -542,7 +546,7 @@ fun SelectBoxesView(
             ),
             contentDescription = "icon",
             contentScale = ContentScale.Inside,
-            colorFilter = ColorFilter.tint(if (isSelectedFood) LightColorScheme.primary else LightColorScheme.primaryContainer)
+            colorFilter = ColorFilter.tint(if (isSelectedFood) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
         )
     }
 
@@ -555,10 +559,10 @@ fun SelectBoxesView(
             )
             .border(
                 3.dp,
-                if (isSelectedArt) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                if (isSelectedArt) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                 RoundedCornerShape(15.dp)
             )
-            .background(LightColorScheme.background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(2.dp)
             .clickable(
                 onClick = {
@@ -578,7 +582,7 @@ fun SelectBoxesView(
             ),
             contentDescription = "icon",
             contentScale = ContentScale.Inside,
-            colorFilter = ColorFilter.tint(if (isSelectedArt) LightColorScheme.primary else LightColorScheme.primaryContainer)
+            colorFilter = ColorFilter.tint(if (isSelectedArt) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
         )
     }
 
@@ -592,10 +596,10 @@ fun SelectBoxesView(
             )
             .border(
                 3.dp,
-                if (isSelectedSport) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                if (isSelectedSport) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                 RoundedCornerShape(15.dp)
             )
-            .background(LightColorScheme.background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(2.dp)
             .clickable(
                 onClick = {
@@ -615,7 +619,7 @@ fun SelectBoxesView(
             ),
             contentDescription = "icon",
             contentScale = ContentScale.Inside,
-            colorFilter = ColorFilter.tint(if (isSelectedSport) LightColorScheme.primary else LightColorScheme.primaryContainer)
+            colorFilter = ColorFilter.tint(if (isSelectedSport) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
         )
     }
 

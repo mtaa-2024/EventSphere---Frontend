@@ -49,7 +49,8 @@ object Destinations {
 @Composable
 fun EventSphereNavHost(
     navController: NavHostController = rememberNavController(),
-    setLanguage: (locale: Locale) -> Unit
+    setLanguage: (locale: Locale) -> Unit,
+    setTheme: (Boolean) -> Unit
 ) {
     var mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
 
@@ -160,6 +161,7 @@ fun EventSphereNavHost(
                     navController.navigate(SEARCHUSER_ROUTE)
                 },
                 setLanguage = { setLanguage(it)},
+                setTheme = { setTheme(it) },
                 mainViewModel = mainViewModel
             )
         }

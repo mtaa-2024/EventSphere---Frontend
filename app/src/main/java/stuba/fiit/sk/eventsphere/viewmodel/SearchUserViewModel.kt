@@ -1,6 +1,5 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
-import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.ui.graphics.ImageBitmap

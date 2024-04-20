@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +30,6 @@ import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
-import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.FriendsViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel

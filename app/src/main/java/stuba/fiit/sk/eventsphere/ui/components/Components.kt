@@ -2,10 +2,8 @@ package stuba.fiit.sk.eventsphere.ui.components
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.TimePickerDialog
 import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.widget.DatePicker
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -38,6 +36,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -83,9 +82,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.model.DateInput
 import stuba.fiit.sk.eventsphere.model.LocationData
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.paragraph
@@ -121,7 +118,7 @@ fun ProfileImageComponent (
         Box(
             modifier = Modifier
                 .background(Color.Transparent)
-                .border(3.dp, shape = RoundedCornerShape(75.dp), color = LightColorScheme.primary)
+                .border(3.dp, shape = RoundedCornerShape(75.dp), color = MaterialTheme.colorScheme.primary)
                 .size(120.dp),
         )
     }
@@ -156,7 +153,7 @@ fun TopBarProfileComponent (
                 .border(
                     2.dp,
                     shape = RoundedCornerShape(75.dp),
-                    color = LightColorScheme.background
+                    color = MaterialTheme.colorScheme.background
                 )
                 .size(70.dp),
         )
@@ -189,7 +186,7 @@ fun FriendImageComponent (
         Box(
             modifier = Modifier
                 .background(shape = RoundedCornerShape(75.dp), color = Color.Transparent)
-                .border(2.dp, shape = RoundedCornerShape(75.dp), color = LightColorScheme.primary)
+                .border(2.dp, shape = RoundedCornerShape(75.dp), color = MaterialTheme.colorScheme.primary)
                 .size(70.dp),
         )
     }
@@ -209,7 +206,7 @@ fun ButtonComponent (
         onClick = onClick,
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(fillColor),
-        border = BorderStroke(1.dp, LightColorScheme.primary),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
     ) {
         Text (
             text = text,
@@ -220,12 +217,6 @@ fun ButtonComponent (
             color = textColor
         )
     }
-}
-
-@Preview
-@Composable
-fun preb() {
-    SearchBarComponent(onUpdate = {}, modifier = Modifier)
 }
 
 @Composable
@@ -242,7 +233,7 @@ fun SearchBarComponent (
         modifier = modifier
             .height(50.dp)
             .clip(shape = RoundedCornerShape(15.dp))
-            .border(1.dp, shape = RoundedCornerShape(15.dp), color = LightColorScheme.primary)
+            .border(1.dp, shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.primary)
             .onFocusChanged { isFocused = it.isFocused },
         value = if (isFocused && value == "Search") "" else value,
         singleLine = false,
@@ -270,11 +261,11 @@ fun SearchBarComponent (
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedTextColor = Color.Gray,
-            unfocusedBorderColor = LightColorScheme.primary,
-            unfocusedContainerColor = LightColorScheme.background,
-            focusedBorderColor = LightColorScheme.primary,
-            focusedContainerColor = LightColorScheme.background,
-            focusedTextColor = LightColorScheme.onBackground,
+            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground,
         ),
     )
 
@@ -313,15 +304,16 @@ fun InputCommentFieldComponent (
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedTextColor = Color.Gray,
-            unfocusedBorderColor = LightColorScheme.primary,
-            unfocusedContainerColor = LightColorScheme.primary,
-            focusedBorderColor = LightColorScheme.primary,
-            focusedContainerColor = LightColorScheme.primary,
-            focusedTextColor = LightColorScheme.onBackground,
-            unfocusedLabelColor = LightColorScheme.onBackground
+            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedContainerColor = MaterialTheme.colorScheme.primary,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground
         ),
     )
 }
+
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -393,19 +385,19 @@ fun InputFieldComponent (
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = ImeAction.Done),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedTextColor = Color.Gray,
-            unfocusedBorderColor = LightColorScheme.primary,
-            unfocusedContainerColor = LightColorScheme.background,
-            focusedBorderColor = LightColorScheme.primary,
-            focusedContainerColor = LightColorScheme.background,
-            focusedTextColor = LightColorScheme.onBackground,
-            unfocusedLabelColor = LightColorScheme.onBackground,
-            focusedLabelColor = LightColorScheme.primary
+            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+            focusedLabelColor = MaterialTheme.colorScheme.primary
         ),
     )
     if (error) {
         Text (
             text = message,
-            color = LightColorScheme.error,
+            color = MaterialTheme.colorScheme.error,
             style = paragraph,
             fontSize = 14.sp,
             modifier = Modifier.padding(5.dp)
@@ -432,10 +424,10 @@ fun CategoryBox (
             )
             .border(
                 3.dp,
-                if (isSelected) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                 RoundedCornerShape(15.dp)
             )
-            .background(LightColorScheme.background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(2.dp)
             .clickable(
                 onClick = {
@@ -451,7 +443,7 @@ fun CategoryBox (
             ),
             contentDescription = "icon",
             contentScale = ContentScale.Inside,
-            colorFilter = ColorFilter.tint(if (isSelected) LightColorScheme.primary else LightColorScheme.primaryContainer)
+            colorFilter = ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
         )
     }
 }
@@ -469,10 +461,10 @@ fun SmallButtonComponent (
             .clip(RoundedCornerShape(15.dp))
             .border(
                 1.dp,
-                if (isSelected) LightColorScheme.background else LightColorScheme.primary,
+                if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary,
                 RoundedCornerShape(15.dp)
             )
-            .background(if (isSelected) LightColorScheme.primary else LightColorScheme.background)
+            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background)
             .clickable {
                 if (!isSelected)
                     onClick()
@@ -483,7 +475,7 @@ fun SmallButtonComponent (
             text = text,
             fontSize = 14.sp,
             style = smallButton,
-            color = if (isSelected) LightColorScheme.background else LightColorScheme.onBackground
+            color = if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -514,7 +506,7 @@ fun EventBanner (
                         bottomEnd = 15.dp
                     )
                 )
-                .background(LightColorScheme.primary),
+                .background(MaterialTheme.colorScheme.primary),
         ) {
             Column (
                 modifier = Modifier
@@ -526,19 +518,19 @@ fun EventBanner (
                     text = title,
                     style = labelStyle,
                     fontSize = 20.sp,
-                    color = LightColorScheme.background
+                    color = MaterialTheme.colorScheme.background
                 )
                 Text (
                     text = date,
                     style = smallButton,
                     fontSize = 17.sp,
-                    color = LightColorScheme.background
+                    color = MaterialTheme.colorScheme.background
                 )
                 Text (
                     text = location,
                     style = smallButton,
                     fontSize = 17.sp,
-                    color = LightColorScheme.background
+                    color = MaterialTheme.colorScheme.background
                 )
             }
         }
@@ -547,14 +539,15 @@ fun EventBanner (
                 .width(60.dp)
                 .height(40.dp)
                 .clip(RoundedCornerShape(15.dp))
-                .background(LightColorScheme.primaryContainer)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .align(Alignment.CenterEnd),
             contentAlignment = Alignment.Center
         ) {
             Image (
                 painter = painterResource(id = icon),
                 contentDescription = "event_icon",
-                contentScale = ContentScale.Inside
+                contentScale = ContentScale.Inside,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background)
             )
         }
     }
@@ -614,7 +607,7 @@ fun CommentBanner (
                     .clip(
                         RoundedCornerShape(8.dp)
                     )
-                    .background(LightColorScheme.primary)
+                    .background(MaterialTheme.colorScheme.primary)
                     .align(Alignment.CenterEnd)
             ) {
                 val scrollState = rememberScrollState()
@@ -629,7 +622,7 @@ fun CommentBanner (
                         text = "$firstname $lastname",
                         style = labelStyle,
                         fontSize = 15.sp,
-                        color = LightColorScheme.background
+                        color = MaterialTheme.colorScheme.background
                     )
                     Spacer(
                         modifier = Modifier
@@ -647,7 +640,7 @@ fun CommentBanner (
                             text = text,
                             style = labelStyle,
                             fontSize = 14.sp,
-                            color = LightColorScheme.background
+                            color = MaterialTheme.colorScheme.background
                         )
                     }
                 }
@@ -657,7 +650,7 @@ fun CommentBanner (
                     .width(70.dp)
                     .height(50.dp)
                     .clip(RoundedCornerShape(15.dp))
-                    .background(LightColorScheme.primaryContainer)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .align(Alignment.TopStart),
                 contentAlignment = Alignment.Center
             ) {
@@ -865,7 +858,7 @@ fun AlertDialogComponent(
                     text = onConfirmText,
                     style = paragraph,
                     fontSize = 13.sp,
-                    color = LightColorScheme.primary
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         },
@@ -879,7 +872,7 @@ fun AlertDialogComponent(
                     text = onDismissText,
                     style = paragraph,
                     fontSize = 13.sp,
-                    color = LightColorScheme.error
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         }

@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -33,11 +32,9 @@ import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
-import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.SearchBarComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.TopBarProfileComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.HomeViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel

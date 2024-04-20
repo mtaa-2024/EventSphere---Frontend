@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +31,6 @@ import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.viewmodel.EventCenterViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
@@ -74,8 +75,8 @@ fun EventCenterScreen (
         ) {
             ButtonComponent(
                 onClick = { toCreateEvent() },
-                fillColor = LightColorScheme.primary,
-                textColor = LightColorScheme.background,
+                fillColor = MaterialTheme.colorScheme.primary,
+                textColor = MaterialTheme.colorScheme.background,
                 text = "Create your event",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,94 +144,7 @@ fun EventCenterScreen (
                 )
             }
         }
-
     }
-
-    /*
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(50.dp))
-            PrimaryButton(text = "Create your event", onClick = toCreateEvent )
-            Spacer(modifier = Modifier.height(50.dp))
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround,
-            ) {
-                var isSelectedUpComing by remember { mutableStateOf(eventCenterViewModel.eventSelectStates.value?.upcoming ?: false) }
-                var isSelectedExpired by remember { mutableStateOf(eventCenterViewModel.eventSelectStates.value?.expired ?: false) }
-
-                if (isSelectedUpComing) HomeSelectorSelected(
-                    value = "Upcoming"
-                ) else HomeSelectorUnselected(
-                    value = "Upcoming",
-                    onSelect = {
-                        isSelectedUpComing = !isSelectedUpComing
-                        isSelectedExpired = false
-                    },
-                    onClick = { eventCenterViewModel.onUpcomingSelect(viewModel) }
-                )
-                if (isSelectedExpired) HomeSelectorSelected(
-                    value = "Expired"
-                ) else HomeSelectorUnselected(
-                    value = "Expired",
-                    onSelect = {
-                        isSelectedUpComing = false
-                        isSelectedExpired = !isSelectedExpired
-                    },
-                    onClick = { eventCenterViewModel.onExpiredSelect(viewModel) }
-                )
-            }
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Spacer(modifier = Modifier.height(50.dp))
-                if (eventCenterViewModel.eventSelectStates.value?.upcoming == true) {
-                    val eventsState = observeLiveData(eventCenterViewModel.upcoming)
-
-                    eventsState?.events?.forEach { event ->
-                        EventBanner(
-                            id = event.id,
-                            title = event.title,
-                            date = event.date,
-                            location = event.location,
-                            icon = R.drawable.book_icon,
-                            toEvent = toEvent
-                        )
-                        Spacer(
-                            modifier = Modifier
-                                .height(10.dp)
-                        )
-                    }
-                } else if (eventCenterViewModel.eventSelectStates.value?.expired == true) {
-                    val eventsState = observeLiveData(eventCenterViewModel.expired)
-
-                    eventsState?.events?.forEach { event ->
-                        EventBanner(
-                            id = event.id,
-                            title = event.title,
-                            date = event.date,
-                            location = event.location,
-                            icon = R.drawable.book_icon,
-                            toEvent = toEvent
-                        )
-                        Spacer(
-                            modifier = Modifier
-                                .height(10.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-     */
 }
 
 @Composable
@@ -261,6 +175,7 @@ fun EventCenterTopBar (
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.back_arrow),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
                     contentDescription = "Back"
                 )
             }

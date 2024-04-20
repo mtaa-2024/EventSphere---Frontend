@@ -17,6 +17,7 @@ fun ProfileRoute(
     onNavigationToFriendsScreen: (id:Int?) -> Unit,
     onNavigationToSearchUserScreen: () -> Unit,
     setLanguage: (Locale) -> Unit,
+    setTheme: (Boolean) -> Unit,
     mainViewModel: MainViewModel
 ) {
     val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(mainViewModel.loggedUser.value?.id ?:0))
@@ -29,6 +30,7 @@ fun ProfileRoute(
         toSearchUser = onNavigationToSearchUserScreen,
         viewModel = mainViewModel,
         profileViewModel = profileViewModel,
-        onLanguageChange = setLanguage
+        onLanguageChange = setLanguage,
+        onThemeChange = setTheme
     )
 }

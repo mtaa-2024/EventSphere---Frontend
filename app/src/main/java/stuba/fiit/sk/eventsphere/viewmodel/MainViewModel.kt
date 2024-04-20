@@ -1,30 +1,18 @@
 package stuba.fiit.sk.eventsphere.viewmodel
-import android.content.Context
-import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Base64
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.core.graphics.createBitmap
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.LoginInput
 import stuba.fiit.sk.eventsphere.model.RegisterInput
 import stuba.fiit.sk.eventsphere.model.User
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.util.Locale
 
 class MainViewModel() : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()

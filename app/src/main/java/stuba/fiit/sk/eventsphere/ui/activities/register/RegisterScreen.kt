@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +20,6 @@ import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.ui.activities.login.TopBar
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.RegisterViewModel
@@ -125,8 +125,8 @@ fun RegisterScreen (
 
             ButtonComponent (
                 text = "Register",
-                fillColor = LightColorScheme.primary,
-                textColor = LightColorScheme.background,
+                fillColor = MaterialTheme.colorScheme.primary,
+                textColor = MaterialTheme.colorScheme.background,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp),

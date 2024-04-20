@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
@@ -46,7 +47,6 @@ import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
@@ -64,7 +64,8 @@ fun ProfileScreen (
     toSearchUser: ()-> Unit,
     viewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
-    onLanguageChange: (Locale) -> Unit
+    onLanguageChange: (Locale) -> Unit,
+    onThemeChange: (Boolean) -> Unit
 ) {
 
     Column (
@@ -105,7 +106,7 @@ fun ProfileScreen (
             Text(
                 text = "$firstName $lastName",
                 style = welcomeStyle,
-                color = LightColorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
             )
 
@@ -183,8 +184,8 @@ fun ProfileScreen (
 
                 ButtonComponent (
                     onClick = { toEventCenter() },
-                    fillColor = LightColorScheme.primary,
-                    textColor = LightColorScheme.background,
+                    fillColor = MaterialTheme.colorScheme.primary,
+                    textColor = MaterialTheme.colorScheme.background,
                     text = "Event center",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -201,9 +202,9 @@ fun ProfileScreen (
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(15.dp))
-                        .background(LightColorScheme.background)
+                        .background(MaterialTheme.colorScheme.background)
                         .border(
-                            BorderStroke(1.dp, LightColorScheme.primary),
+                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             shape = RoundedCornerShape(15.dp)
                         ),
                     contentAlignment = Alignment.Center
@@ -274,11 +275,22 @@ fun ProfileScreen (
                                     modifier = Modifier
                                         .height(10.dp)
                                 )
-                                Text(
-                                    text = "Set",
-                                    style = labelStyle,
-                                    fontSize = 18.sp
+
+                                val darkMode = isSystemInDarkTheme()
+                                var modeChange by remember { mutableStateOf(darkMode) }
+
+
+                                SmallButtonComponent(
+                                    text = "mode",
+                                    isSelected = false,
+                                    onClick = {
+                                        modeChange = !modeChange
+                                        onThemeChange(modeChange)
+                                    }
                                 )
+
+                                println(modeChange)
+
                                 Spacer (
                                     modifier = Modifier
                                         .height(10.dp)
@@ -347,6 +359,7 @@ fun ProfileTopBar (
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.back_arrow),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
                     contentDescription = "Back"
                 )
             }
@@ -384,7 +397,7 @@ fun FriendBox (
         Text(
             text = "$firstname $lastname",
             style = labelStyle,
-            color = LightColorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 13.sp,
         )
     }

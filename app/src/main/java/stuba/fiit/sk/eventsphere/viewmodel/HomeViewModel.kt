@@ -11,7 +11,6 @@ import stuba.fiit.sk.eventsphere.model.BannerStruct
 import stuba.fiit.sk.eventsphere.model.CategorySelectStates
 import stuba.fiit.sk.eventsphere.model.EventSelectStates
 import stuba.fiit.sk.eventsphere.model.Events
-import stuba.fiit.sk.eventsphere.model.FriendList
 
 class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
     private val viewModel = viewModel

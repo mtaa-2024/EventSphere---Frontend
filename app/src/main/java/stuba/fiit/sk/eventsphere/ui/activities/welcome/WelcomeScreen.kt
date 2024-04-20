@@ -1,6 +1,5 @@
 package stuba.fiit.sk.eventsphere.ui.activities.welcome
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,19 +19,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
-import java.util.Locale
 
 
 @Composable
@@ -59,8 +55,8 @@ fun WelcomeScreen (
 
             ButtonComponent (
                 onClick = toLogin,
-                fillColor = LightColorScheme.primary,
-                textColor = LightColorScheme.background,
+                fillColor = MaterialTheme.colorScheme.primary,
+                textColor = MaterialTheme.colorScheme.background,
                 text = stringResource(id = R.string.login_button),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,8 +70,8 @@ fun WelcomeScreen (
 
             ButtonComponent (
                 onClick = toRegister,
-                fillColor = LightColorScheme.background,
-                textColor = LightColorScheme.primary,
+                fillColor = MaterialTheme.colorScheme.background,
+                textColor = MaterialTheme.colorScheme.primary,
                 text = stringResource(id = R.string.register_button),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -156,7 +152,7 @@ fun GuestButton (
                 text = stringResource(id = R.string.guest_continue),
                 style = labelStyle,
                 textAlign = TextAlign.Center,
-                color = LightColorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.padding(3.dp))
@@ -165,7 +161,7 @@ fun GuestButton (
                 text = stringResource(id = R.string.guest),
                 style = labelStyle,
                 textAlign = TextAlign.Center,
-                color = LightColorScheme.primary
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }

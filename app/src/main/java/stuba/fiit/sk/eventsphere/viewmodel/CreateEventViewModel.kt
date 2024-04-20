@@ -1,8 +1,6 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
 import android.icu.util.Calendar
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,11 +10,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.AddPerformerState
-import stuba.fiit.sk.eventsphere.model.CategorySelectStates
 import stuba.fiit.sk.eventsphere.model.DateInput
 import stuba.fiit.sk.eventsphere.model.EventInput
-import stuba.fiit.sk.eventsphere.model.EventSelectStates
 import stuba.fiit.sk.eventsphere.model.FriendPerformer
 import stuba.fiit.sk.eventsphere.model.LocationData
 
@@ -28,6 +23,12 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
 
     private val performersList: MutableList<FriendPerformer> = mutableListOf()
     val friendsList: MutableList<FriendPerformer> = mutableListOf()
+
+    var timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
+
+    fun updateTimestamp() {
+        timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
+    }
 
     private val calendar: Calendar = Calendar.getInstance()
     var date = DateInput (
@@ -160,7 +161,7 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             jsonBody.addProperty("longitude", _event.value?.location?.longitude)
             jsonBody.addProperty("category", _event.value?.category)
 
-            val timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
+            timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
             jsonBody.addProperty("estimated_end", timestamp)
 
 

@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -120,7 +121,7 @@ fun EditProfileScreen (
             Text(
                 text = "$firstName $lastName",
                 style = welcomeStyle,
-                color = LightColorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
             )
 
