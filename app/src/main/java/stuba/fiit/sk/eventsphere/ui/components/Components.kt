@@ -42,6 +42,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -67,6 +68,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -126,8 +128,44 @@ fun ProfileImageComponent (
 }
 
 @Composable
+fun TopBarProfileComponent (
+    image: ImageBitmap?,
+) {
+    Box (
+        contentAlignment = Alignment.Center
+    ) {
+        if (image != null) {
+            Image(
+                painter = BitmapPainter(image),
+                contentDescription = null,
+                contentScale = ContentScale.Inside,
+                modifier = Modifier
+                    .size(65.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.profile_default),
+                contentDescription = "Profile background",
+                modifier = Modifier.size(65.dp)
+            )
+        }
+        Box(
+            modifier = Modifier
+                .background(shape = RoundedCornerShape(75.dp), color = Color.Transparent)
+                .border(
+                    2.dp,
+                    shape = RoundedCornerShape(75.dp),
+                    color = LightColorScheme.background
+                )
+                .size(70.dp),
+        )
+    }
+}
+
+@Composable
 fun FriendImageComponent (
-    image: ImageBitmap?
+    image: ImageBitmap?,
 ) {
     Box (
         contentAlignment = Alignment.Center
@@ -182,6 +220,64 @@ fun ButtonComponent (
             color = textColor
         )
     }
+}
+
+@Preview
+@Composable
+fun preb() {
+    SearchBarComponent(onUpdate = {}, modifier = Modifier)
+}
+
+@Composable
+fun SearchBarComponent (
+    onUpdate: (String) -> Unit,
+    modifier: Modifier
+) {
+    var value by remember { mutableStateOf("Search") }
+    var isFocused by remember { mutableStateOf(false) }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    TextField (
+        modifier = modifier
+            .height(50.dp)
+            .clip(shape = RoundedCornerShape(15.dp))
+            .border(1.dp, shape = RoundedCornerShape(15.dp), color = LightColorScheme.primary)
+            .onFocusChanged { isFocused = it.isFocused },
+        value = if (isFocused && value == "Search") "" else value,
+        singleLine = false,
+        onValueChange = {
+            value = it
+            onUpdate(value)
+        },
+        textStyle = labelStyle.copy(
+            fontSize = 16.sp,
+            letterSpacing = 0.sp,
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+            }
+        ),
+        leadingIcon = { IconButton (
+            onClick = {  },
+        ) {
+            Icon (
+                painterResource(id = R.drawable.search),
+                contentDescription = "Icon"
+            )
+        } },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedTextColor = Color.Gray,
+            unfocusedBorderColor = LightColorScheme.primary,
+            unfocusedContainerColor = LightColorScheme.background,
+            focusedBorderColor = LightColorScheme.primary,
+            focusedContainerColor = LightColorScheme.background,
+            focusedTextColor = LightColorScheme.onBackground,
+        ),
+    )
+
 }
 
 @Composable

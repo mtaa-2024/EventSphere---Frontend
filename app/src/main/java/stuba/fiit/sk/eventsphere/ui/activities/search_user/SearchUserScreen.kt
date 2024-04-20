@@ -23,16 +23,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.activities.profile.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
+import stuba.fiit.sk.eventsphere.ui.components.SearchBarComponent
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.SearchUserViewModel
+
+
 
 @Composable
 fun SearchUserScreen (
@@ -46,42 +52,23 @@ fun SearchUserScreen (
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.top_bar),
-                contentDescription = "welcome_background",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .matchParentSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
 
-                Button(
-                    onClick = toProfile,
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "Back"
-                    )
-                }
-            }
-        }
+        SearchFriendTopBar (
+            toProfile = toProfile
+        )
+
         Column (
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxWidth()
+                .padding(25.dp, 0.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer (
+                modifier = Modifier.height(25.dp)
+            )
+
             Text(
-                text = "Search User",
+                text = "Search for User",
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
@@ -90,47 +77,82 @@ fun SearchUserScreen (
                     .height(30.dp)
             )
 
-            InputFieldComponent(
-                label = "Search",
-                text = searchUserViewModel.search.value.toString(),
-                onUpdate = searchUserViewModel::updateSearch,
-                keyboardType = KeyboardType.Text,
-                onCheck = null,
+            SearchBarComponent (
+                onUpdate = {
+                           searchUserViewModel.updateSearch(it)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            /*Button(
-                onClick = {
-                    viewModel.viewModelScope.launch {
-                        searchUserViewModel.getFriendsSearch(searchUserViewModel.search.value.toString())
 
-                    }
-                }) {
-                Text(text = "search")
-            }*/
+            Spacer (
+                modifier = Modifier.height(25.dp)
+            )
 
         }
-        val friendScrollState = rememberScrollState()
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .verticalScroll(friendScrollState),
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                searchUserViewModel.friends.value?.listFriends?.forEach { friend ->
-                    Text(text = friend.firstname!!
-                    )
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(25.dp, 15.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
 
-                    if (friend.firstname != null && friend.lastname != null) {
-                        FriendBox(
-                            firstname = friend.firstname!!,
-                            lastname = friend.lastname!!,
-                            onClick = toFriends,
-                            id = friend.id!!,
-                            image = friend.profile_picture
-                        )
+            val friends = observeLiveData(searchUserViewModel.friends)
+
+            if (friends?.listFriends?.isEmpty() == true) {
+                Text (
+                    text = "Friends not found",
+                    style = welcomeStyle,
+                    fontSize = 20.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                friends?.listFriends?.forEach { friend ->
+                    FriendBox(
+                        firstname = friend.firstname ?: "Firstname",
+                        lastname = friend.lastname ?: "Lastname",
+                        onClick = toFriends,
+                        id = friend.id!!,
+                        image = friend.profile_picture
+                    )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchFriendTopBar (
+    toProfile: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.top_bar),
+            contentDescription = "welcome_background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .matchParentSize(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Button(
+                onClick = toProfile,
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.back_arrow),
+                    contentDescription = "Back"
+                )
             }
         }
     }

@@ -25,12 +25,6 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     private val performersList: MutableList<FriendPerformer> = mutableListOf()
     val friendsList: MutableList<FriendPerformer> = mutableListOf()
 
-    private val _addPerformerState = MutableLiveData<AddPerformerState>()
-    val addPerformerState: LiveData<AddPerformerState> = _addPerformerState
-
-    private val _newUser = MutableLiveData<NewPerformer>()
-    val newUser: LiveData<NewPerformer> = _newUser
-
 
     init {
         viewModelScope.launch {
@@ -42,7 +36,7 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             title = "Title",
             description = "Description",
             location = LocationData (
-                address = "",
+                address = null,
                 latitude = 0.0,
                 longitude = 0.0,
             ),
@@ -56,16 +50,6 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             ),
             performers = performersList
 
-        )
-
-        _addPerformerState.value = AddPerformerState(
-            friend = true,
-            input = false
-        )
-
-        _newUser.value = NewPerformer(
-            firstname = "",
-            lastname = ""
         )
     }
 
@@ -84,7 +68,6 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
         _event.value = updatedEvent
     }
     fun addPerformer(friend: FriendPerformer) {
-        println(friend)
         performersList.add(friend)
         friendsList.remove(friend)
     }
@@ -95,14 +78,6 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             if ((performer.id ?: -1) != -1)
                 friendsList.add(performer)
         }
-    }
-
-    fun onFirstnameUpdate(input: String) {
-        newUser.value?.firstname = input
-    }
-
-    fun onLastnameUpdate(input: String) {
-        newUser.value?.lastname = input
     }
 
 
@@ -172,22 +147,7 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
         }
         return -1
     }
-
-    fun onFriendSelect() {
-        _addPerformerState.value?.friend = true
-        _addPerformerState.value?.input = false
-    }
-
-    fun onInputSelect() {
-        _addPerformerState.value?.friend = false
-        _addPerformerState.value?.input = true
-    }
 }
-
-data class NewPerformer (
-    var firstname: String,
-    var lastname: String
-)
 
 class CreateEventViewModelFactory(private val mainViewModel: MainViewModel) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

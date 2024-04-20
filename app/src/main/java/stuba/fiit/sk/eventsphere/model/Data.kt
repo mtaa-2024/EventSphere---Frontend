@@ -25,7 +25,7 @@ data class RegisterInput (
 )
 
 data class LocationData (
-    var address: String,
+    var address: String?,
     var latitude: Double,
     var longitude: Double
 )

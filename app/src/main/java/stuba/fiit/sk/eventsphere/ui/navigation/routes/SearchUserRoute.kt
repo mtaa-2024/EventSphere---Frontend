@@ -13,7 +13,7 @@ fun SearchUserRoute(
     onNavigationToFriendsScreen: (id:Int?) -> Unit,
     mainViewModel: MainViewModel
 ) {
-    val searchUserViewModel: SearchUserViewModel = viewModel(factory = SearchUserViewModelFactory(mainViewModel.loggedUser.value?.id ?:0))
+    val searchUserViewModel: SearchUserViewModel = viewModel(factory = SearchUserViewModelFactory(mainViewModel.loggedUser.value?.id ?: 0))
     SearchUserScreen (
         toProfile = onNavigationToProfile,
         toFriends = onNavigationToFriendsScreen,

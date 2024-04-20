@@ -82,7 +82,7 @@ fun EditProfileScreen (
 
             val context = LocalContext.current
             val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-                editProfileViewModel.uriToByteArray(context, uri, viewModel.loggedUser.value?.id)
+                suspend { editProfileViewModel.uriToByteArray(context, uri, viewModel.loggedUser.value?.id ?: 0) }
             }
 
 

@@ -25,12 +25,19 @@ class ProfileViewModel(id:Int) : ViewModel() {
         }
     }
 
+    private fun clearFriends() {
+        _friends.value = FriendList(emptyList())
+    }
+
     suspend fun getProfileData(id: Int) {
         try {
             val fetchedJson = apiService.getFriends(id)
             val friendsList = mutableListOf<Friend>()
 
             if (fetchedJson.get("result").asBoolean) {
+
+                clearFriends()
+
                 val friendsArray = fetchedJson.getAsJsonArray("friends").asJsonArray
                 friendsArray.forEach { friendsElement ->
                     val friendsObject = friendsElement.asJsonObject

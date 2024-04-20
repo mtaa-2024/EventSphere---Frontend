@@ -14,30 +14,33 @@ import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.Friend
 import stuba.fiit.sk.eventsphere.model.FriendList
 
-class SearchUserViewModel() : ViewModel() {
+class SearchUserViewModel(id: Int) : ViewModel() {
     private val _friends = MutableLiveData<FriendList>()
     val friends: LiveData<FriendList> = _friends
 
-    private val _search = MutableLiveData<String>()
-    val search: LiveData<String> = _search
+    private val id = id
 
-    init{
-        _search.value = "Search"
+
+    fun updateSearch(input: String) {
+        if (input.isNotEmpty() && input != "Search" && input.length > 1)
         viewModelScope.launch {
-            getFriendsSearch(_search.value)
+            getFriendsSearch(input)
         }
     }
 
-    fun updateSearch(input: String) {
-        _search.value = input
+    private fun clearFriends() {
+        _friends.value = FriendList(emptyList())
     }
 
-    suspend fun getFriendsSearch(filter: String?) {
+    private suspend fun getFriendsSearch(filter: String?) {
         try {
             val fetchedJson = apiService.getFriendsSearch(filter)
             val friendsList = mutableListOf<Friend>()
-            println(fetchedJson)
+
+            clearFriends()
+
             if (fetchedJson.get("result").asBoolean) {
+
                 val friendsArray = fetchedJson.getAsJsonArray("friends").asJsonArray
                 friendsArray.forEach { friendsElement ->
                     val friendsObject = friendsElement.asJsonObject
@@ -69,12 +72,15 @@ class SearchUserViewModel() : ViewModel() {
                         ).asString,
                         profile_picture = bitmap,
                     )
-                    friendsList.add(friendsView)
+                    if (friendsView.id != id) {
+                        friendsList.add(friendsView)
+                    }
                 }
                 val friends = FriendList(
                     listFriends = friendsList
                 )
                 _friends.value = friends
+                println(_friends.value)
             }
         } catch (e: Exception) {
             println("Error: $e")
@@ -82,12 +88,12 @@ class SearchUserViewModel() : ViewModel() {
     }
 }
 
-class SearchUserViewModelFactory(i: Int) : ViewModelProvider.Factory {
+class SearchUserViewModelFactory(private val id: Int) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SearchUserViewModel::class.java)) {
-            return SearchUserViewModel() as T
+            return SearchUserViewModel(id) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

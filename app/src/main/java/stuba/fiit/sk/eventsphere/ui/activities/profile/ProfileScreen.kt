@@ -31,10 +31,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
@@ -145,15 +147,29 @@ fun ProfileScreen (
                     .horizontalScroll(friendScrollState),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                profileViewModel.friends.value?.listFriends?.forEach { friend ->
-                    if (friend.firstname != null && friend.lastname != null) {
-                        FriendBox(
-                            firstname = friend.firstname!!,
-                            lastname = friend.lastname!!,
-                            onClick = toFriend,
-                            id = friend.id!!,
-                            image = friend.profile_picture
-                        )
+
+                val friends = observeLiveData(profileViewModel.friends)
+
+                if (friends?.listFriends?.isEmpty() == true) {
+                    Text (
+                        text = "No friends :(",
+                        style = welcomeStyle,
+                        fontSize = 18.sp,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+
+                    friends?.listFriends?.forEach { friend ->
+                        if (friend.firstname != null && friend.lastname != null) {
+                            FriendBox(
+                                firstname = friend.firstname!!,
+                                lastname = friend.lastname!!,
+                                onClick = toFriend,
+                                id = friend.id!!,
+                                image = friend.profile_picture
+                            )
+                        }
                     }
                 }
             }
@@ -179,7 +195,7 @@ fun ProfileScreen (
                         .height(50.dp)
                 )
 
-                //Settings
+
                 Spacer (
                     modifier = Modifier
                         .height(30.dp)

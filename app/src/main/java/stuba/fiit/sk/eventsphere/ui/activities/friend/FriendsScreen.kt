@@ -15,6 +15,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +30,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
+import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.FriendsViewModel
@@ -104,29 +109,31 @@ fun FriendsScreen (
                     fontSize = 20.sp,
                 )
 
-                //doobre tak toto treba porobit xDD
-                TextButton(
+                Spacer (
+                    modifier = Modifier.height(25.dp)
+                )
+
+                var canBeAdded by remember { mutableStateOf(friendsViewModel.isFriendValue) }
+
+                SmallButtonComponent (
+                    text = if (!canBeAdded) "Add friend" else "You are friends",
+                    isSelected = canBeAdded,
                     onClick = {
-                        viewModel.viewModelScope.launch {
-                            friendsViewModel.addFriend( friendsViewModel.friend.value?.id ?:0, viewModel.loggedUser.value?.id ?:0)
+                        if (!canBeAdded) {
+                            friendsViewModel.viewModelScope.launch {
+                                friendsViewModel.addFriend()
+                                canBeAdded = friendsViewModel.isFriendValue
+                            }
+                            if (canBeAdded) {
+                                viewModel.viewModelScope.launch {
+
+                                }
+                            }
                         }
                     }
-                ) {
-                    Text(
-                        text = "Add friend",
-                        style = buttonStyle,
-                        fontSize = 20.sp
-                    )
-                }
+                )
 
             }
-
-/*
-            PrimaryButton (text = "addFriend", onClick = {
-                viewModel.viewModelScope.launch {
-                    friendsViewModel.addFriend( friendsViewModel.friend.value?.id ?:0, viewModel.loggedUser.value?.id ?:0)
-                }
-            })*/
         }
     }
 }

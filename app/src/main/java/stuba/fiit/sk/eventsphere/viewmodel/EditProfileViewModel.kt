@@ -2,6 +2,8 @@ package stuba.fiit.sk.eventsphere.viewmodel
 
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import androidx.lifecycle.LiveData
@@ -78,6 +80,23 @@ class EditProfileViewModel() : ViewModel() {
         }
 
         return false
+    }
+
+    fun resizeImageToTargetSize(imagePath: String?): Bitmap {
+        val targetFileSizeInBytes = (25 * 1024 * 1024).toLong() // 25MB in bytes
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(imagePath, options)
+        val imageWidth = options.outWidth
+        val imageHeight = options.outHeight
+        var scaleFactor = 1
+
+        while (imageWidth / scaleFactor * (imageHeight / scaleFactor) * 4 > targetFileSizeInBytes) {
+            scaleFactor *= 2
+        }
+        options.inJustDecodeBounds = false
+        options.inSampleSize = scaleFactor
+        return BitmapFactory.decodeFile(imagePath, options)
     }
 
     fun uriToByteArray(context: Context, uri: Uri?, userId: Int?) {

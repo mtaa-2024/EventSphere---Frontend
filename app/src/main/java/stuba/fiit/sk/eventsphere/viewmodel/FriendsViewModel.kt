@@ -14,19 +14,32 @@ import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.User
 
-class FriendsViewModel(id:Int) : ViewModel() {
+class FriendsViewModel(friendId: Int, userId: Int) : ViewModel() {
     private val _friend = MutableLiveData<User>()
     val friend: LiveData<User> = _friend
 
+    var isFriendValue = false
+    private val friend_id = friendId
+    private val user_id = userId
+
     init {
         viewModelScope.launch {
-            getFriend(id)
+            getFriend()
+            isFriend()
         }
     }
 
-    suspend fun getFriend(id: Int){
+    suspend fun isFriend() {
         try {
-            val fetchedJson = apiService.getUserData(id)
+            isFriendValue = apiService.isFriend(user_id, friend_id).get("result").asBoolean
+        } catch (e: Exception) {
+            println(e)
+        }
+    }
+
+    private suspend fun getFriend() {
+        try {
+            val fetchedJson = apiService.getUserData(friend_id)
             if (fetchedJson.get("result").asBoolean) {
                 val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
 
@@ -60,19 +73,20 @@ class FriendsViewModel(id:Int) : ViewModel() {
             }
         } catch (e: Exception) {
                 println("Error: $e")
-
         }
     }
 
-    suspend fun addFriend (id:Int, userId: Int){
+    suspend fun addFriend () {
         try {
             val addFriendData = JsonObject()
-            addFriendData.addProperty("id",id)
-            addFriendData.addProperty("userId",userId)
-            val fetchedJson = apiService.addFriend(addFriendData)
-
+            addFriendData.addProperty("user_id", user_id)
+            addFriendData.addProperty("friend_id", friend_id)
+            val fetchedJson = apiService.add(addFriendData)
+            println(fetchedJson)
             if (fetchedJson.get("result").asBoolean) {
-                println(fetchedJson)
+                isFriendValue = true
+            } else {
+                isFriendValue = false
             }
 
         } catch (e: Exception) {
@@ -81,11 +95,11 @@ class FriendsViewModel(id:Int) : ViewModel() {
     }
 }
 
-class FriendsViewModelFactory(private val id:Int ) : ViewModelProvider.Factory {
+class FriendsViewModelFactory(private val friend: Int, private val user: Int) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FriendsViewModel::class.java)) {
-            return FriendsViewModel(id) as T
+            return FriendsViewModel(friend, user) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

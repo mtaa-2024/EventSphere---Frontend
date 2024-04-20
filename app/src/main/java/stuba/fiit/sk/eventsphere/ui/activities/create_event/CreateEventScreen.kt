@@ -55,6 +55,7 @@ import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
+import stuba.fiit.sk.eventsphere.ui.theme.paragraph
 import stuba.fiit.sk.eventsphere.viewmodel.CreateEventViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
@@ -102,27 +103,26 @@ fun CreateEventScreen(
                 createEventViewModel = createEventViewModel
             )
 
-            Spacer(modifier = Modifier.height(50.dp))
-
-            var scrollState = rememberScrollState()
+            Spacer(modifier = Modifier.height(10.dp))
 
             Column (
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                EventDetailInput(
+                EventDetailInput (
                     createEventViewModel = createEventViewModel,
                     onMapShow = { isMapSelected = true }
                 )
-
-                Spacer(modifier = Modifier.height(40.dp))
-
-                PerformersRow(createEventViewModel = createEventViewModel)
-
+                Spacer (
+                    modifier = Modifier
+                        .height(20.dp)
+                )
+                PerformersRow (
+                    createEventViewModel = createEventViewModel
+                )
             }
-
-
         }
     }
 }
@@ -153,24 +153,29 @@ fun PerformersRow(
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .padding(5.dp, 0.dp)
+            .height(90.dp)
             .horizontalScroll(performerScroll),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         createEventViewModel.event.value?.performers?.forEach { performer ->
             FriendBox (
                 firstname = performer.firstname!!,
                 lastname = performer.lastname!!,
                 onClick = {
-                    selectedPerformer = performer
-                    isSelectedPerformer = true
+                          if (isSelectedPerformer && selectedPerformer == performer) {
+                              isSelectedPerformer = false
+                              selectedPerformer = null
+                          } else if (isSelectedPerformer && selectedPerformer != performer){
+                              isSelectedPerformer = true
+                              selectedPerformer = performer
+                          } else {
+                              isSelectedPerformer = true
+                              selectedPerformer = performer
+                          }
                 },
                 id = performer.id!!,
                 image = performer.profile_picture
-            )
-            Spacer (
-                modifier = Modifier.width(20.dp)
             )
         }
 
@@ -178,18 +183,25 @@ fun PerformersRow(
 
     Spacer (
         modifier = Modifier
-            .height(10.dp)
+            .height(20.dp)
     )
-
-    if (isSelectedPerformer) {
-        SmallButtonComponent (
-            text = "Remove",
-            isSelected = false,
-            onClick = {
-                createEventViewModel.removePerformer(selectedPerformer)
-                isSelectedPerformer = false
-            }
-        )
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
+        verticalArrangement = Arrangement.SpaceAround,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (isSelectedPerformer) {
+            SmallButtonComponent(
+                text = "Remove",
+                isSelected = false,
+                onClick = {
+                    createEventViewModel.removePerformer(selectedPerformer)
+                    isSelectedPerformer = false
+                },
+            )
+        }
     }
 
 
@@ -216,7 +228,7 @@ fun PerformersRow(
 
         Spacer(
             modifier = Modifier
-                .height(25.dp)
+                .height(10.dp)
         )
 
         if (addPerformer) {
@@ -226,16 +238,18 @@ fun PerformersRow(
                 Text (
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = "You dont have friends to add :(",
+                    text = "No friends to add :(",
                     style = labelStyle,
                     textAlign = TextAlign.Center
                 )
             } else {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .verticalScroll(friendScrollState)
+                        .fillMaxSize()
+                        .height(100.dp)
+                        .verticalScroll(friendScrollState),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     createEventViewModel.friendsList.forEach { friend ->
                         FriendBox(
@@ -301,28 +315,24 @@ fun EventDetailInput (
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(100.dp)
                 .clip(RoundedCornerShape(15.dp))
                 .background(LightColorScheme.primary),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
+            Column (
                 modifier = Modifier
                     .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Spacer (
-                    modifier = Modifier
-                        .height(10.dp)
-                )
-                val estimatedEnd = createEventViewModel.event.value?.estimated_end
+                var estimatedEnd by remember { mutableStateOf(createEventViewModel.event.value?.estimated_end) }
 
                 DateTimePicker(
                     onSelect = { input ->
-                        estimatedEnd?.let {
-                            createEventViewModel.updateEstimatedEnd(input)
-                        }
+                        createEventViewModel.updateEstimatedEnd(input)
+                        estimatedEnd = input
                     },
                     initializedDateTime = estimatedEnd ?: DateInput(
                         day = 0,
@@ -332,20 +342,28 @@ fun EventDetailInput (
                         minutes = 0
                     )
                 )
-            }
-            Column(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer (
-                    modifier = Modifier
-                        .height(10.dp)
+
+                Text (
+                    text = "${estimatedEnd?.day}.${estimatedEnd?.month}.${estimatedEnd?.year} ${estimatedEnd?.hour}:${estimatedEnd?.minutes}",
+                    style = paragraph,
+                    fontSize = 13.sp
                 )
+            }
+            Column (
+                modifier = Modifier
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
                 SmallButtonComponent(
                     text = "Location",
                     isSelected = false,
                     onClick = { onMapShow() }
+                )
+                Text (
+                    text = createEventViewModel.event.value?.location?.address ?: "Address",
+                    style = paragraph,
+                    fontSize = 13.sp
                 )
             }
         }
@@ -393,20 +411,20 @@ fun CreateEventTopBar (
                     }
                     openSaveDialog.value = true
                 },
-                text = "Save",
+                text = "Create",
                 isSelected = false
             )
             if(openSaveDialog.value) {
                 AlertDialogComponent(
-                    onDismissRequest = { openSaveDialog.value = false },
+                    onDismissRequest = { },
                     onConfirmation = {
                         openSaveDialog.value = false
                         back()
                     },
-                    dialogTitle = "Saved",
-                    dialogText = "Cigis",
-                    onDismissText = "pipik",
-                    onConfirmText = "ok"
+                    dialogTitle = "Event created",
+                    dialogText = "Your event was created",
+                    onDismissText = "",
+                    onConfirmText = "Close"
                 )
             }
 

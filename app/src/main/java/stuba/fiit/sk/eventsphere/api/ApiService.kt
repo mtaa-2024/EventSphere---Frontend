@@ -33,7 +33,7 @@ interface ApiService {
     ): JsonObject
 
     @POST("friend/add")
-    suspend fun addFriend(
+    suspend fun add(
         @Body addFriendData: JsonObject
     ): JsonObject
 
@@ -98,6 +98,12 @@ interface ApiService {
     @GET("email")
     suspend fun emailExists (
         @Query("input") input: String
+    ): JsonObject
+
+    @GET("isFriend")
+    suspend fun isFriend(
+        @Query("user_id") id: Int,
+        @Query("friend_id") friend_id: Int
     ): JsonObject
 }
 

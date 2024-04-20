@@ -33,7 +33,9 @@ import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
+import stuba.fiit.sk.eventsphere.ui.components.SearchBarComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.TopBarProfileComponent
 import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.HomeViewModel
@@ -67,29 +69,42 @@ fun HomeScreen (
 
         Column (
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(15.dp, 0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            Spacer (
+            Spacer(
                 modifier = Modifier
                     .height(25.dp)
             )
-            Text (
+            Text(
                 text = "Let’s explore events you might like",
                 style = welcomeStyle,
                 fontSize = 22.sp
             )
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(
+                modifier = Modifier
+                    .height(25.dp)
+            )
+
+            SearchBarComponent(
+                onUpdate = {},
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .height(25.dp)
+            )
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp, 0.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
-                CategoryBox (
+                CategoryBox(
                     icon = R.drawable.book_icon,
                     initializeState = homeViewModel.categories.value?.education ?: false,
                     onClick = homeViewModel::onClickEducation
@@ -121,7 +136,7 @@ fun HomeScreen (
                     .height(30.dp)
             )
 
-            EventViewButtons (
+            EventViewButtons(
                 homeViewModel = homeViewModel
             )
 
@@ -129,31 +144,31 @@ fun HomeScreen (
                 modifier = Modifier
                     .height(50.dp)
             )
+        }
 
-            val scrollState = rememberScrollState()
-            Column (
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-            ) {
-                val eventsState = observeLiveData(homeViewModel.events)
-                eventsState?.events?.forEach { event ->
-                    EventBanner(
-                        id = event.id,
-                        title = event.title ?: "",
-                        date = event.date ?: "",
-                        location = event.location ?: "",
-                        icon = R.drawable.book_icon,
-                        toEvent = toEvent
-                    )
+        val scrollState = rememberScrollState()
+        Column (
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
+            val eventsState = observeLiveData(homeViewModel.events)
+            eventsState?.events?.forEach { event ->
+                EventBanner(
+                    id = event.id,
+                    title = event.title ?: "",
+                    date = event.date ?: "",
+                    location = event.location ?: "",
+                    icon = R.drawable.book_icon,
+                    toEvent = toEvent
+                )
 
-                    Spacer(
-                        modifier = Modifier
-                            .height(10.dp)
-                    )
-                }
-
+                Spacer(
+                    modifier = Modifier
+                        .height(10.dp)
+                )
             }
+
         }
     }
 }
@@ -193,7 +208,7 @@ fun HomeTopBar(
                     }
                 )
             ) {
-                FriendImageComponent(
+                TopBarProfileComponent(
                     image = viewModel.loggedUser.value?.profile_image,
                 )
             }

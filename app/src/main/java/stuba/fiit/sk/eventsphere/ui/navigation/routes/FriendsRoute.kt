@@ -13,7 +13,7 @@ fun FriendsRoute (
     onNavigationToProfile: () -> Unit,
     mainViewModel: MainViewModel
 ) {
-    val friendsViewModel: FriendsViewModel = viewModel(factory = FriendsViewModelFactory(friendId))
+    val friendsViewModel: FriendsViewModel = viewModel(factory = FriendsViewModelFactory(friendId, mainViewModel.loggedUser.value?.id ?: 0))
     FriendsScreen (
         toProfile = onNavigationToProfile,
         viewModel = mainViewModel,
