@@ -17,6 +17,11 @@ interface ApiService {
         @Query("password") password: String?
     ): JsonObject
 
+    @GET("friends/search")
+    suspend fun getFriendsSearch(
+        @Query("filter") filter: String?
+    ): JsonObject
+
     @GET("user")
     suspend fun getUserData(
         @Query("id") id: Int

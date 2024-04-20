@@ -10,10 +10,10 @@ import stuba.fiit.sk.eventsphere.viewmodel.SearchUserViewModelFactory
 @Composable
 fun SearchUserRoute(
     onNavigationToProfile: () -> Unit,
-    onNavigationToFriendsScreen: () -> Unit,
+    onNavigationToFriendsScreen: (id:Int?) -> Unit,
     mainViewModel: MainViewModel
 ) {
-    val searchUserViewModel: SearchUserViewModel = viewModel(factory = SearchUserViewModelFactory())
+    val searchUserViewModel: SearchUserViewModel = viewModel(factory = SearchUserViewModelFactory(mainViewModel.loggedUser.value?.id ?:0))
     SearchUserScreen (
         toProfile = onNavigationToProfile,
         toFriends = onNavigationToFriendsScreen,

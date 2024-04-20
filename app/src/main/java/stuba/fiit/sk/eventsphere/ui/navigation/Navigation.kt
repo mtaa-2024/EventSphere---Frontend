@@ -196,8 +196,8 @@ fun EventSphereNavHost(
                 onNavigationToProfile = {
                     navController.navigate(PROFILE_ROUTE)
                 },
-                onNavigationToFriendsScreen = {
-                    navController.navigate(FRIENDS_ROUTE)
+                onNavigationToFriendsScreen = { friendId: Int? ->
+                    navController.navigate("$FRIENDS_ROUTE/$friendId")
                 },
                 mainViewModel = mainViewModel
             )
