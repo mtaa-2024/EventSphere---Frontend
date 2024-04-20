@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -90,7 +91,9 @@ fun HomeScreen (
             )
 
             SearchBarComponent(
-                onUpdate = {},
+                onUpdate = {
+                    homeViewModel.onUpdateFilter(it)
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -153,20 +156,30 @@ fun HomeScreen (
                 .verticalScroll(scrollState)
         ) {
             val eventsState = observeLiveData(homeViewModel.events)
-            eventsState?.events?.forEach { event ->
-                EventBanner(
-                    id = event.id,
-                    title = event.title ?: "",
-                    date = event.date ?: "",
-                    location = event.location ?: "",
-                    icon = R.drawable.book_icon,
-                    toEvent = toEvent
+            if (eventsState?.events?.isEmpty() == true) {
+                Text (
+                    text = "No events found",
+                    style = welcomeStyle,
+                    fontSize = 20.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
+            } else {
+                eventsState?.events?.forEach { event ->
+                    EventBanner(
+                        id = event.id,
+                        title = event.title ?: "",
+                        date = event.date ?: "",
+                        location = event.location ?: "",
+                        icon = R.drawable.book_icon,
+                        toEvent = toEvent
+                    )
 
-                Spacer(
-                    modifier = Modifier
-                        .height(10.dp)
-                )
+                    Spacer(
+                        modifier = Modifier
+                            .height(10.dp)
+                    )
+                }
             }
 
         }

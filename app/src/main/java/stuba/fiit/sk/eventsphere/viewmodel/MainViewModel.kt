@@ -1,5 +1,6 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -23,6 +24,7 @@ import stuba.fiit.sk.eventsphere.model.User
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Locale
 
 class MainViewModel() : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()

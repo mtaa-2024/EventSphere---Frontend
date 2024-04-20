@@ -51,6 +51,7 @@ data class EventInput(
     var user_id: Int,
     var location: LocationData,
     var estimated_end: DateInput,
+    var category: Int,
     var performers: List<FriendPerformer>?
 )
 
@@ -101,7 +102,7 @@ data class BannerStruct (
 )
 
 data class Events (
-    val events: List<BannerStruct>?
+    var events: List<BannerStruct>?
 )
 
 data class CategorySelectStates (

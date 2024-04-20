@@ -2,6 +2,7 @@ package stuba.fiit.sk.eventsphere.ui.activities.create_event
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,9 +54,11 @@ import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.DateInput
 import stuba.fiit.sk.eventsphere.model.FriendPerformer
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.activities.profile.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
 import stuba.fiit.sk.eventsphere.ui.components.DateTimePicker
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
@@ -111,12 +114,11 @@ fun CreateEventScreen(
                 createEventViewModel = createEventViewModel
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Column (
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 EventDetailInput (
@@ -125,7 +127,7 @@ fun CreateEventScreen(
                 )
                 Spacer (
                     modifier = Modifier
-                        .height(20.dp)
+                        .height(10.dp)
                 )
                 PerformersRow (
                     createEventViewModel = createEventViewModel
@@ -135,142 +137,147 @@ fun CreateEventScreen(
     }
 }
 
+
 @Composable
 fun PerformersRow(
     createEventViewModel: CreateEventViewModel
 ) {
-    Text (
-        text = "Performers",
-        style = buttonStyle,
-        color = LightColorScheme.onBackground,
-        fontSize = 18.sp,
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
-
-    Spacer (
-        modifier = Modifier
-            .height(20.dp)
-    )
-
-
-    val performerScroll = rememberScrollState()
-    var isSelectedPerformer by remember { mutableStateOf(false) }
-    var selectedPerformer by remember { mutableStateOf<FriendPerformer?>(null) }
-
-    Row (
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(90.dp)
-            .horizontalScroll(performerScroll),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        createEventViewModel.event.value?.performers?.forEach { performer ->
-            FriendBox (
-                firstname = performer.firstname!!,
-                lastname = performer.lastname!!,
-                onClick = {
-                          if (isSelectedPerformer && selectedPerformer == performer) {
-                              isSelectedPerformer = false
-                              selectedPerformer = null
-                          } else if (isSelectedPerformer && selectedPerformer != performer){
-                              isSelectedPerformer = true
-                              selectedPerformer = performer
-                          } else {
-                              isSelectedPerformer = true
-                              selectedPerformer = performer
-                          }
-                },
-                id = performer.id!!,
-                image = performer.profile_picture
-            )
-        }
-
-    }
-
-    Spacer (
-        modifier = Modifier
-            .height(20.dp)
-    )
     Column (
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp),
-        verticalArrangement = Arrangement.SpaceAround,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize()
     ) {
-        if (isSelectedPerformer) {
-            SmallButtonComponent(
-                text = "Remove",
-                isSelected = false,
-                onClick = {
-                    createEventViewModel.removePerformer(selectedPerformer)
-                    isSelectedPerformer = false
-                },
-            )
-        }
-    }
-
-
-    var addPerformer by remember { mutableStateOf(false) }
-
-    Spacer (
-        modifier = Modifier
-            .height(20.dp)
-    )
-
-    Column (
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(30.dp, 0.dp)
-    ) {
-        ButtonComponent(
-            onClick = { addPerformer = true },
-            fillColor = LightColorScheme.primary,
-            textColor = LightColorScheme.background,
-            text = "Add performer",
-            modifier = Modifier
-                .fillMaxWidth()
+        Text(
+            text = "Performers",
+            style = buttonStyle,
+            color = LightColorScheme.onBackground,
+            fontSize = 18.sp,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
         )
 
         Spacer(
             modifier = Modifier
-                .height(10.dp)
+                .height(20.dp)
         )
 
-        if (addPerformer) {
-            val friendScrollState = rememberScrollState()
 
-            if (createEventViewModel.friendsList.isEmpty()) {
-                Text (
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = "No friends to add :(",
-                    style = labelStyle,
-                    textAlign = TextAlign.Center
+        val performerScroll = rememberScrollState()
+        var isSelectedPerformer by remember { mutableStateOf(false) }
+        var selectedPerformer by remember { mutableStateOf<FriendPerformer?>(null) }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(90.dp)
+                .horizontalScroll(performerScroll),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            createEventViewModel.event.value?.performers?.forEach { performer ->
+                FriendBox(
+                    firstname = performer.firstname ?: "",
+                    lastname = performer.lastname ?: "",
+                    onClick = {
+                        if (isSelectedPerformer && selectedPerformer == performer) {
+                            isSelectedPerformer = false
+                            selectedPerformer = null
+                        } else if (isSelectedPerformer && selectedPerformer != performer) {
+                            isSelectedPerformer = true
+                            selectedPerformer = performer
+                        } else {
+                            isSelectedPerformer = true
+                            selectedPerformer = performer
+                        }
+                    },
+                    id = performer.id!!,
+                    image = performer.profile_picture
                 )
-            } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .height(100.dp)
-                        .verticalScroll(friendScrollState),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    createEventViewModel.friendsList.forEach { friend ->
-                        FriendBox(
-                            firstname = friend.firstname!!,
-                            lastname = friend.lastname!!,
-                            onClick = {
-                                createEventViewModel.addPerformer(friend)
-                                addPerformer = false
-                            },
-                            id = friend.id!!,
-                            image = friend.profile_picture
-                        )
+            }
 
+        }
+
+        Spacer(
+            modifier = Modifier
+                .height(20.dp)
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (isSelectedPerformer) {
+                SmallButtonComponent(
+                    text = "Remove",
+                    isSelected = false,
+                    onClick = {
+                        createEventViewModel.removePerformer(selectedPerformer)
+                        isSelectedPerformer = false
+                    },
+                )
+            }
+        }
+
+
+        var addPerformer by remember { mutableStateOf(false) }
+
+        Spacer(
+            modifier = Modifier
+                .height(20.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 0.dp)
+        ) {
+            ButtonComponent(
+                onClick = { addPerformer = true },
+                fillColor = LightColorScheme.primary,
+                textColor = LightColorScheme.background,
+                text = "Add performer",
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .height(10.dp)
+            )
+
+            if (addPerformer) {
+                val friendScrollState = rememberScrollState()
+
+                if (createEventViewModel.friendsList.isEmpty()) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        text = "No friends to add :(",
+                        style = labelStyle,
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .height(100.dp)
+                            .verticalScroll(friendScrollState),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        createEventViewModel.friendsList.forEach { friend ->
+                            FriendBox(
+                                firstname = friend.firstname ?: "",
+                                lastname = friend.lastname ?: "",
+                                onClick = {
+                                    createEventViewModel.addPerformer(friend)
+                                    addPerformer = false
+                                },
+                                id = friend.id!!,
+                                image = friend.profile_picture
+                            )
+
+                        }
                     }
                 }
             }
@@ -301,7 +308,7 @@ fun EventDetailInput (
 
         Spacer(
             modifier = Modifier
-                .height(20.dp)
+                .height(10.dp)
         )
 
         InputFieldComponent(
@@ -315,9 +322,56 @@ fun EventDetailInput (
                 .height(100.dp),
         )
 
+        Spacer (
+            modifier = Modifier.height(10.dp)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+        ) {
+
+            CategoryBox(
+                icon = R.drawable.book_icon,
+                initializeState = createEventViewModel.categorySelectStates.value?.education ?: false,
+                onClick = {
+                    createEventViewModel.onEducationSelect(it)
+                }
+            )
+            CategoryBox(
+                icon = R.drawable.music_icon,
+                initializeState = createEventViewModel.categorySelectStates.value?.music ?: false,
+                onClick = {
+                    createEventViewModel.onMusicSelect(it)
+                }
+            )
+            CategoryBox(
+                icon = R.drawable.burger_icon,
+                initializeState = createEventViewModel.categorySelectStates.value?.food ?: false,
+                onClick = {
+                    createEventViewModel.onFoodSelect(it)
+                }
+            )
+            CategoryBox(
+                icon = R.drawable.brush_icon,
+                initializeState = createEventViewModel.categorySelectStates.value?.art ?: false,
+                onClick = {
+                    createEventViewModel.onArtSelect(it)
+                }
+            )
+            CategoryBox(
+                icon = R.drawable.dribbble_icon,
+                initializeState = createEventViewModel.categorySelectStates.value?.sport ?: false,
+                onClick = {
+                    createEventViewModel.onSportSelect(it)
+                }
+            )
+        }
+
         Spacer(
             modifier = Modifier
-                .height(30.dp)
+                .height(10.dp)
         )
 
         Row (
@@ -378,7 +432,6 @@ fun EventDetailInput (
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEventTopBar (
     back: () -> Unit,
@@ -413,53 +466,16 @@ fun CreateEventTopBar (
                 )
             }
 
-            val menu = arrayOf("Music", "Sport", "Education", "Art", "Food")
-            var expanded by remember { mutableStateOf(false) }
-            var selectedItem by remember { mutableStateOf(menu[0]) }
-
-            createEventViewModel.selectedCategory = selectedItem
-
-            ExposedDropdownMenuBox (
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded },
-            ) {
-                TextField (
-                    modifier = Modifier.width(150.dp).menuAnchor(),
-                    value = selectedItem,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {  ExposedDropdownMenuDefaults.TrailingIcon( expanded = expanded) },
-                    colors = TextFieldDefaults.textFieldColors(unfocusedTextColor = LightColorScheme.onBackground, focusedTextColor = LightColorScheme.primary),
-
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    for (item in menu) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = item
-                                )
-                            },
-                            onClick = {
-                                selectedItem = item
-                                createEventViewModel.selectedCategory = item
-                            }
-                        )
-                    }
-
-                }
-            }
 
             val openSaveDialog = remember { mutableStateOf(false) }
+            val openErrorDialog = remember { mutableStateOf(false) }
+
             SmallButtonComponent(
                 onClick = {
                     createEventViewModel.viewModelScope.launch {
-                        createEventViewModel.createEvent()
+                        openErrorDialog.value = createEventViewModel.createEvent()
                     }
-                    openSaveDialog.value = true
+                    if (!openErrorDialog.value) openSaveDialog.value = true
                 },
                 text = "Create",
                 isSelected = false
@@ -473,6 +489,17 @@ fun CreateEventTopBar (
                     },
                     dialogTitle = "Event created",
                     dialogText = "Your event was created",
+                    onDismissText = "",
+                    onConfirmText = "To event center"
+                )
+            } else if (openErrorDialog.value) {
+                AlertDialogComponent(
+                    onDismissRequest = { },
+                    onConfirmation = {
+                        openErrorDialog.value = false
+                    },
+                    dialogTitle = "Error creating event",
+                    dialogText = "Something unexpected happened during creating your event",
                     onDismissText = "",
                     onConfirmText = "Close"
                 )

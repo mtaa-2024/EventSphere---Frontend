@@ -1,6 +1,8 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
 import android.icu.util.Calendar
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +13,10 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.AddPerformerState
+import stuba.fiit.sk.eventsphere.model.CategorySelectStates
 import stuba.fiit.sk.eventsphere.model.DateInput
 import stuba.fiit.sk.eventsphere.model.EventInput
+import stuba.fiit.sk.eventsphere.model.EventSelectStates
 import stuba.fiit.sk.eventsphere.model.FriendPerformer
 import stuba.fiit.sk.eventsphere.model.LocationData
 
@@ -25,11 +29,15 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     private val performersList: MutableList<FriendPerformer> = mutableListOf()
     val friendsList: MutableList<FriendPerformer> = mutableListOf()
 
-    var selectedCategory: String = ""
+    private val _categorySelectStates = mutableStateOf(CategorySelectStates(
+        education = false,
+        music = false,
+        art = false,
+        food = false,
+        sport = false
+    ))
+    val categorySelectStates: State<CategorySelectStates> = _categorySelectStates
 
-    fun updateSelectedCategory(input: String) {
-        selectedCategory = input
-    }
 
     init {
         viewModelScope.launch {
@@ -53,9 +61,80 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
                 hour = calendar[Calendar.HOUR_OF_DAY],
                 minutes = calendar[Calendar.MINUTE]
             ),
-            performers = performersList
-
+            performers = performersList,
+            category = 0
         )
+    }
+
+
+    fun onCategorySelect(category: Category, isSelected: Boolean) {
+        when (category) {
+            Category.EDUCATION -> {
+                if (isSelected) {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(education = true)
+                    _categorySelectStates.value = _categorySelectStates.value.copy(
+                        music = false,
+                        art = false,
+                        food = false,
+                        sport = false
+                    )
+                } else {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(education = false)
+                }
+            }
+            Category.MUSIC -> {
+                if (isSelected) {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(music = true)
+                    _categorySelectStates.value = _categorySelectStates.value.copy(
+                        education = false,
+                        art = false,
+                        food = false,
+                        sport = false
+                    )
+                } else {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(music = false)
+                }
+            }
+            Category.ART -> {
+                if (isSelected) {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(art = true)
+                    _categorySelectStates.value = _categorySelectStates.value.copy(
+                        education = false,
+                        art = false,
+                        food = false,
+                        sport = false
+                    )
+                } else {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(art = false)
+                }
+            }
+            Category.FOOD -> {
+                if (isSelected) {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(food = true)
+                    _categorySelectStates.value = _categorySelectStates.value.copy(
+                        education = false,
+                        art = false,
+                        food = false,
+                        sport = false
+                    )
+                } else {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(food = false)
+                }
+            }
+            Category.SPORT -> {
+                if (isSelected) {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(sport = true)
+                    _categorySelectStates.value = _categorySelectStates.value.copy(
+                        education = false,
+                        art = false,
+                        food = false,
+                        sport = false
+                    )
+                } else {
+                    _categorySelectStates.value = _categorySelectStates.value.copy(sport = false)
+                }
+            }
+        }
     }
 
     fun updateTitle(input: String) {
@@ -113,10 +192,8 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
         }
     }
 
-    suspend fun createEvent(): Int {
+    suspend fun createEvent(): Boolean {
         try {
-            val categoryId = if (selectedCategory == "Music") 1 else if (selectedCategory == "Education") 2 else if (selectedCategory == "Food") 3 else if (selectedCategory == "Sport") 4 else  5
-
             val jsonBody = JsonObject()
             jsonBody.addProperty("title", _event.value?.title)
             jsonBody.addProperty("user_id", _event.value?.user_id)
@@ -124,15 +201,13 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             jsonBody.addProperty("location", _event.value?.location?.address)
             jsonBody.addProperty("latitude", _event.value?.location?.latitude)
             jsonBody.addProperty("longitude", _event.value?.location?.longitude)
-            jsonBody.addProperty("category", categoryId)
+            jsonBody.addProperty("category", _event.value?.category)
 
             val timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
             jsonBody.addProperty("estimated_end", timestamp)
 
 
             val performersArray = JsonArray()
-
-
             performersList.forEach { performer ->
                 val performerObject = JsonObject()
                 performerObject.addProperty("id", performer.id)
@@ -140,17 +215,21 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
             }
             jsonBody.add("performers", performersArray)
 
-
             val fetchedJson = apiService.createEvent(jsonBody)
-            if (fetchedJson.get("result").asBoolean) {
-                return fetchedJson.get("id").asInt
-            }
-
+            return fetchedJson.get("result").asBoolean
         } catch (e: Exception) {
             println("Error: $e")
         }
-        return -1
+        return false
     }
+}
+
+enum class Category {
+    EDUCATION,
+    MUSIC,
+    ART,
+    FOOD,
+    SPORT
 }
 
 class CreateEventViewModelFactory(private val mainViewModel: MainViewModel) : ViewModelProvider.Factory {

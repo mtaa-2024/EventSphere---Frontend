@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EventSphere</string>
+    <string name="login">Prihlásiť sa</string>
+    <string name="welcome">Odomknite bránu k Nezabudnuteľné chvíle!</string>
+</resources>

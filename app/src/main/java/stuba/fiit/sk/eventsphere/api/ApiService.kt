@@ -48,7 +48,13 @@ interface ApiService {
     ): JsonObject
 
     @GET("upcoming")
-    suspend fun getUpcoming(): JsonObject
+    suspend fun getUpcoming(
+        @Query("education") education: Boolean,
+        @Query("music") music: Boolean,
+        @Query("food") food: Boolean,
+        @Query("art") art: Boolean,
+        @Query("sport") sport: Boolean
+    ): JsonObject
 
     @GET("attending")
     suspend fun getAttending(
@@ -104,6 +110,11 @@ interface ApiService {
     suspend fun isFriend(
         @Query("user_id") id: Int,
         @Query("friend_id") friend_id: Int
+    ): JsonObject
+
+    @GET("event/search")
+    suspend fun searchEvents(
+        @Query("input") input: String
     ): JsonObject
 }
 
