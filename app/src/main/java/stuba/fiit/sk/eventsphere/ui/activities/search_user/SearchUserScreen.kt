@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,7 +69,7 @@ fun SearchUserScreen (
             )
 
             Text(
-                text = "Search for User",
+                text = stringResource(id = R.string.search_user_welcome_text),
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
@@ -76,9 +77,10 @@ fun SearchUserScreen (
                 modifier = Modifier
                     .height(30.dp)
             )
-
+            val searchString = stringResource(id = R.string.search_label)
             SearchBarComponent (
                 onUpdate = {
+                       if(it != searchString)
                            searchUserViewModel.updateSearch(it)
                 },
                 modifier = Modifier
@@ -102,7 +104,7 @@ fun SearchUserScreen (
 
             if (friends?.listFriends?.isEmpty() == true) {
                 Text (
-                    text = "Friends not found",
+                    text = stringResource(id = R.string.friends_not_found),
                     style = welcomeStyle,
                     fontSize = 20.sp,
                     modifier = Modifier.fillMaxWidth(),
@@ -111,8 +113,8 @@ fun SearchUserScreen (
             } else {
                 friends?.listFriends?.forEach { friend ->
                     FriendBox(
-                        firstname = friend.firstname ?: "Firstname",
-                        lastname = friend.lastname ?: "Lastname",
+                        firstname = friend.firstname ?: stringResource(id = R.string.firstname_label),
+                        lastname = friend.lastname ?: stringResource(id = R.string.lastname_label),
                         onClick = toFriends,
                         id = friend.id!!,
                         image = friend.profile_picture

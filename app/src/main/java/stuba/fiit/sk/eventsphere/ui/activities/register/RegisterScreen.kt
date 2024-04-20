@@ -10,12 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.activities.login.TopBar
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
@@ -24,7 +26,7 @@ import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.RegisterViewModel
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, locale = "sk")
 @Composable
 fun Preview () {
     RegisterScreen(toHome = {}, back = {}, viewModel = MainViewModel(), registerViewModel = RegisterViewModel())
@@ -38,6 +40,10 @@ fun RegisterScreen (
     registerViewModel: RegisterViewModel
 
 ) {
+    registerViewModel.register.value?.username = stringResource(id = R.string.enter_username_input_text)
+    registerViewModel.register.value?.password = stringResource(id = R.string.password_input_text)
+    registerViewModel.register.value?.email = stringResource(id = R.string.enter_email_input_text)
+    registerViewModel.register.value?.verifyPassword = stringResource(id = R.string.password_input_text)
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -53,7 +59,7 @@ fun RegisterScreen (
         ) {
 
             Text (
-                text = "Step into tomorrow's world of events, effortlessly!",
+                text = stringResource(id = R.string.register_welcome_text),
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
@@ -64,7 +70,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Username",
+                label = stringResource(id = R.string.username_label),
                 text = registerViewModel.register.value?.username.toString(),
                 onUpdate = registerViewModel::updateUsername,
                 onCheck = registerViewModel::checkUsername,
@@ -79,7 +85,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Email",
+                label = stringResource(id = R.string.email_label),
                 text = registerViewModel.register.value?.email.toString(),
                 onUpdate = registerViewModel::updateEmail,
                 onCheck =  registerViewModel::checkEmail,
@@ -94,7 +100,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Password",
+                label = stringResource(id = R.string.password_label),
                 text = registerViewModel.register.value?.password.toString(),
                 onUpdate = registerViewModel::updatePassword,
                 onCheck = null,
@@ -109,7 +115,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Verify password",
+                label = stringResource(id = R.string.verify_password_label),
                 text = registerViewModel.register.value?.verifyPassword.toString(),
                 onUpdate = registerViewModel::updateRepeatedPassword,
                 onCheck = null,
@@ -124,7 +130,7 @@ fun RegisterScreen (
             )
 
             ButtonComponent (
-                text = "Register",
+                text = stringResource(id = R.string.register_button),
                 fillColor = LightColorScheme.primary,
                 textColor = LightColorScheme.background,
                 modifier = Modifier
