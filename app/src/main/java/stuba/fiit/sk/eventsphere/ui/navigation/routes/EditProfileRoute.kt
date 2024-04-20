@@ -14,7 +14,7 @@ fun EditProfileRoute(
 ) {
     val editProfileViewModel: EditProfileViewModel = viewModel(factory = EditProfileViewModelFactory())
     EditProfileScreen (
-        toProfile = onNavigationToProfile,
+        back = onNavigationToProfile,
         viewModel = mainViewModel,
         editProfileViewModel = editProfileViewModel
     )

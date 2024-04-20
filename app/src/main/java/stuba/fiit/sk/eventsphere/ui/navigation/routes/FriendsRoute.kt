@@ -2,7 +2,7 @@ package stuba.fiit.sk.eventsphere.ui.navigation.routes
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import stuba.fiit.sk.eventsphere.ui.activities.friends.FriendsScreen
+import stuba.fiit.sk.eventsphere.ui.activities.friend.FriendsScreen
 import stuba.fiit.sk.eventsphere.viewmodel.FriendsViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.FriendsViewModelFactory
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel

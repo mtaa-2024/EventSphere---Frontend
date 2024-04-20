@@ -1,38 +1,34 @@
 package stuba.fiit.sk.eventsphere.ui.activities.register
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.components.InputField
-import stuba.fiit.sk.eventsphere.ui.components.InputPasswordField
-import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
-import stuba.fiit.sk.eventsphere.ui.components.SaveDialog
+import stuba.fiit.sk.eventsphere.ui.activities.login.TopBar
+import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
+import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.RegisterViewModel
+
+@Preview(showBackground = true)
+@Composable
+fun Preview () {
+    RegisterScreen(toHome = {}, back = {}, viewModel = MainViewModel(), registerViewModel = RegisterViewModel())
+}
 
 @Composable
 fun RegisterScreen (
@@ -42,57 +38,39 @@ fun RegisterScreen (
     registerViewModel: RegisterViewModel
 
 ) {
-    Column(
+    Column (
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.top_bar),
-                contentDescription = "welcome_background",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .matchParentSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            )       {
-                Button (
-                    onClick = back,
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                ) {
-                    Image (
-                        painter = painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "Back"
-                    )
-                }
-            }
-        }
+        TopBar(back)
+
         Column (
             modifier = Modifier
-                .padding(25.dp),
+                .padding(25.dp)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = "Step into tomorrow's world of events, effortlessly ",
+
+            Text (
+                text = "Step into tomorrow's world of events, effortlessly!",
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
-            Spacer(
+
+            Spacer (
                 modifier = Modifier
-                    .height(30.dp)
+                    .height(60.dp)
             )
-            InputField (
+
+            InputFieldComponent (
                 label = "Username",
-                value = registerViewModel.registerData.value?.username.toString(),
-                onChange = registerViewModel::updateUsername
+                text = registerViewModel.register.value?.username.toString(),
+                onUpdate = registerViewModel::updateUsername,
+                onCheck = registerViewModel::checkUsername,
+                keyboardType = KeyboardType.Text,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             Spacer(
@@ -100,10 +78,14 @@ fun RegisterScreen (
                     .height(30.dp)
             )
 
-            InputField (
+            InputFieldComponent (
                 label = "Email",
-                value = registerViewModel.registerData.value?.email.toString(),
-                onChange = registerViewModel::updateEmail
+                text = registerViewModel.register.value?.email.toString(),
+                onUpdate = registerViewModel::updateEmail,
+                onCheck =  registerViewModel::checkEmail,
+                keyboardType = KeyboardType.Text,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             Spacer(
@@ -111,10 +93,14 @@ fun RegisterScreen (
                     .height(30.dp)
             )
 
-            InputPasswordField (
+            InputFieldComponent (
                 label = "Password",
-                value = registerViewModel.registerData.value?.password.toString(),
-                onChange = registerViewModel::updatePassword
+                text = registerViewModel.register.value?.password.toString(),
+                onUpdate = registerViewModel::updatePassword,
+                onCheck = null,
+                keyboardType = KeyboardType.Password,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             Spacer(
@@ -122,10 +108,14 @@ fun RegisterScreen (
                     .height(30.dp)
             )
 
-            InputPasswordField (
-                label = "Password",
-                value = registerViewModel.registerData.value?.repeatPassword.toString(),
-                onChange = registerViewModel::updateRepeatedPassword
+            InputFieldComponent (
+                label = "Verify password",
+                text = registerViewModel.register.value?.verifyPassword.toString(),
+                onUpdate = registerViewModel::updateRepeatedPassword,
+                onCheck = null,
+                keyboardType = KeyboardType.Password,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             Spacer (
@@ -133,31 +123,26 @@ fun RegisterScreen (
                     .weight(1f)
             )
 
-            val openRegisterAlertDialog = remember { mutableStateOf(false) }
-
-            PrimaryButton (text = "Register", onClick = {
-                viewModel.viewModelScope.launch {
-                    if (viewModel.registerNewUser(registerViewModel.registerData.value?.username.toString(), registerViewModel.registerData.value?.email.toString(), registerViewModel.registerData.value?.password.toString(),registerViewModel.registerData.value?.repeatPassword.toString())) {
+            ButtonComponent (
+                text = "Register",
+                fillColor = LightColorScheme.primary,
+                textColor = LightColorScheme.background,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp),
+                onClick = { viewModel.viewModelScope.launch {
+                    if (viewModel.registerNewUser(registerViewModel.register.value)) {
                         toHome()
-                    }else{
-                        openRegisterAlertDialog.value = true
+                        }
                     }
                 }
-            })
-
-            if(openRegisterAlertDialog.value) {
-                SaveDialog(
-                    onDismissRequest = { openRegisterAlertDialog.value = false },
-                    onConfirmation = {
-                        openRegisterAlertDialog.value = false
-                    },
-                    dialogTitle = viewModel.errorRegister.value.toString())
-            }
+            )
 
             Spacer (
                 modifier = Modifier
-                    .height(25.dp)
+                    .height(50.dp)
             )
+
         }
     }
 }

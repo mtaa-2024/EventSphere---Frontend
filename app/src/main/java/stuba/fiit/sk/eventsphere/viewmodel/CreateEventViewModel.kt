@@ -10,94 +10,111 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.DateStructure
-import stuba.fiit.sk.eventsphere.model.EventCreate
-import stuba.fiit.sk.eventsphere.model.FriendsView
-import stuba.fiit.sk.eventsphere.model.ListFriendsView
-import stuba.fiit.sk.eventsphere.model.PerformerStruct
-import stuba.fiit.sk.eventsphere.model.PerformersView
-import stuba.fiit.sk.eventsphere.model.User
+import stuba.fiit.sk.eventsphere.model.AddPerformerState
+import stuba.fiit.sk.eventsphere.model.DateInput
+import stuba.fiit.sk.eventsphere.model.EventInput
+import stuba.fiit.sk.eventsphere.model.FriendPerformer
+import stuba.fiit.sk.eventsphere.model.LocationData
 
 class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
-
     private val creatorId = viewModel.loggedUser.value?.id
 
-    private val _eventData = MutableLiveData<EventCreate>()
-    val eventData: LiveData<EventCreate> = _eventData
+    private val _event = MutableLiveData<EventInput>()
+    val event: LiveData<EventInput> = _event
 
-    private val _date = MutableLiveData<DateStructure>()
-    val date: LiveData<DateStructure> = _date
-
-    val performerList = mutableListOf<FriendsView>()
-
-    val calendar = Calendar.getInstance()
+    private val performersList: MutableList<FriendPerformer> = mutableListOf()
+    val friendsList: MutableList<FriendPerformer> = mutableListOf()
 
     private val _addPerformerState = MutableLiveData<AddPerformerState>()
     val addPerformerState: LiveData<AddPerformerState> = _addPerformerState
 
-    private val _friends = MutableLiveData<ListFriendsView>()
-    val friends: LiveData<ListFriendsView> = _friends
+    private val _newUser = MutableLiveData<NewPerformer>()
+    val newUser: LiveData<NewPerformer> = _newUser
+
 
     init {
         viewModelScope.launch {
             getFriends()
         }
+        val calendar = Calendar.getInstance()
 
-        _eventData.value = EventCreate (
+        _event.value = EventInput (
             title = "Title",
             description = "Description",
-            location = "Location",
-            user_id = viewModel.loggedUser.value?.id,
-            estimated_end = "Start date",
-        )
+            location = LocationData (
+                address = "",
+                latitude = 0.0,
+                longitude = 0.0,
+            ),
+            user_id = viewModel.loggedUser.value?.id ?: -1,
+            estimated_end = DateInput (
+                day = calendar[Calendar.DAY_OF_MONTH],
+                month = calendar[Calendar.MONTH],
+                year = calendar[Calendar.YEAR],
+                hour = calendar[Calendar.HOUR_OF_DAY],
+                minutes = calendar[Calendar.MINUTE]
+            ),
+            performers = performersList
 
-        _date.value = DateStructure(
-            day = calendar[Calendar.DAY_OF_MONTH],
-            month = calendar[Calendar.MONTH],
-            year = calendar[Calendar.YEAR],
-            hour = calendar[Calendar.HOUR_OF_DAY],
-            minutes = calendar[Calendar.MINUTE]
         )
 
         _addPerformerState.value = AddPerformerState(
             friend = true,
             input = false
         )
+
+        _newUser.value = NewPerformer(
+            firstname = "",
+            lastname = ""
+        )
     }
 
     fun updateTitle(input: String) {
-        _eventData.value?.title = input
+        _event.value?.title = input
     }
     fun updateDescription(input: String) {
-        _eventData.value?.description = input
+        _event.value?.description = input
     }
-    fun updateLocation(input: String) {
-        _eventData.value?.location = input
+    fun updateLocation(input: LocationData) {
+        _event.value?.location = input
     }
-    fun updateEstimatedEnd(input: String) {
-        _eventData.value?.estimated_end = input
+    fun updateEstimatedEnd(input: DateInput) {
+        val currentEvent = _event.value ?: return
+        val updatedEvent = currentEvent.copy(estimated_end = input)
+        _event.value = updatedEvent
     }
-    fun addPerformer(friend: FriendsView) {
-        performerList.add(friend)
+    fun addPerformer(friend: FriendPerformer) {
+        println(friend)
+        performersList.add(friend)
+        friendsList.remove(friend)
     }
 
-    fun removePerformer(id: Int?, firstname: String?, lastname: String?) {
-        if (id != null) {
-            performerList.removeIf { it.id == id }
-        } else {
-            performerList.removeIf { it.firstname == firstname && it.lastname == lastname }
+    fun removePerformer(performer: FriendPerformer?) {
+        if (performer != null) {
+            performersList.remove(performer)
+            if ((performer.id ?: -1) != -1)
+                friendsList.add(performer)
         }
     }
+
+    fun onFirstnameUpdate(input: String) {
+        newUser.value?.firstname = input
+    }
+
+    fun onLastnameUpdate(input: String) {
+        newUser.value?.lastname = input
+    }
+
 
     suspend fun getFriends() {
         try {
             val fetchedJson = apiService.getFriends(creatorId)
-            val friendsList = mutableListOf<FriendsView>()
             if (fetchedJson.get("result").asBoolean) {
+                friendsList.clear()
                 val friendsArray = fetchedJson.getAsJsonArray("friends").asJsonArray
                 friendsArray.forEach { friendsElement ->
                     val friendsObject = friendsElement.asJsonObject
-                    val friendsView = FriendsView(
+                    val friendsView = FriendPerformer(
                         id = if (friendsObject.get("id").isJsonNull) null else friendsObject.get("id").asInt,
                         firstname = if (friendsObject.get("firstname").isJsonNull) null else friendsObject.get(
                             "firstname"
@@ -105,16 +122,10 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
                         lastname = if (friendsObject.get("lastname").isJsonNull) null else friendsObject.get(
                             "lastname"
                         ).asString,
-                        profile_picture = if (friendsObject.get("profile_image").isJsonNull) null else friendsObject.get(
-                            "profile_image"
-                        ).asString,
+                        profile_picture = null,
                     )
                     friendsList.add(friendsView)
                 }
-                val friends = ListFriendsView(
-                    listFriends = friendsList
-                )
-                _friends.value = friends
             }
 
         } catch (e: Exception) {
@@ -125,29 +136,33 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     suspend fun createEvent(): Int {
         try {
             val jsonBody = JsonObject()
-            jsonBody.addProperty("title", _eventData.value?.title)
-            jsonBody.addProperty("user_id", _eventData.value?.user_id)
-            jsonBody.addProperty("description", _eventData.value?.description)
-            jsonBody.addProperty("location", _eventData.value?.location)
-            jsonBody.addProperty("estimated_end", _eventData.value?.estimated_end)
+            jsonBody.addProperty("title", _event.value?.title)
+            jsonBody.addProperty("user_id", _event.value?.user_id)
+            jsonBody.addProperty("description", _event.value?.description)
+            jsonBody.addProperty("location", _event.value?.location?.address)
+            jsonBody.addProperty("latitude", _event.value?.location?.latitude)
+            jsonBody.addProperty("longitude", _event.value?.location?.longitude)
+
+            val timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
+            jsonBody.addProperty("estimated_end", timestamp)
+
+
             val performersArray = JsonArray()
 
 
-            performerList.forEach { performer ->
+            performersList.forEach { performer ->
                 val performerObject = JsonObject()
                 performerObject.addProperty("id", performer.id)
                 performerObject.addProperty("firstname", performer.firstname)
                 performerObject.addProperty("lastname", performer.lastname)
-                performerObject.addProperty("profile_image", performer.profile_picture)
+                //performerObject.addProperty("profile_img", performer.lastname)
 
                 performersArray.add(performerObject)
             }
             jsonBody.add("performers", performersArray)
 
-            println(jsonBody)
 
             val fetchedJson = apiService.createEvent(jsonBody)
-
             if (fetchedJson.get("result").asBoolean) {
                 return fetchedJson.get("id").asInt
             }
@@ -169,9 +184,9 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     }
 }
 
-data class AddPerformerState(
-    var friend: Boolean,
-    var input: Boolean
+data class NewPerformer (
+    var firstname: String,
+    var lastname: String
 )
 
 class CreateEventViewModelFactory(private val mainViewModel: MainViewModel) : ViewModelProvider.Factory {

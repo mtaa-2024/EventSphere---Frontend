@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,59 +22,131 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
+import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
-import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorSelected
-import stuba.fiit.sk.eventsphere.ui.components.HomeSelectorUnselected
-import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
+import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
+import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.viewmodel.EventCenterViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
+
+@Preview(showBackground = true)
+@Composable
+fun Preview () {
+    EventCenterScreen(viewModel = MainViewModel(), eventCenterViewModel = EventCenterViewModel(
+        MainViewModel()
+    ), back = {}, toEvent = {}, toCreateEvent = {})
+}
 
 @Composable
 fun EventCenterScreen (
     viewModel: MainViewModel,
     eventCenterViewModel: EventCenterViewModel,
-    toBack: () -> Unit,
+    back: () -> Unit,
     toEvent: (Int) -> Unit,
     toCreateEvent: () -> Unit
 ) {
-    Column(
+
+    Column (
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
+        EventCenterTopBar (
+            back = back
+        )
+
+        Spacer (
+            modifier = Modifier
+                .height(30.dp)
+        )
+
+        var isSelectedUpcoming by remember { mutableStateOf(eventCenterViewModel.eventSelectStates.value?.upcoming) }
+        var isSelectedExpired by remember { mutableStateOf(eventCenterViewModel.eventSelectStates.value?.expired) }
+
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 0.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.top_bar),
-                contentDescription = "welcome_background",
-                contentScale = ContentScale.FillBounds,
+            ButtonComponent(
+                onClick = { toCreateEvent() },
+                fillColor = LightColorScheme.primary,
+                textColor = LightColorScheme.background,
+                text = "Create your event",
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            Row(
+
+            Spacer (
                 modifier = Modifier
-                    .padding(20.dp)
-                    .matchParentSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .height(50.dp)
+            )
+
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
+                SmallButtonComponent (
+                    text = "Upcoming",
+                    isSelected = eventCenterViewModel.eventSelectStates.value?.upcoming ?: false,
+                    onClick = {
+                        eventCenterViewModel.onUpcomingSelect(viewModel)
+                        isSelectedUpcoming = true
+                        isSelectedExpired = false
+                    }
+                )
+                SmallButtonComponent (
+                    text = "Expired",
+                    isSelected = eventCenterViewModel.eventSelectStates.value?.expired ?: false,
+                    onClick = {
+                        eventCenterViewModel.onExpiredSelect(viewModel)
+                        isSelectedUpcoming = false
+                        isSelectedExpired = true
+                    }
+                )
+            }
 
-                Box(
+            Spacer (
+                modifier = Modifier
+                    .height(80.dp)
+            )
+        }
+        var eventsState = observeLiveData(eventCenterViewModel.upcoming)
+        if (isSelectedUpcoming == true) {
+            eventsState = observeLiveData(eventCenterViewModel.upcoming)
+        } else if (isSelectedExpired == true) {
+            eventsState = observeLiveData(eventCenterViewModel.expired)
+        }
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.Start
+        ) {
+            eventsState?.events?.forEach { event ->
+                EventBanner(
+                    id = event.id,
+                    title = event.title ?: "",
+                    date = event.date ?: "",
+                    location = event.location ?: "",
+                    icon = R.drawable.book_icon,
+                    toEvent = toEvent
+                )
+                Spacer(
                     modifier = Modifier
-                        .clickable(onClick = toBack)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "Back"
-                    )
-                }
-
+                        .height(10.dp)
+                )
             }
         }
+
+    }
+
+    /*
 
         Column(
             modifier = Modifier
@@ -153,6 +227,44 @@ fun EventCenterScreen (
                     }
                 }
             }
+        }
+    }
+
+     */
+}
+
+@Composable
+fun EventCenterTopBar (
+    back: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.top_bar),
+            contentDescription = "welcome_background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Row(
+            modifier = Modifier
+                .padding(20.dp)
+                .matchParentSize(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .clickable(onClick = back)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.back_arrow),
+                    contentDescription = "Back"
+                )
+            }
+
         }
     }
 }

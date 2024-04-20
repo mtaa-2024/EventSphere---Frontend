@@ -14,7 +14,7 @@ fun HomeRoute (
     onNavigationToBack: () -> Unit,
     mainViewModel: MainViewModel
 ) {
-    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory())
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(viewModel = mainViewModel))
     HomeScreen (
         toProfile = onNavigationToProfile,
         viewModel = mainViewModel,

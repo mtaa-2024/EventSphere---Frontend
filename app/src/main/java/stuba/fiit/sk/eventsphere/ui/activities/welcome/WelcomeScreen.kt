@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -21,13 +20,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
-import stuba.fiit.sk.eventsphere.ui.components.SecondaryButton
+import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
+
+@Preview (showBackground = true)
+@Composable
+fun Preview () {
+    WelcomeScreen(toLogin = {}, toRegister = {}, toHome = {})
+}
 
 @Composable
 fun WelcomeScreen (
@@ -40,91 +46,126 @@ fun WelcomeScreen (
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box (
+        WelcomeTopBar()
+
+        Column (
             modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.TopCenter
+                .fillMaxSize()
+                .padding(25.dp, 0.dp),
         ) {
-            Image (
-                painter = painterResource(id = R.drawable.welcome_background),
-                contentDescription = "welcome_background",
-                contentScale = ContentScale.FillWidth,
+            Spacer(
+                modifier = Modifier
+                    .height(50.dp)
+            )
+
+            ButtonComponent (
+                onClick = toLogin,
+                fillColor = LightColorScheme.primary,
+                textColor = LightColorScheme.background,
+                text = "Login",
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(50.dp)
             )
-            Column (
+
+            Spacer(
                 modifier = Modifier
-                    .padding(40.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "",
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .width(350.dp)
-                )
-                Spacer(
-                    modifier = Modifier
-                        .height(35.dp)
-                )
-                Text(
-                    text = " Unlock the Gateway to Unforgettable Moments!",
-                    style = welcomeStyle,
-                    textAlign = TextAlign.Center,
-                    fontSize = 24.sp,
-                    color = Color.White,
-                    maxLines = 2,
-                    lineHeight = 35.sp,
-                    letterSpacing = 2.sp,
-                )
-            }
+                    .height(20.dp)
+            )
+
+            ButtonComponent (
+                onClick = toRegister,
+                fillColor = LightColorScheme.background,
+                textColor = LightColorScheme.primary,
+                text = "Register",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .height(30.dp)
+            )
+            GuestButton(toHome)
         }
-        
-        Spacer(
+    }
+}
+
+@Composable
+fun WelcomeTopBar (
+
+) {
+    Box (
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Image (
+            painter = painterResource(id = R.drawable.welcome_background),
+            contentDescription = "welcome_background",
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
-                .height(50.dp)
+                .fillMaxWidth()
         )
-
-        PrimaryButton(text = "Login", onClick = toLogin)
-
-        Spacer(
+        Column (
             modifier = Modifier
-                .height(25.dp)
-        )
-
-        SecondaryButton(text = "Register", onClick = toRegister)
-
-        Spacer(
-            modifier = Modifier
-                .height(25.dp)
-        )
-
-        Row (
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            TextButton(
-                onClick = toHome
-            ) {
-                Text(
-                    text = "Continue as",
-                    style = labelStyle,
-                    textAlign = TextAlign.Center,
-                    color = Color.Black
-                )
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .width(350.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .height(35.dp)
+            )
+            Text(
+                text = " Unlock the Gateway to Unforgettable Moments!",
+                style = welcomeStyle,
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                color = Color.White,
+                maxLines = 2,
+                lineHeight = 35.sp,
+                letterSpacing = 2.sp,
+            )
+        }
+    }
+}
 
-                Spacer(modifier = Modifier.padding(3.dp))
+@Composable
+fun GuestButton (
+    toHome: () -> Unit
+) {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextButton(
+            onClick = toHome
+        ) {
+            Text(
+                text = "Continue as",
+                style = labelStyle,
+                textAlign = TextAlign.Center,
+                color = LightColorScheme.onBackground
+            )
 
-                Text(
-                    text = "guest",
-                    style = labelStyle,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+            Spacer(modifier = Modifier.padding(3.dp))
+
+            Text(
+                text = "guest",
+                style = labelStyle,
+                textAlign = TextAlign.Center,
+                color = LightColorScheme.primary
+            )
         }
     }
 }

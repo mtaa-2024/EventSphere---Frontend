@@ -6,14 +6,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface ApiService {
 
     @GET("login")
     suspend fun getUser(
-        @Query("username") username: String,
-        @Query("password") password: String
+        @Query("username") username: String?,
+        @Query("password") password: String?
     ): JsonObject
 
     @GET("user")
@@ -73,10 +74,30 @@ interface ApiService {
     suspend fun insertComment(
         @Body body: JsonObject
     ): JsonObject
+
+    @GET("event/comments")
+    suspend fun getUpdatedComments(
+        @Query("id") id: Int
+    ): JsonObject
+
+    @PUT("profile/image")
+    suspend fun updateImage (
+        @Body body: JsonObject
+    ): JsonObject
+
+    @GET("username")
+    suspend fun usernameExists (
+        @Query("input") input: String
+    ): JsonObject
+
+    @GET("email")
+    suspend fun emailExists (
+        @Query("input") input: String
+    ): JsonObject
 }
 
 val retrofit = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:3000/")
+    .baseUrl("http://10.0.2.2:9000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 

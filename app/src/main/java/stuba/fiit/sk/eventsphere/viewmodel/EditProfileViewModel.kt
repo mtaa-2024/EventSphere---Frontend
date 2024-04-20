@@ -1,14 +1,18 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+
+import android.content.Context
+import android.net.Uri
+import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
-import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 
 class EditProfileViewModel() : ViewModel() {
@@ -17,10 +21,10 @@ class EditProfileViewModel() : ViewModel() {
 
     init {
         _updateProfileData.value = updateProfileClass (
-            firstname = "firstname",
-            lastname = "lastname",
-            oldEmail = "oldEmail",
-            newEmail = "newEmail",
+            firstname = "Enter your firstname",
+            lastname = "Enter your lastname",
+            oldEmail = "Enter your current email",
+            newEmail = "Enter your new email",
             oldPassword = "oldPassword",
             newPassword = "newPassword"
 
@@ -52,13 +56,13 @@ class EditProfileViewModel() : ViewModel() {
     suspend fun updateProfileInfo(id: Int, firstname: String, lastname: String, oldEmail: String, newEmail: String): Boolean {
         val editUserData = JsonObject()
         editUserData.addProperty("id", id)
-        if(firstname != "" && firstname != "firstname"){
+        if(firstname != "" && firstname != "Enter your firstname"){
             editUserData.addProperty("firstname", firstname)
         }
-        if(lastname != "" && lastname != "lastname"){
+        if(lastname != "" && lastname != "Enter your lastname"){
             editUserData.addProperty("lastname", lastname)
         }
-        if(oldEmail != "" && newEmail != "" && oldEmail != "oldEmail" && newEmail != "newEmail"){
+        if(oldEmail != "" && newEmail != "" && oldEmail != "Enter your old email" && newEmail != "Enter your new email"){
             editUserData.addProperty("oldEmail", oldEmail)
             editUserData.addProperty("newEmail", newEmail)
         }
@@ -76,15 +80,26 @@ class EditProfileViewModel() : ViewModel() {
         return false
     }
 
-    fun serializeImage(bitmap: Bitmap): ByteArray {
-        ByteArrayOutputStream().apply {
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100, this)
-            return toByteArray()
+    fun uriToByteArray(context: Context, uri: Uri?, userId: Int?) {
+        uri ?: return
+        try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val byteArray = inputStream?.buffered()?.use { it.readBytes() }
+            byteArray?.let {
+                val base64String = Base64.encodeToString(it, Base64.DEFAULT)
+                val body = JsonObject().apply {
+                    addProperty("image", base64String)
+                    addProperty("id", userId)
+                }
+                viewModelScope.launch {
+                    apiService.updateImage(body)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
-    fun deserializeImage(byteArray: ByteArray): Bitmap {
-        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-    }
+
 }
 
 class EditProfileViewModelFactory : ViewModelProvider.Factory {

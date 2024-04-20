@@ -14,7 +14,7 @@ fun CreateEventRoute (
 ) {
     val createEventViewModel: CreateEventViewModel = viewModel(factory = CreateEventViewModelFactory(mainViewModel))
     CreateEventScreen(
-        toBack = onNavigationToBack,
+        back = onNavigationToBack,
         viewModel = mainViewModel,
         createEventViewModel = createEventViewModel
     )

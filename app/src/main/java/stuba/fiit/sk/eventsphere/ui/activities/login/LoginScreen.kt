@@ -19,19 +19,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.components.InputField
-import stuba.fiit.sk.eventsphere.ui.components.InputPasswordField
-import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
+import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
+import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
+@Preview(showBackground = true)
+@Composable
+fun Preview () {
+    LoginScreen(toHome = {}, back = {}, viewModel = MainViewModel(), loginViewModel = LoginViewModel())
+}
 @Composable
 fun LoginScreen (
     toHome: () -> Unit,
@@ -39,70 +45,53 @@ fun LoginScreen (
     viewModel: MainViewModel,
     loginViewModel: LoginViewModel
 ) {
-
     Column (
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.top_bar),
-                contentDescription = "welcome_background",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .matchParentSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        TopBar (back = back)
 
-                Button (
-                    onClick = back,
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                ) {
-                    Image (
-                        painter = painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "Back"
-                    )
-                }
-            }
-        }
         Column (
             modifier = Modifier
-                .padding(25.dp),
+                .padding(25.dp)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
+            Text (
                 text = "Welcome back",
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
-            Spacer(
+
+            Spacer (
                 modifier = Modifier
-                    .height(30.dp)
+                    .height(60.dp)
             )
-            InputField (
+
+            InputFieldComponent (
                 label = "Username or email",
-                value = loginViewModel.loginData.value?.user.toString(),
-                onChange = loginViewModel::updateUser
+                text = loginViewModel.login.value?.user.toString(),
+                onUpdate = loginViewModel::updateUser,
+                keyboardType = KeyboardType.Text,
+                onCheck = null,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             Spacer(
                 modifier = Modifier
-                    .height(25.dp)
+                    .height(40.dp)
             )
 
-            InputPasswordField (
+            InputFieldComponent (
                 label = "Password",
-                value = loginViewModel.loginData.value?.password.toString(),
-                onChange = loginViewModel::updatePassword
+                text = loginViewModel.login.value?.password.toString(),
+                onUpdate = loginViewModel::updatePassword,
+                keyboardType = KeyboardType.Password,
+                onCheck = null,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             Spacer (
@@ -110,27 +99,62 @@ fun LoginScreen (
                     .weight(1f)
             )
 
-            PrimaryButton(text = "Login", onClick = {
-                viewModel.viewModelScope.launch {
-                    if (viewModel.authenticateUser(loginViewModel.loginData.value?.user.toString(), loginViewModel.loginData.value?.password.toString())) {
-                        toHome()
+            ButtonComponent (
+                text = "Login",
+                fillColor = LightColorScheme.primary,
+                textColor = LightColorScheme.background,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp),
+                onClick = {
+                    viewModel.viewModelScope.launch {
+                        if (viewModel.authenticateUser(loginViewModel.login.value)) {
+                            toHome()
+                        }
                     }
                 }
-            })
+            )
 
-            Spacer(
+            Spacer (
                 modifier = Modifier
-                    .height(25.dp)
+                    .height(50.dp)
             )
+        }
+    }
+}
 
-            Text(
-                text = "",
-                style = welcomeStyle,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+@Composable
+fun TopBar (
+    back: () -> Unit
+) {
+    Box (
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.top_bar),
+            contentDescription = "welcome_background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Row (
+            modifier = Modifier
+                .padding(10.dp)
+                .matchParentSize(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
+            Button (
+                onClick = back,
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+            ) {
+                Image (
+                    painter = painterResource(id = R.drawable.back_arrow),
+                    contentDescription = "Back"
+                )
+            }
         }
     }
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import stuba.fiit.sk.eventsphere.model.LoginClass
 
 class SearchUserViewModel() : ViewModel() {}
 

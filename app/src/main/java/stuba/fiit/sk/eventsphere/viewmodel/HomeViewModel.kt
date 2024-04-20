@@ -8,16 +8,21 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.BannerStruct
-import stuba.fiit.sk.eventsphere.model.Category
+import stuba.fiit.sk.eventsphere.model.CategorySelectStates
 import stuba.fiit.sk.eventsphere.model.EventSelectStates
 import stuba.fiit.sk.eventsphere.model.Events
 
-class HomeViewModel() : ViewModel() {
-    private val _categories = MutableLiveData<Category>()
-    val categories: LiveData<Category> = _categories
+class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
+    private val viewModel = viewModel
+
+    private val _categories = MutableLiveData<CategorySelectStates>()
+    val categories: LiveData<CategorySelectStates>
+        get() = _categories
 
     private val _eventSelectedStates = MutableLiveData<EventSelectStates>()
-    val eventSelectStates: LiveData<EventSelectStates> = _eventSelectedStates
+    val eventSelectStates: LiveData<EventSelectStates>
+        get() = _eventSelectedStates
+
 
     private val _events = MutableLiveData<Events>()
     val events: LiveData<Events>
@@ -34,7 +39,7 @@ class HomeViewModel() : ViewModel() {
             invited = false
         )
 
-        _categories.value = Category(
+        _categories.value = CategorySelectStates (
             education = false,
             music = false,
             art = false,
@@ -81,7 +86,9 @@ class HomeViewModel() : ViewModel() {
         }
     }
 
-    private suspend fun getAttending(viewModel: MainViewModel) {
+    private suspend fun getAttending() {
+        if ((viewModel.loggedUser.value?.id ?: 0) == 0)
+            return
         try {
             val fetchedJson = apiService.getAttending(viewModel.loggedUser.value?.id)
             if (fetchedJson.get("result").asBoolean) {
@@ -119,7 +126,7 @@ class HomeViewModel() : ViewModel() {
         }
     }
 
-    private suspend fun getInvited(viewModel: MainViewModel) {
+    private suspend fun getInvited() {
         try {
             val fetchedJson = apiService.getUpcoming()
             println(fetchedJson)
@@ -160,32 +167,32 @@ class HomeViewModel() : ViewModel() {
 
 
     fun onUpcomingSelect() {
-        viewModelScope.launch{
-            getUpcoming()
-        }
+        println("upcom")
         _eventSelectedStates.value?.upcoming = true
         _eventSelectedStates.value?.attending = false
         _eventSelectedStates.value?.invited = false
-    }
-    fun onAttendingSelect(viewModel: MainViewModel) {
         viewModelScope.launch{
-            getAttending(viewModel)
+            getUpcoming()
         }
+    }
+    fun onAttendingSelect() {
         _eventSelectedStates.value?.upcoming = false
         _eventSelectedStates.value?.attending = true
         _eventSelectedStates.value?.invited = false
-    }
-    fun onInvitedSelect(viewModel: MainViewModel) {
         viewModelScope.launch{
-            getInvited(viewModel)
+            getAttending()
         }
+    }
+    fun onInvitedSelect() {
         _eventSelectedStates.value?.upcoming = false
         _eventSelectedStates.value?.attending = false
         _eventSelectedStates.value?.invited = true
+        viewModelScope.launch{
+            getInvited()
+        }
     }
 
     fun onClickEducation(value: Boolean) {
-        println(value)
         _categories.value?.education = value
     }
 
@@ -206,11 +213,11 @@ class HomeViewModel() : ViewModel() {
     }
 }
 
-class HomeViewModelFactory : ViewModelProvider.Factory {
+class HomeViewModelFactory(private val viewModel: MainViewModel) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            return HomeViewModel() as T
+            return HomeViewModel(viewModel) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

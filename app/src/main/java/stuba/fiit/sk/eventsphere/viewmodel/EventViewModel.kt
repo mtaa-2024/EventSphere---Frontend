@@ -1,5 +1,9 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,21 +12,18 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.CommentsView
-import stuba.fiit.sk.eventsphere.model.EventView
-import stuba.fiit.sk.eventsphere.model.PerformersView
+import stuba.fiit.sk.eventsphere.model.CommentStruct
+import stuba.fiit.sk.eventsphere.model.EventOutput
+import stuba.fiit.sk.eventsphere.model.FriendPerformer
+import stuba.fiit.sk.eventsphere.model.LocationData
+import stuba.fiit.sk.eventsphere.model.User
 
 class EventViewModel(id: Int) : ViewModel() {
     private val eventId = id
 
-    private val _event = MutableLiveData<EventView>()
-    val event: LiveData<EventView> = _event
+    private val _event = MutableLiveData<EventOutput>()
+    val event: LiveData<EventOutput> = _event
 
-    private val _performers = MutableLiveData<EventView>()
-    val performers: LiveData<EventView> = _performers
-
-    private val _comment = MutableLiveData<String>()
-    val comment: LiveData<String> = _comment
 
     init {
         viewModelScope.launch{
@@ -33,87 +34,119 @@ class EventViewModel(id: Int) : ViewModel() {
     suspend fun getEventData(id: Int) {
         try {
             val fetchedJson = apiService.getEvent(id)
-            val performersList = mutableListOf<PerformersView>()
-            val commentsList = mutableListOf<CommentsView>()
 
+            val performersList = mutableListOf<FriendPerformer>()
+            val commentsList = mutableListOf<CommentStruct>()
+
+            println(fetchedJson.get("performers"))
             if (!fetchedJson.get("performers").isJsonNull) {
                 val performersArray = fetchedJson.getAsJsonArray("performers").asJsonArray
-                performersArray.forEach { performerElement ->
-                    val performerObject = performerElement.asJsonObject
-                    val performerView = PerformersView (
-                        id = if (performerObject.get("id").isJsonNull) null else performerObject.get("id").asInt,
-                        firstname = if (performerObject.get("firstname").isJsonNull) null else performerObject.get("firstname").asString,
-                        lastname = if (performerObject.get("lastname").isJsonNull) null else performerObject.get("lastname").asString,
-                        profile_picture = if (performerObject.get("profile_image").isJsonNull) null else performerObject.get("profile_image").asString,
-                    )
-                    performersList.add(performerView)
+                if (!performersArray.isEmpty) {
+                    performersArray.forEach { performerElement ->
+                        val performerObject = performerElement.asJsonObject
+                        val performerView = FriendPerformer(
+                            id = if (performerObject.get("id").isJsonNull) null else performerObject.get("id")?.asInt,
+                            firstname = if (performerObject.get("firstname").isJsonNull) null else performerObject.get("firstname")?.asString ?: "",
+                            lastname = if (performerObject.get("lastname").isJsonNull) null else performerObject.get("lastname")?.asString ?: "",
+                            profile_picture = null,
+                        )
+                        performersList.add(performerView)
+                    }
                 }
             }
-
+            println(fetchedJson.get("comments"))
             if (!fetchedJson.get("comments").isJsonNull) {
                 val commentsArray = fetchedJson.getAsJsonArray("comments").asJsonArray
-                commentsArray.forEach { commentElement ->
-                    val commentObject = commentElement.asJsonObject
-                    val commentView = CommentsView (
-                        id = if (commentObject.get("id").isJsonNull) null else commentObject.get("id").asInt,
-                        firstname = if (commentObject.get("firstname").isJsonNull) null else commentObject.get("firstname").asString,
-                        lastname = if (commentObject.get("lastname").isJsonNull) null else commentObject.get("lastname").asString,
-                        profile_picture = if (commentObject.get("profile_image").isJsonNull) null else commentObject.get("profile_image").asString,
-                        text = if (commentObject.get("text").isJsonNull) null else commentObject.get("text").asString,
-                    )
-                    commentsList.add(commentView)
+                if (!commentsArray.isEmpty) {
+                    commentsArray.forEach { commentElement ->
+                        val commentObject = commentElement.asJsonObject
+                        val commentView = CommentStruct(
+                            id = commentObject.get("id").asInt,
+                            firstname = if (commentObject.get("firstname").isJsonNull) null else commentObject.get("firstname").asString ?: "",
+                            lastname = if (commentObject.get("lastname").isJsonNull) null else commentObject.get("lastname").asString ?: "",
+                            profile_image = null,
+                            text = commentObject.get("text").asString ?: "",
+                        )
+                        commentsList.add(commentView)
+                    }
                 }
             }
 
             val eventObject = fetchedJson.getAsJsonArray("event").get(0).asJsonObject
-            val event = EventView(
-                title = eventObject.get("title")?.asString,
-                description = eventObject.get("description")?.asString,
-                location = eventObject.get("location")?.asString,
-                estimated_end = eventObject.get("estimated_end")?.asString,
-                owner_firstname = eventObject.get("firstname")?.asString,
-                owner_lastname = eventObject.get("lastname")?.asString,
-                owner_picture = eventObject.get("profile_picture")?.asString,
+
+            val location = LocationData (
+                address = eventObject.get("location").asString ?: "",
+                latitude = eventObject.get("latitude").asDouble,
+                longitude = eventObject.get("longitude").asDouble
+            )
+
+            val event = EventOutput (
+                event_id = eventObject.get("id").asInt,
+                title = eventObject.get("title").asString ?: "",
+                description = eventObject.get("description").asString ?: "",
+                location = location,
+                estimated_end = eventObject.get("estimated_end").asString ?: "",
+                owner_id = eventObject.get("owner_id").asInt,
+                owner_firstname = eventObject.get("firstname").asString ?: "",
+                owner_lastname = eventObject.get("lastname").asString ?: "",
+                owner_profile_image = null,
                 performers = performersList,
                 comments = commentsList
             )
             _event.value = event
+            println(event)
         } catch (e: Exception) {
             println("Error: $e")
         }
     }
 
-    fun existsComment(id: Int?): CommentsView? {
-        event.value?.comments?.forEach{ comment ->
-            if (comment.id == id) {
-                return comment
-            }
-        }
-        return null
-    }
 
-    fun updateComment(input: String) {
-        _comment.value = input
-    }
-
-    suspend fun publishComment(id: Int?) {
+    suspend fun insertCommentNew (comment: String, loggedUser: LiveData<User>) {
         try {
-            val body = JsonObject()
-            body.addProperty("id", id)
-            body.addProperty("event_id", eventId)
-            body.addProperty("commentValue", _comment.value)
+            val jsonBody = JsonObject()
+            jsonBody.addProperty("id", loggedUser.value?.id)
+            jsonBody.addProperty("event_id", eventId)
+            jsonBody.addProperty("commentValue", comment)
 
-            val fetchedJson = apiService.insertComment(body)
-            if (fetchedJson.get("result").asBoolean) {
-                viewModelScope.launch {
-                    getEventData(eventId)
+            val commentState = apiService.insertComment(jsonBody)
+
+            if (commentState.get("result").asBoolean) {
+                val fetchedJson = apiService.getUpdatedComments(eventId)
+                val commentsList = mutableListOf<CommentStruct>()
+                if (!fetchedJson.get("comments").isJsonNull) {
+                    val commentsArray = fetchedJson.getAsJsonArray("comments").asJsonArray
+                    if (!commentsArray.isEmpty) {
+                        commentsArray.forEach { commentElement ->
+                            val commentObject = commentElement.asJsonObject
+
+                            var bitmap: ImageBitmap? = null
+
+                            val imageArray = if (commentObject.get("profile_image").isJsonNull) null else commentObject.getAsJsonObject("profile_image").getAsJsonArray("data")
+                            if (imageArray != null) {
+                                val image = jsonArrayToByteArray(imageArray).decodeToString()
+                                val decodedByteArray = Base64.decode(image, Base64.DEFAULT)
+                                val imageBitMap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
+                                bitmap= imageBitMap.asImageBitmap()
+                            }
+
+                            val commentView = CommentStruct (
+                                id = commentObject.get("id").asInt,
+                                firstname = if (commentObject.get("firstname").isJsonNull) null else commentObject.get("firstname").asString ?: "",
+                                lastname = if (commentObject.get("lastname").isJsonNull) null else commentObject.get("lastname").asString ?: "",
+                                profile_image = bitmap,
+                                text = commentObject.get("text").asString ?: "",
+                            )
+                            commentsList.add(commentView)
+                        }
+                    }
                 }
+                _event.value = _event.value?.copy(comments = commentsList)
             }
+
         } catch (e: Exception) {
             println("Error: $e")
         }
     }
-
 
 }
 

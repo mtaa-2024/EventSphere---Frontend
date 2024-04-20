@@ -19,7 +19,7 @@ fun EventCenterRoute (
     EventCenterScreen(
         viewModel = mainViewModel,
         eventCenterViewModel = eventCenterViewModel,
-        toBack = onNavigationBack,
+        back = onNavigationBack,
         toEvent = onNavigationToEvent,
         toCreateEvent = onNavigationToCreateEvent
     )

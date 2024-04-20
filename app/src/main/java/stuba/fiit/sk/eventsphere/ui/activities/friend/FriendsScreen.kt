@@ -1,4 +1,4 @@
-package stuba.fiit.sk.eventsphere.ui.activities.friends
+package stuba.fiit.sk.eventsphere.ui.activities.friend
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
+import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.FriendsViewModel
@@ -86,7 +86,10 @@ fun FriendsScreen (
                     modifier = Modifier
                         .height(30.dp)
                 )
-                Text(text = "profile_img")
+
+                ProfileImageComponent (
+                    image = friendsViewModel.friend.value?.profile_image
+                )
 
                 Spacer(
                     modifier = Modifier

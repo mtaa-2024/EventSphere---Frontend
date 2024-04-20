@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import stuba.fiit.sk.eventsphere.model.FriendsView
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.CREATEEVENT_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EDITPROFILE_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENTCENTER_ROUTE
@@ -140,11 +139,11 @@ fun EventSphereNavHost(
 
         composable(PROFILE_ROUTE) {
             ProfileRoute(
-                onNavigationToHome = {
-                    navController.navigate(HOME_ROUTE)
+                onNavigationToLogout = {
+                    navController.navigate(WELCOME_ROUTE)
                 },
                 onNavigationToBack = {
-                    navController.navigate(WELCOME_ROUTE)
+                    navController.navigate(HOME_ROUTE)
                 },
                 onNavigationToEventCenter = {
                     navController.navigate(EVENTCENTER_ROUTE)

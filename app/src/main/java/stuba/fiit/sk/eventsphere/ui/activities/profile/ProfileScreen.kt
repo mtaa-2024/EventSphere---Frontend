@@ -1,6 +1,10 @@
 package stuba.fiit.sk.eventsphere.ui.activities.profile
 
+
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -8,340 +12,363 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.model.FriendsView
-import stuba.fiit.sk.eventsphere.ui.components.PrimaryButton
-import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
+import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
+import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
+import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
+import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
-import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModel
 
+@Preview(showBackground = true)
+@Composable
+fun Preview () {
+    ProfileScreen(toLogout = {}, back = {}, toEditProfile = {}, toEventCenter = {}, toFriend = {}, toSearchUser = {}, viewModel = MainViewModel(), profileViewModel = ProfileViewModel(1))
+}
+
+
 @Composable
 fun ProfileScreen (
-    home: () -> Unit,
-    toWelcomeScreen: () -> Unit,
+    toLogout: () -> Unit,
+    back: () -> Unit,
     toEventCenter: () -> Unit,
     toEditProfile: () -> Unit,
-    toFriends: (id:Int?) -> Unit,
+    toFriend: (id:Int?) -> Unit,
     toSearchUser: ()-> Unit,
     viewModel: MainViewModel,
     profileViewModel: ProfileViewModel
 ) {
+
     Column (
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.top_bar),
-                contentDescription = "welcome_background",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .matchParentSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        ProfileTopBar (
+            back = back,
+            toEditProfile = toEditProfile
+        )
 
-                Button(
-                    onClick = home,
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "Back"
-                    )
-                }
-                TextButton(
-                    onClick = toEditProfile
-                ) {
-                    Text(
-                        text = "Edit Profile",
-                        style = labelStyle,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-        }
-
-        val profileScroll = rememberScrollState()
+        val scrollState = rememberScrollState()
 
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(profileScroll),
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer (
+                modifier = Modifier
+                    .height(10.dp)
+            )
+
+            ProfileImageComponent (
+                image = viewModel.loggedUser.value?.profile_image
+            )
 
             Spacer(
                 modifier = Modifier
-                    .height(30.dp)
+                    .height(10.dp)
             )
-            Text(text = "profile_img")
 
-            Spacer(
-                modifier = Modifier
-                    .height(15.dp)
-            )
             val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
             val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
 
             Text(
                 text = "$firstName $lastName",
                 style = welcomeStyle,
+                color = LightColorScheme.onBackground,
                 fontSize = 20.sp,
             )
 
-            Spacer(
+            Spacer (
                 modifier = Modifier
                     .height(20.dp)
             )
 
-            Row(
+            Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    .padding(15.dp)
+                ,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
-                Text(
+                Text (
                     text = "Friends",
                     style = welcomeStyle,
                     fontSize = 20.sp
                 )
 
-                TextButton(
-                    onClick = toSearchUser
-                ) {
-                    Text(
-                        text = "Search user",
-                        style = buttonStyle,
-                        fontSize = 20.sp
-                    )
+                SmallButtonComponent (
+                    text = "Search friend",
+                    isSelected = true,
+                    onClick = { toSearchUser() }
+                )
+            }
+
+            val friendScrollState = rememberScrollState()
+
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .horizontalScroll(friendScrollState),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                profileViewModel.friends.value?.listFriends?.forEach { friend ->
+                    if (friend.firstname != null && friend.lastname != null) {
+                        FriendBox(
+                            firstname = friend.firstname!!,
+                            lastname = friend.lastname!!,
+                            onClick = toFriend,
+                            id = friend.id!!,
+                            image = friend.profile_picture
+                        )
+                    }
                 }
             }
-            val friendsState = rememberScrollState()
-            Column(
+
+            Spacer (
                 modifier = Modifier
-                    .fillMaxHeight(),
+                    .height(20.dp)
+            )
+
+            Column (
+                modifier = Modifier
+                    .padding(25.dp, 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
+
+                ButtonComponent (
+                    onClick = { toEventCenter() },
+                    fillColor = LightColorScheme.primary,
+                    textColor = LightColorScheme.background,
+                    text = "Event center",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp)
-                        .padding(10.dp)
-                        .horizontalScroll(friendsState),
-                    horizontalArrangement = Arrangement.Start
+                        .height(50.dp)
+                )
+
+                //Settings
+                Spacer (
+                    modifier = Modifier
+                        .height(30.dp)
+                )
+
+                Box (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(LightColorScheme.background)
+                        .border(
+                            BorderStroke(1.dp, LightColorScheme.primary),
+                            shape = RoundedCornerShape(15.dp)
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    profileViewModel.friends.value?.listFriends?.forEach { friend ->
-                        Column(
+                    Column (
+                        modifier = Modifier
+                            .padding(15.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text (
+                            text = "Settings",
+                            style = labelStyle,
+                            fontSize = 24.sp
+                        )
+
+                        Spacer (
                             modifier = Modifier
-                                .fillMaxHeight(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .height(10.dp)
+                        )
+
+
+                        Row (
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround
                         ) {
-                            Box(
-                                modifier = Modifier.clickable{
-                                    toFriends(friend.id)
-                                }
-                            )
-                            {
-                                Column(
+
+                            Column(
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Notifications",
+                                    style = labelStyle,
+                                    fontSize = 18.sp
+                                )
+                                Spacer (
                                     modifier = Modifier
-                                        .fillMaxHeight(),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.baseline_circle_24),
-                                        contentDescription = ""
-                                    )
-                                    Text(
-                                        text = friend.firstname.toString() + " " + friend.lastname.toString(),
-                                        style = smallButton,
-                                        fontSize = 15.sp,
-                                        color = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
+                                        .height(10.dp)
+                                )
+                                Text(
+                                    text = "Dark mode",
+                                    style = labelStyle,
+                                    fontSize = 18.sp
+                                )
+                                Spacer (
+                                    modifier = Modifier
+                                        .height(10.dp)
+                                )
+                                Text(
+                                    text = "Language",
+                                    style = labelStyle,
+                                    fontSize = 18.sp,
+                                )
+
+                            }
+
+                            Column(
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Set",
+                                    style = labelStyle,
+                                    fontSize = 18.sp
+                                )
+                                Spacer (
+                                    modifier = Modifier
+                                        .height(10.dp)
+                                )
+                                Text(
+                                    text = "Set",
+                                    style = labelStyle,
+                                    fontSize = 18.sp
+                                )
+                                Spacer (
+                                    modifier = Modifier
+                                        .height(10.dp)
+                                )
+                                Text(
+                                    text = "Set",
+                                    style = labelStyle,
+                                    fontSize = 18.sp
+                                )
+
                             }
                         }
                     }
                 }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        PrimaryButton(text = "Event Center", onClick = toEventCenter)
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        Spacer(
-                            modifier = Modifier
-                                .width(30.dp)
-                        )
-
-                        Text(
-                            text = "Settings",
-                            style = welcomeStyle,
-                            fontSize = 20.sp
-                        )
-
-                        Spacer(
-                            modifier = Modifier
-                                .width(5.dp)
-                        )
-
-                        Image(
-                            painter = painterResource(id = R.drawable.setting_icon),
-                            contentDescription = "Settings",
-                            contentScale = ContentScale.FillBounds,
-                        )
-                    }
-
-                    Spacer(
-                        modifier = Modifier
-                            .height(20.dp)
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            Text(
-                                text = "Notifications",
-                                style = welcomeStyle,
-                                fontSize = 20.sp
-                            )
-
-                            Text(
-                                text = "Notifications",
-                                style = welcomeStyle,
-                                fontSize = 20.sp
-                            )
-                        }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            Text(
-                                text = "Color mode",
-                                style = welcomeStyle,
-                                fontSize = 20.sp
-                            )
-
-                            Text(
-                                text = "Color mode",
-                                style = welcomeStyle,
-                                fontSize = 20.sp
-                            )
-                        }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            Text(
-                                text = "Language",
-                                style = welcomeStyle,
-                                fontSize = 20.sp
-                            )
-
-                            Text(
-                                text = "Language",
-                                style = welcomeStyle,
-                                fontSize = 20.sp
-                            )
-                        }
-                    }
-                }
-
-                Spacer(
-                    modifier = Modifier
-                        .height(20.dp)
-                )
-
-                TextButton(
-                    onClick = toWelcomeScreen
-                ) {
-                    Text(
-                        text = "Logout",
-                        style = labelStyle,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
+            Spacer (
+                modifier = Modifier
+                    .weight(1f)
+            )
+
+            SmallButtonComponent (
+                text = "Logout",
+                isSelected = false,
+                onClick = toLogout,
+            )
+
+            Spacer (
+                modifier = Modifier
+                    .height(50.dp)
+            )
         }
+    }
+}
+
+@Composable
+fun ProfileTopBar (
+    back: () -> Unit,
+    toEditProfile: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.top_bar),
+            contentDescription = "welcome_background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Row (
+            modifier = Modifier
+                .padding(10.dp)
+                .matchParentSize(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button (
+                onClick = back,
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.back_arrow),
+                    contentDescription = "Back"
+                )
+            }
+            SmallButtonComponent (
+                text = "Edit profile",
+                isSelected = false,
+                onClick = { toEditProfile() }
+            )
+        }
+    }
+}
+
+@Composable
+fun FriendBox (
+    firstname: String,
+    lastname: String,
+    image: ImageBitmap?,
+    onClick: (id: Int) -> Unit,
+    id: Int
+) {
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box (
+            modifier = Modifier
+                .clickable(
+                    onClick = { onClick(id) }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            FriendImageComponent (
+                image = image,
+            )
+        }
+        Text(
+            text = "$firstname $lastname",
+            style = labelStyle,
+            color = LightColorScheme.onBackground,
+            fontSize = 13.sp,
+        )
     }
 }
