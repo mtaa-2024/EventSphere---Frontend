@@ -104,6 +104,8 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
                 _categories.value?.art ?: false,
                 _categories.value?.sport ?: false
             )
+
+
             val eventList = mutableListOf<BannerStruct>()
             if (fetchedJson.get("result").asBoolean) {
                 val eventArray = fetchedJson.getAsJsonArray("events").asJsonArray

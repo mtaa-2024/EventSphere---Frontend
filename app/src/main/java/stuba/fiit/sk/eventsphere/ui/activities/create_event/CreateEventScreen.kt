@@ -1,7 +1,10 @@
 package stuba.fiit.sk.eventsphere.ui.activities.create_event
 
+import android.app.TimePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -20,25 +23,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -59,7 +58,6 @@ import stuba.fiit.sk.eventsphere.ui.activities.profile.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
-import stuba.fiit.sk.eventsphere.ui.components.DateTimePicker
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
@@ -267,14 +265,18 @@ fun PerformersRow(
                     ) {
                         createEventViewModel.friendsList.forEach { friend ->
                             FriendBox(
-                                firstname = friend.firstname ?: "",
-                                lastname = friend.lastname ?: "",
+                                firstname = friend.firstname ?: "Firstname",
+                                lastname = friend.lastname ?: "Lastname",
                                 onClick = {
                                     createEventViewModel.addPerformer(friend)
                                     addPerformer = false
                                 },
                                 id = friend.id!!,
                                 image = friend.profile_picture
+                            )
+                            Spacer (
+                                modifier = Modifier
+                                    .width(20.dp)
                             )
 
                         }
@@ -332,41 +334,13 @@ fun EventDetailInput (
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
 
-            CategoryBox(
-                icon = R.drawable.book_icon,
-                initializeState = createEventViewModel.categorySelectStates.value?.education ?: false,
-                onClick = {
-                    createEventViewModel.onEducationSelect(it)
+            SelectBoxesView (
+                onUpdate = {
+                    createEventViewModel.onUpdateCategory(it)
                 }
+
             )
-            CategoryBox(
-                icon = R.drawable.music_icon,
-                initializeState = createEventViewModel.categorySelectStates.value?.music ?: false,
-                onClick = {
-                    createEventViewModel.onMusicSelect(it)
-                }
-            )
-            CategoryBox(
-                icon = R.drawable.burger_icon,
-                initializeState = createEventViewModel.categorySelectStates.value?.food ?: false,
-                onClick = {
-                    createEventViewModel.onFoodSelect(it)
-                }
-            )
-            CategoryBox(
-                icon = R.drawable.brush_icon,
-                initializeState = createEventViewModel.categorySelectStates.value?.art ?: false,
-                onClick = {
-                    createEventViewModel.onArtSelect(it)
-                }
-            )
-            CategoryBox(
-                icon = R.drawable.dribbble_icon,
-                initializeState = createEventViewModel.categorySelectStates.value?.sport ?: false,
-                onClick = {
-                    createEventViewModel.onSportSelect(it)
-                }
-            )
+
         }
 
         Spacer(
@@ -390,26 +364,47 @@ fun EventDetailInput (
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 var estimatedEnd by remember { mutableStateOf(createEventViewModel.event.value?.estimated_end) }
+                val context = LocalContext.current
 
-                DateTimePicker(
-                    onSelect = { input ->
-                        createEventViewModel.updateEstimatedEnd(input)
-                        estimatedEnd = input
+
+                val datePicker = android.app.DatePickerDialog(
+                    context,
+                    { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
+                        estimatedEnd?.let {
+                            it.day = selectedDayOfMonth
+                            it.month = selectedMonth
+                            it.year = selectedYear
+                        }
                     },
-                    initializedDateTime = estimatedEnd ?: DateInput(
-                        day = 0,
-                        month = 0,
-                        year = 0,
-                        hour = 0,
-                        minutes = 0
-                    )
+                    createEventViewModel.event.value?.estimated_end?.year ?: 0, createEventViewModel.event.value?.estimated_end?.month ?: 0, createEventViewModel.event.value?.estimated_end?.day ?: 0
                 )
 
-                Text (
-                    text = "${estimatedEnd?.day}.${estimatedEnd?.month}.${estimatedEnd?.year} ${estimatedEnd?.hour}:${estimatedEnd?.minutes}",
-                    style = paragraph,
-                    fontSize = 13.sp
+                val timePicker = TimePickerDialog(
+                    context,
+                    { _, selectedHour: Int, selectedMinute: Int ->
+                        estimatedEnd?.let {
+                            it.hour = selectedHour
+                            it.minutes = selectedMinute
+                        }
+                    },
+                    createEventViewModel.event.value?.estimated_end?.hour ?: 0, createEventViewModel.event.value?.estimated_end?.minutes ?: 0, false
                 )
+
+                Box(
+                    modifier = Modifier
+                        .clickable(
+                            onClick = {
+                                timePicker.show()
+                                datePicker.show()
+                            }
+                        )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon),
+                        contentDescription = "datepicker"
+                    )
+                }
+
             }
             Column (
                 modifier = Modifier
@@ -425,11 +420,205 @@ fun EventDetailInput (
                 Text (
                     text = createEventViewModel.event.value?.location?.address ?: "Address",
                     style = paragraph,
-                    fontSize = 13.sp
+                    fontSize = 14.sp
                 )
             }
         }
     }
+}
+
+@Composable
+fun SelectBoxesView(
+    onUpdate: (id: Int) -> Unit
+) {
+    var isSelectedEducation by remember { mutableStateOf(false) }
+    var isSelectedMusic by remember { mutableStateOf(false) }
+    var isSelectedFood by remember { mutableStateOf(false) }
+    var isSelectedArt by remember { mutableStateOf(false) }
+    var isSelectedSport by remember { mutableStateOf(false) }
+
+    Box (
+        modifier = Modifier
+            .width(48.dp)
+            .height(48.dp)
+            .clip(
+                RoundedCornerShape(15.dp)
+            )
+            .border(
+                3.dp,
+                if (isSelectedEducation) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                RoundedCornerShape(15.dp)
+            )
+            .background(LightColorScheme.background)
+            .padding(2.dp)
+            .clickable(
+                onClick = {
+                    isSelectedEducation = !isSelectedEducation
+                    isSelectedMusic = false
+                    isSelectedFood = false
+                    isSelectedArt = false
+                    isSelectedSport = false
+                    onUpdate(1)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.book_icon
+            ),
+            contentDescription = "icon",
+            contentScale = ContentScale.Inside,
+            colorFilter = ColorFilter.tint(if (isSelectedEducation) LightColorScheme.primary else LightColorScheme.primaryContainer)
+        )
+    }
+
+    Box (
+        modifier = Modifier
+            .width(48.dp)
+            .height(48.dp)
+            .clip(
+                RoundedCornerShape(15.dp)
+            )
+            .border(
+                3.dp,
+                if (isSelectedMusic) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                RoundedCornerShape(15.dp)
+            )
+            .background(LightColorScheme.background)
+            .padding(2.dp)
+            .clickable(
+                onClick = {
+                    isSelectedMusic = !isSelectedMusic
+                    isSelectedEducation = false
+                    isSelectedFood = false
+                    isSelectedArt = false
+                    isSelectedSport = false
+                    onUpdate(2)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.music_icon
+            ),
+            contentDescription = "icon",
+            contentScale = ContentScale.Inside,
+            colorFilter = ColorFilter.tint(if (isSelectedMusic) LightColorScheme.primary else LightColorScheme.primaryContainer)
+        )
+    }
+
+
+    Box (
+        modifier = Modifier
+            .width(48.dp)
+            .height(48.dp)
+            .clip(
+                RoundedCornerShape(15.dp)
+            )
+            .border(
+                3.dp,
+                if (isSelectedFood) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                RoundedCornerShape(15.dp)
+            )
+            .background(LightColorScheme.background)
+            .padding(2.dp)
+            .clickable(
+                onClick = {
+                    isSelectedFood = !isSelectedFood
+                    isSelectedEducation = false
+                    isSelectedMusic = false
+                    isSelectedArt = false
+                    isSelectedSport = false
+                    onUpdate(3)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.burger_icon
+            ),
+            contentDescription = "icon",
+            contentScale = ContentScale.Inside,
+            colorFilter = ColorFilter.tint(if (isSelectedFood) LightColorScheme.primary else LightColorScheme.primaryContainer)
+        )
+    }
+
+    Box (
+        modifier = Modifier
+            .width(48.dp)
+            .height(48.dp)
+            .clip(
+                RoundedCornerShape(15.dp)
+            )
+            .border(
+                3.dp,
+                if (isSelectedArt) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                RoundedCornerShape(15.dp)
+            )
+            .background(LightColorScheme.background)
+            .padding(2.dp)
+            .clickable(
+                onClick = {
+                    isSelectedArt = !isSelectedArt
+                    isSelectedEducation = false
+                    isSelectedFood = false
+                    isSelectedMusic = false
+                    isSelectedSport = false
+                    onUpdate(4)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.brush_icon
+            ),
+            contentDescription = "icon",
+            contentScale = ContentScale.Inside,
+            colorFilter = ColorFilter.tint(if (isSelectedArt) LightColorScheme.primary else LightColorScheme.primaryContainer)
+        )
+    }
+
+
+    Box (
+        modifier = Modifier
+            .width(48.dp)
+            .height(48.dp)
+            .clip(
+                RoundedCornerShape(15.dp)
+            )
+            .border(
+                3.dp,
+                if (isSelectedSport) LightColorScheme.primary else LightColorScheme.primaryContainer,
+                RoundedCornerShape(15.dp)
+            )
+            .background(LightColorScheme.background)
+            .padding(2.dp)
+            .clickable(
+                onClick = {
+                    isSelectedSport = !isSelectedSport
+                    isSelectedEducation = false
+                    isSelectedMusic = false
+                    isSelectedArt = false
+                    isSelectedArt = false
+                    onUpdate(5)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.dribbble_icon
+            ),
+            contentDescription = "icon",
+            contentScale = ContentScale.Inside,
+            colorFilter = ColorFilter.tint(if (isSelectedSport) LightColorScheme.primary else LightColorScheme.primaryContainer)
+        )
+    }
+
 }
 
 @Composable
@@ -468,12 +657,15 @@ fun CreateEventTopBar (
 
 
             val openSaveDialog = remember { mutableStateOf(false) }
-            val openErrorDialog = remember { mutableStateOf(false) }
+            var openErrorDialog = remember { mutableStateOf(false) }
+            var errorMessage = remember { mutableStateOf("") }
 
             SmallButtonComponent(
                 onClick = {
                     createEventViewModel.viewModelScope.launch {
-                        openErrorDialog.value = createEventViewModel.createEvent()
+                        val (result, message) = createEventViewModel.createEvent()
+                        openErrorDialog.value = !result
+                        errorMessage.value = message
                     }
                     if (!openErrorDialog.value) openSaveDialog.value = true
                 },
@@ -499,7 +691,7 @@ fun CreateEventTopBar (
                         openErrorDialog.value = false
                     },
                     dialogTitle = "Error creating event",
-                    dialogText = "Something unexpected happened during creating your event",
+                    dialogText = errorMessage.value,
                     onDismissText = "",
                     onConfirmText = "Close"
                 )

@@ -413,6 +413,8 @@ fun InputFieldComponent (
     }
 }
 
+
+
 @Composable
 fun CategoryBox (
     icon: Int,
@@ -686,60 +688,6 @@ fun CommentBanner (
                 }
             }
         }
-    }
-}
-
-@Composable
-fun DateTimePicker(
-    onSelect: (input: DateInput) -> Unit,
-    initializedDateTime: DateInput?
-) {
-    val context = LocalContext.current
-    var compare = initializedDateTime?.copy()
-
-    val datePicker = android.app.DatePickerDialog(
-        context,
-        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            initializedDateTime?.let {
-                it.day = selectedDayOfMonth
-                it.month = selectedMonth
-                it.year = selectedYear
-            }
-        }, initializedDateTime?.year ?: 0, initializedDateTime?.month ?: 0, initializedDateTime?.day ?: 0
-    )
-
-    val timePicker = TimePickerDialog(
-        context,
-        { _, selectedHour: Int, selectedMinute: Int ->
-            initializedDateTime?.let {
-                it.hour = selectedHour
-                it.minutes = selectedMinute
-            }
-        }, initializedDateTime?.hour ?: 0, initializedDateTime?.minutes ?: 0, false
-    )
-
-    LaunchedEffect(initializedDateTime) {
-        initializedDateTime?.let {
-            if (it != compare) {
-                println(initializedDateTime)
-                onSelect(initializedDateTime)
-                compare = initializedDateTime.copy()
-            }
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .clickable(onClick = {
-                timePicker.show()
-                datePicker.show()
-            }
-            )
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.icon),
-            contentDescription = "datepicker"
-        )
     }
 }
 
