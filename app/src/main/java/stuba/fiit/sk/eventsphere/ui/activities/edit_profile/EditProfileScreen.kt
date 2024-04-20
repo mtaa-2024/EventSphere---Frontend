@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,13 @@ fun EditProfileScreen (
     viewModel: MainViewModel,
     editProfileViewModel: EditProfileViewModel
 ) {
+    editProfileViewModel.userNewData.value?.firstname = stringResource(id = R.string.firstname_input)
+    editProfileViewModel.userNewData.value?.lastname = stringResource(id = R.string.lastname_input)
+    editProfileViewModel.userNewData.value?.oldEmail = stringResource(id = R.string.old_email_input)
+    editProfileViewModel.userNewData.value?.newEmail = stringResource(id = R.string.new_email_input)
+    editProfileViewModel.userNewData.value?.oldPassword = stringResource(id = R.string.old_password_input)
+    editProfileViewModel.userNewData.value?.newPassword = stringResource(id = R.string.new_password_input)
+
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -115,8 +123,8 @@ fun EditProfileScreen (
                     .height(5.dp)
             )
 
-            val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
-            val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
+            val firstName = viewModel.loggedUser.value?.firstname ?: stringResource(id = R.string.firstname_label)
+            val lastName = viewModel.loggedUser.value?.lastname ?: stringResource(id = R.string.lastname_label)
 
             Text(
                 text = "$firstName $lastName",
@@ -140,7 +148,7 @@ fun EditProfileScreen (
             ) {
 
                 InputFieldComponent(
-                    label = "Firstname",
+                    label = stringResource(id = R.string.firstname_label),
                     text = editProfileViewModel.userNewData.value?.firstname.toString(),
                     onUpdate = editProfileViewModel::updateFirstname,
                     keyboardType = KeyboardType.Text,
@@ -155,7 +163,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "Lastname",
+                    label = stringResource(id = R.string.lastname_label),
                     text = editProfileViewModel.userNewData.value?.lastname.toString(),
                     onUpdate = editProfileViewModel::updateLastname,
                     keyboardType = KeyboardType.Text,
@@ -170,7 +178,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "Old email",
+                    label = stringResource(id = R.string.old_email_label),
                     text = editProfileViewModel.userNewData.value?.oldEmail.toString(),
                     onUpdate = editProfileViewModel::updateOldEmail,
                     keyboardType = KeyboardType.Text,
@@ -185,7 +193,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "New email",
+                    label = stringResource(id = R.string.new_email_label),
                     text = editProfileViewModel.userNewData.value?.newEmail.toString(),
                     onUpdate = editProfileViewModel::updateNewEmail,
                     keyboardType = KeyboardType.Text,
@@ -200,7 +208,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "Old password",
+                    label = stringResource(id = R.string.old_password_label),
                     text = editProfileViewModel.userNewData.value?.oldPassword.toString(),
                     onUpdate = editProfileViewModel::updateOldPassword,
                     keyboardType = KeyboardType.Password,
@@ -215,7 +223,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "New password",
+                    label = stringResource(id = R.string.new_password_label),
                     text = editProfileViewModel.userNewData.value?.newPassword.toString(),
                     onUpdate = editProfileViewModel::updateNewPassword,
                     keyboardType = KeyboardType.Password,
@@ -284,7 +292,7 @@ fun EditProfileTopBar (
                     }
                     openSaveDialog.value = true
                 },
-                text = "Save",
+                text = stringResource(id = R.string.save_button),
                 isSelected = false
             )
             if(openSaveDialog.value) {
@@ -294,10 +302,10 @@ fun EditProfileTopBar (
                         openSaveDialog.value = false
                         back()
                     },
-                    dialogTitle = "Saved",
-                    dialogText = "Cigis",
-                    onDismissText = "pipik",
-                    onConfirmText = "ok"
+                    dialogTitle = stringResource(id = R.string.save_dialog_label),
+                    dialogText = "\uD83D\uDC3B\u200D❄\uFE0F",
+                    onDismissText = "",
+                    onConfirmText = stringResource(id = R.string.save_dialog_on_confirm_text)
                 )
             }
 

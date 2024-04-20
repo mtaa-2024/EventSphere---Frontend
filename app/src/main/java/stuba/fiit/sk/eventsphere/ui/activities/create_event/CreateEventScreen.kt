@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,6 +80,8 @@ fun CreateEventScreen(
     viewModel: MainViewModel,
     createEventViewModel: CreateEventViewModel
 ) {
+    createEventViewModel.event.value?.title = stringResource(id = R.string.tittle_label)
+    createEventViewModel.event.value?.description = stringResource(id = R.string.description_label)
     var isMapSelected by remember { mutableStateOf(false)}
 
     if (isMapSelected) {
@@ -139,7 +142,7 @@ fun PerformersRow(
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = "Performers",
+            text = stringResource(id = R.string.performers),
             style = buttonStyle,
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
@@ -201,7 +204,7 @@ fun PerformersRow(
         ) {
             if (isSelectedPerformer) {
                 SmallButtonComponent(
-                    text = "Remove",
+                    text = stringResource(id = R.string.remove),
                     isSelected = false,
                     onClick = {
                         createEventViewModel.removePerformer(selectedPerformer)
@@ -228,7 +231,7 @@ fun PerformersRow(
                 onClick = { addPerformer = true },
                 fillColor = MaterialTheme.colorScheme.primary,
                 textColor = MaterialTheme.colorScheme.background,
-                text = "Add performer",
+                text = stringResource(id = R.string.add_performers_button),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -245,7 +248,7 @@ fun PerformersRow(
                     Text(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        text = "No friends to add :(",
+                        text = stringResource(id = R.string.you_dont_have_friends_text),
                         style = labelStyle,
                         textAlign = TextAlign.Center
                     )
@@ -260,8 +263,8 @@ fun PerformersRow(
                     ) {
                         createEventViewModel.friendsList.forEach { friend ->
                             FriendBox(
-                                firstname = friend.firstname ?: "Firstname",
-                                lastname = friend.lastname ?: "Lastname",
+                                firstname = friend.firstname ?: stringResource(id = R.string.firstname_label),
+                                lastname = friend.lastname ?: stringResource(id = R.string.lastname_label),
                                 onClick = {
                                     createEventViewModel.addPerformer(friend)
                                     addPerformer = false
@@ -294,7 +297,7 @@ fun EventDetailInput (
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputFieldComponent(
-            label = "Title",
+            label = stringResource(id = R.string.tittle_label),
             text = createEventViewModel.event.value?.title.toString(),
             onUpdate = createEventViewModel::updateTitle,
             keyboardType = KeyboardType.Text,
@@ -309,7 +312,7 @@ fun EventDetailInput (
         )
 
         InputFieldComponent(
-            label = "Description",
+            label = stringResource(id = R.string.description_label),
             text = createEventViewModel.event.value?.description.toString(),
             onUpdate = createEventViewModel::updateDescription,
             keyboardType = KeyboardType.Text,
@@ -417,7 +420,7 @@ fun EventDetailInput (
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 SmallButtonComponent(
-                    text = "Location",
+                    text = stringResource(id = R.string.location_button),
                     isSelected = false,
                     onClick = { onMapShow() }
                 )
@@ -607,7 +610,6 @@ fun SelectBoxesView(
                     isSelectedEducation = false
                     isSelectedMusic = false
                     isSelectedArt = false
-                    isSelectedArt = false
                     onUpdate(5)
                 }
             ),
@@ -673,7 +675,7 @@ fun CreateEventTopBar (
                     }
                     if (!openErrorDialog.value) openSaveDialog.value = true
                 },
-                text = "Create",
+                text = stringResource(id = R.string.tittle_label),
                 isSelected = false
             )
             if(openSaveDialog.value) {
@@ -683,10 +685,10 @@ fun CreateEventTopBar (
                         openSaveDialog.value = false
                         back()
                     },
-                    dialogTitle = "Event created",
-                    dialogText = "Your event was created",
+                    dialogTitle = stringResource(id = R.string.event_created_text),
+                    dialogText = stringResource(id = R.string.your_event_was_created_text),
                     onDismissText = "",
-                    onConfirmText = "To event center"
+                    onConfirmText = stringResource(id = R.string.to_event_center_text)
                 )
             } else if (openErrorDialog.value) {
                 AlertDialogComponent(
@@ -694,10 +696,10 @@ fun CreateEventTopBar (
                     onConfirmation = {
                         openErrorDialog.value = false
                     },
-                    dialogTitle = "Error creating event",
+                    dialogTitle = stringResource(id = R.string.error_creating_event),
                     dialogText = errorMessage.value,
                     onDismissText = "",
-                    onConfirmText = "Close"
+                    onConfirmText = stringResource(id = R.string.close)
                 )
             }
 
