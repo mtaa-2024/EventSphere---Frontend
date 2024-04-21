@@ -1,5 +1,6 @@
 package stuba.fiit.sk.eventsphere.ui.activities.register
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.ui.activities.login.TopBar
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
+import stuba.fiit.sk.eventsphere.ui.isInternetAvailable
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.RegisterViewModel
@@ -122,7 +125,7 @@ fun RegisterScreen (
                 modifier = Modifier
                     .weight(1f)
             )
-
+            val context = LocalContext.current
             ButtonComponent (
                 text = "Register",
                 fillColor = MaterialTheme.colorScheme.primary,
@@ -130,9 +133,13 @@ fun RegisterScreen (
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp),
-                onClick = { viewModel.viewModelScope.launch {
-                    if (viewModel.registerNewUser(registerViewModel.register.value)) {
-                        toHome()
+                    onClick = { viewModel.viewModelScope.launch {
+                        if (isInternetAvailable(context)) {
+                            if (viewModel.registerNewUser(registerViewModel.register.value)) {
+                                toHome()
+                            }
+                        }else{
+                            Toast.makeText(context, "No internet connection available.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

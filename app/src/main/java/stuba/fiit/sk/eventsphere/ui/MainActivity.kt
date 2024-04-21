@@ -1,7 +1,11 @@
 package stuba.fiit.sk.eventsphere.ui
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -21,27 +25,31 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            val mode = isSystemInDarkTheme()
-            var darkMode by remember { mutableStateOf(mode) }
+       // if(isInternetAvailable(this)) {
+            setContent {
+                val mode = isSystemInDarkTheme()
+                var darkMode by remember { mutableStateOf(mode) }
 
-            EventSphereTheme (
-                darkTheme = darkMode
-            ) {
-                Locale.setDefault(Locale("en"))
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                EventSphereTheme(
+                    darkTheme = darkMode
                 ) {
-                    EventSphereNavHost(
-                        setLanguage = { SetLocale(it) },
-                        setTheme = { darkMode = it }
-                    )
+                    Locale.setDefault(Locale("en"))
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        EventSphereNavHost(
+                            setLanguage = { SetLocale(it) },
+                            setTheme = { darkMode = it }
+                        )
+                    }
                 }
             }
-        }
-    }
+        }/*else{
+            Toast.makeText(this, "No internet connection available.", Toast.LENGTH_SHORT).show();
+        }*/
+    //}
 
     private fun SetLocale (
         locale: Locale
@@ -56,5 +64,22 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             createConfigurationContext(config)
         resources.updateConfiguration(config, resources.displayMetrics)
+    }
+}
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network = connectivityManager.activeNetwork ?: return false
+        val actNw = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return when {
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
+        }
+    } else {
+        val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+        return nwInfo.isConnected
     }
 }
