@@ -57,7 +57,8 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun EventScreen (
     viewModel: MainViewModel,
     eventViewModel: EventViewModel,
-    toBack: () -> Unit
+    toBack: () -> Unit,
+    toEdit: (id: Int) -> Unit
 ) {
     Column (
         modifier = Modifier
@@ -66,7 +67,9 @@ fun EventScreen (
         if (eventViewModel.event.isInitialized) {
             EventTopBar(
                 eventViewModel = eventViewModel,
-                toBack = toBack
+                toBack = toBack,
+                viewModel = viewModel,
+                toEdit = toEdit
             )
 
             Column(
@@ -352,7 +355,9 @@ fun OrganizatorViewWidget (
 @Composable
 fun EventTopBar (
     eventViewModel: EventViewModel,
-    toBack: () -> Unit
+    viewModel: MainViewModel,
+    toBack: () -> Unit,
+    toEdit: (id: Int), Unit
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -386,11 +391,21 @@ fun EventTopBar (
                     )
                 }
                 Box() {}
-                SmallButtonComponent(
-                    text = "Notify me",
-                    isSelected = false,
-                    onClick = {}
-                )
+                if (eventViewModel.event.value?.owner_id != viewModel.loggedUser.value?.id) {
+                    SmallButtonComponent(
+                        text = "Notify me",
+                        isSelected = false,
+                        onClick = {}
+                    )
+                } else {
+                    SmallButtonComponent(
+                        text = "Edit",
+                        isSelected = false,
+                        onClick = {
+
+                        }
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(5.dp))
             Column(

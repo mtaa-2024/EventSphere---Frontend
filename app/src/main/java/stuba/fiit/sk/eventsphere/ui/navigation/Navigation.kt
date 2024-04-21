@@ -6,7 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.CREATEEVENT_ROUTE
+import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EDITEVENT_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EDITPROFILE_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENTCENTER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EVENT_ROUTE
@@ -18,6 +20,7 @@ import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.REGISTER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.SEARCHUSER_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.WELCOME_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.CreateEventRoute
+import stuba.fiit.sk.eventsphere.ui.navigation.routes.EditEventRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EditProfileRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventCenterRoute
 import stuba.fiit.sk.eventsphere.ui.navigation.routes.EventRoute
@@ -44,6 +47,7 @@ object Destinations {
     const val FRIENDS_ROUTE = "friends"
     const val CREATEEVENT_ROUTE = "createevent"
     const val SEARCHUSER_ROUTE = "searchuser"
+    const val EDITEVENT_ROUTE = "editevent"
 }
 
 @Composable
@@ -121,6 +125,18 @@ fun EventSphereNavHost(
                         navController.navigate(HOME_ROUTE)
                     else
                         navController.navigate(EVENTCENTER_ROUTE)
+                },
+                toEdit = {
+                    navController.navigate(EDITEVENT_ROUTE)
+                }
+            )
+        }
+
+        composable(EDITEVENT_ROUTE) {
+            EditEventRoute(
+                mainViewModel = mainViewModel,
+                toEvent = { id ->
+                    navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
                 }
             )
         }
