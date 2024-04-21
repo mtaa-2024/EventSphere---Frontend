@@ -83,36 +83,38 @@ fun EditEventScreen (
             }
         )
     } else {
-        Column (
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-
-            EditCreateEventTopBar(
-                toBack = back,
-                toUpdatedEvent = { toUpdatedEvent() },
-                editEventViewModel = editEventViewModel
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Column (
+        if (editEventViewModel.event.isInitialized) {
+            Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                EditEventDetailInput (
-                    editEventViewModel = editEventViewModel,
-                    onMapShow = { isMapSelected = true }
-                )
-                Spacer (
-                    modifier = Modifier
-                        .height(10.dp)
-                )
-                EditPerformersRow (
+
+                EditCreateEventTopBar(
+                    toBack = back,
+                    toUpdatedEvent = { toUpdatedEvent() },
                     editEventViewModel = editEventViewModel
                 )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    EditEventDetailInput(
+                        editEventViewModel = editEventViewModel,
+                        onMapShow = { isMapSelected = true }
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .height(10.dp)
+                    )
+                    EditPerformersRow(
+                        editEventViewModel = editEventViewModel
+                    )
+                }
             }
         }
     }
@@ -612,7 +614,7 @@ fun EditCreateEventTopBar (
         ) {
 
             Button(
-                onClick = toUpdatedEvent,
+                onClick = toBack,
                 colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
             ) {
                 Image(
@@ -643,7 +645,7 @@ fun EditCreateEventTopBar (
                     onDismissRequest = { },
                     onConfirmation = {
                         openSaveDialog.value = false
-                        toBack()
+                        toUpdatedEvent()
                     },
                     dialogTitle = "Event updated",
                     dialogText = "Your event was updated",

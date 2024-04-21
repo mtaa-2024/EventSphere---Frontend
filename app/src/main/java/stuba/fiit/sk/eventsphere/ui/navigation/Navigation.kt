@@ -117,6 +117,7 @@ fun EventSphereNavHost(
         composable("$EVENT_ROUTE/{eventId}/{route}") { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId")?.toIntOrNull() ?: -1
             val route = backStackEntry.arguments?.getString("route")
+
             EventRoute(
                 eventId,
                 mainViewModel = mainViewModel,
@@ -127,21 +128,33 @@ fun EventSphereNavHost(
                         navController.navigate(EVENTCENTER_ROUTE)
                 },
                 toEdit = { id ->
-                    navController.navigate("$EDITEVENT_ROUTE/$id")
+                    if (route == "home") {
+                        navController.navigate("$EDITEVENT_ROUTE/$id/$HOME_ROUTE")
+                    } else {
+                        navController.navigate("$EDITEVENT_ROUTE/$id/$EVENTCENTER_ROUTE")
+                    }
+
                 }
             )
         }
 
-        composable("$EDITEVENT_ROUTE/{id}") { backStackEntry ->
+        composable("$EDITEVENT_ROUTE/{id}/{route}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: -1
+            val route = backStackEntry.arguments?.getString("route")
             EditEventRoute(
                 id = id,
                 mainViewModel = mainViewModel,
                 toBack = {
-                    navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
+                    if (route == "home")
+                        navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
+                    else
+                        navController.navigate("$EVENT_ROUTE/$id/$EVENTCENTER_ROUTE")
                 },
                 toEvent = {
-                    navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
+                    if (route == "home")
+                        navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
+                    else
+                        navController.navigate("$EVENT_ROUTE/$id/$EVENTCENTER_ROUTE")
                 }
             )
         }

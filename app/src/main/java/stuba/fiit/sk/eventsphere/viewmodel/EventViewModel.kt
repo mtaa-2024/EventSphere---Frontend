@@ -26,20 +26,17 @@ class EventViewModel(id: Int) : ViewModel() {
 
 
     init {
-        println(id)
         viewModelScope.launch{
-            getEventData(id)
+            getEventData()
         }
     }
 
-    suspend fun getEventData(id: Int) {
+    private suspend fun getEventData() {
         try {
-            val fetchedJson = apiService.getEvent(id)
+            val fetchedJson = apiService.getEvent(eventId)
 
             val performersList = mutableListOf<FriendPerformer>()
             val commentsList = mutableListOf<CommentStruct>()
-
-            println(fetchedJson)
 
             if (!fetchedJson.get("performers").isJsonNull) {
                 val performersArray = fetchedJson.getAsJsonArray("performers").asJsonArray

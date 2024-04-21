@@ -118,6 +118,12 @@ interface ApiService {
     suspend fun searchEvents(
         @Query("input") input: String
     ): JsonObject
+
+    @POST("update/event")
+    suspend fun updateEvent(
+        @Body body: JsonObject
+    ): JsonObject
+    
 }
 
 val retrofit = Retrofit.Builder()

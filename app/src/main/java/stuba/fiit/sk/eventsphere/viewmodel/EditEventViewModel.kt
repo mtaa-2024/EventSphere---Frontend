@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.CommentStruct
@@ -61,7 +63,6 @@ class EditEventViewModel (id: Int) : ViewModel() {
             val fetchedJson = apiService.getEvent(eventId)
             val commentsList = mutableListOf<CommentStruct>()
 
-            println(fetchedJson)
 
             if (!fetchedJson.get("performers").isJsonNull) {
                 performersList.clear()
@@ -127,11 +128,6 @@ class EditEventViewModel (id: Int) : ViewModel() {
         }
     }
 
-    fun updateEvent(): Pair<Boolean, String> {
-
-        return Pair(true, "")
-    }
-
     fun updateDescription(s: String) {
         _event.value?.description = s
     }
@@ -154,6 +150,32 @@ class EditEventViewModel (id: Int) : ViewModel() {
 
     fun updateLocation(input: LocationData) {
         _event.value?.location = input
+    }
+
+    suspend fun updateEvent(): Pair<Boolean, String> {
+        try {
+            val body = JsonObject()
+            body.addProperty("id", _event.value?.event_id)
+            body.addProperty("title", _event.value?.title)
+            body.addProperty("description", _event.value?.description)
+            body.addProperty("location", _event.value?.location?.address)
+            body.addProperty("latitude", _event.value?.location?.latitude)
+            body.addProperty("longitude", _event.value?.location?.longitude)
+
+            val performersArray = JsonArray()
+            _event.value?.performers?.forEach { performer ->
+                val performerObject = JsonObject()
+                performerObject.addProperty("id", performer.id)
+                performersArray.add(performerObject)
+            }
+            body.add("performers", performersArray)
+
+            val fetchedJson = apiService.updateEvent(body)
+            return Pair(fetchedJson.get("result").asBoolean, "")
+        } catch (e : Exception) {
+            println(e)
+        }
+        return Pair(false, "Error updating event")
     }
 
 }
