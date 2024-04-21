@@ -126,14 +126,16 @@ fun EventSphereNavHost(
                     else
                         navController.navigate(EVENTCENTER_ROUTE)
                 },
-                toEdit = {
-                    navController.navigate(EDITEVENT_ROUTE)
+                toEdit = { id ->
+                    navController.navigate("$EDITEVENT_ROUTE/$id")
                 }
             )
         }
 
-        composable(EDITEVENT_ROUTE) {
+        composable("$EDITEVENT_ROUTE/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: -1
             EditEventRoute(
+                id = id,
                 mainViewModel = mainViewModel,
                 toEvent = { id ->
                     navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")

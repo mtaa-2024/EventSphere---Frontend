@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
             EventSphereTheme (
                 darkTheme = darkMode
             ) {
+                Locale.setDefault(Locale("en"))
                 Surface(
                     modifier = Modifier
                         .fillMaxSize(),

@@ -357,7 +357,7 @@ fun EventTopBar (
     eventViewModel: EventViewModel,
     viewModel: MainViewModel,
     toBack: () -> Unit,
-    toEdit: (id: Int), Unit
+    toEdit: (id: Int) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -402,7 +402,7 @@ fun EventTopBar (
                         text = "Edit",
                         isSelected = false,
                         onClick = {
-
+                            toEdit(eventViewModel.event.value?.event_id!!)
                         }
                     )
                 }

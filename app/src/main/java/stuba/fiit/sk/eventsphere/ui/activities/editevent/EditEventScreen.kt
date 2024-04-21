@@ -1,5 +1,6 @@
 package stuba.fiit.sk.eventsphere.ui.activities.editevent
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import stuba.fiit.sk.eventsphere.viewmodel.EditEventViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel

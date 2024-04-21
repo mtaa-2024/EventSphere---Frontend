@@ -61,6 +61,7 @@ data class EventOutput (
     val description: String,
     val location: LocationData,
     val estimated_end: String,
+    val category: Int,
     val owner_id: Int,
     val owner_firstname: String,
     val owner_lastname: String,

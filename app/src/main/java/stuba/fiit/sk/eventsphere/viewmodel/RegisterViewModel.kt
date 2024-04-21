@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.RegisterInput
+import java.util.Locale
 
 class RegisterViewModel() : ViewModel() {
 
@@ -37,9 +38,10 @@ class RegisterViewModel() : ViewModel() {
 
     suspend fun checkUsername(input: String): Pair<Boolean, String> {
         try {
-            val result = apiService.usernameExists(input).get("result").asBoolean
-            if (result)
-                return Pair(true, "Username is already in use")
+            val result = apiService.usernameExists(input, Locale.getDefault().toString())
+            println(result)
+            if (result.get("result").asBoolean)
+                return Pair(true, result.get("text").asString)
         } catch (e: Exception) {
             println(e)
         }
@@ -51,9 +53,9 @@ class RegisterViewModel() : ViewModel() {
             return Pair(true, "Invalid email address")
         }
         try {
-            val result = apiService.emailExists(input).get("result").asBoolean
-            if (result)
-                return Pair(true, "Email is already in use")
+            val result = apiService.emailExists(input, Locale.getDefault().toString())
+            if (result.get("result").asBoolean)
+                return Pair(true, result.get("text").asString)
         } catch (e: Exception) {
             println(e)
         }

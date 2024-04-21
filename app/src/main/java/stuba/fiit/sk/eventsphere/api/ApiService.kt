@@ -98,12 +98,14 @@ interface ApiService {
 
     @GET("username")
     suspend fun usernameExists (
-        @Query("input") input: String
+        @Query("input") input: String,
+        @Query("locale") locale: String,
     ): JsonObject
 
     @GET("email")
     suspend fun emailExists (
-        @Query("input") input: String
+        @Query("input") input: String,
+        @Query("locale") locale: String,
     ): JsonObject
 
     @GET("isFriend")

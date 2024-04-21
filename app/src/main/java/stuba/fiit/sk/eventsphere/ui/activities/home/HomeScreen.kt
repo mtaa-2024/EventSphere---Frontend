@@ -40,12 +40,6 @@ import stuba.fiit.sk.eventsphere.viewmodel.HomeViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 
-@Preview(showBackground = true)
-@Composable
-fun Preview () {
-    HomeScreen(toProfile = {}, toBack = {}, viewModel = MainViewModel(), homeViewModel = HomeViewModel(MainViewModel()), toEvent = {})
-}
-
 @Composable
 fun HomeScreen (
     toProfile: () -> Unit,

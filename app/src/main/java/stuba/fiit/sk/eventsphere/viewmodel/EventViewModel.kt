@@ -26,6 +26,7 @@ class EventViewModel(id: Int) : ViewModel() {
 
 
     init {
+        println(id)
         viewModelScope.launch{
             getEventData(id)
         }
@@ -38,14 +39,15 @@ class EventViewModel(id: Int) : ViewModel() {
             val performersList = mutableListOf<FriendPerformer>()
             val commentsList = mutableListOf<CommentStruct>()
 
-            println(fetchedJson.get("performers"))
+            println(fetchedJson)
+
             if (!fetchedJson.get("performers").isJsonNull) {
                 val performersArray = fetchedJson.getAsJsonArray("performers").asJsonArray
                 if (!performersArray.isEmpty) {
                     performersArray.forEach { performerElement ->
                         val performerObject = performerElement.asJsonObject
                         val performerView = FriendPerformer(
-                            id = if (performerObject.get("id").isJsonNull) null else performerObject.get("id")?.asInt,
+                            id =  performerObject.get("user_id").asInt,
                             firstname = if (performerObject.get("firstname").isJsonNull) null else performerObject.get("firstname")?.asString ?: "",
                             lastname = if (performerObject.get("lastname").isJsonNull) null else performerObject.get("lastname")?.asString ?: "",
                             profile_picture = null,
@@ -54,7 +56,6 @@ class EventViewModel(id: Int) : ViewModel() {
                     }
                 }
             }
-            println(fetchedJson.get("comments"))
             if (!fetchedJson.get("comments").isJsonNull) {
                 val commentsArray = fetchedJson.getAsJsonArray("comments").asJsonArray
                 if (!commentsArray.isEmpty) {
@@ -80,11 +81,14 @@ class EventViewModel(id: Int) : ViewModel() {
                 longitude = eventObject.get("longitude").asDouble
             )
 
+
+
             val event = EventOutput (
                 event_id = eventObject.get("id").asInt,
                 title = eventObject.get("title").asString ?: "",
                 description = eventObject.get("description").asString ?: "",
                 location = location,
+                category = eventObject.get("category_id").asInt,
                 estimated_end = eventObject.get("estimated_end").asString ?: "",
                 owner_id = eventObject.get("owner_id").asInt,
                 owner_firstname = eventObject.get("firstname").asString ?: "",

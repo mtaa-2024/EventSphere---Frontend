@@ -64,14 +64,6 @@ import stuba.fiit.sk.eventsphere.viewmodel.CreateEventViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 
-@Preview(showBackground = true)
-@Composable
-fun Preview () {
-    CreateEventScreen(back = {}, viewModel = MainViewModel(), createEventViewModel = CreateEventViewModel(
-        MainViewModel()
-    ))
-}
-
 
 @Composable
 fun CreateEventScreen(
