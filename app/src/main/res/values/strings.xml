@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EventSphere</string>
 
@@ -15,22 +16,21 @@
     <string name="guest">guest</string>
 
 
-    <string name="username_or_email_label">Username or email</string>
-    <string name="password_label">Password</string>
-    <string name="username_label">Username</string>
-    <string name="email_label">Email</string>
-    <string name="verify_password_label">Verify Password</string>
+    <string name="username_or_email">Username or email</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="verify_password">Verify your password</string>
 
 
+    <string name="enter_username_or_email">Enter your username or email</string>
+    <string name="enter_password">Enter your password</string>
+    <string name="enter_username">Enter your username</string>
+    <string name="enter_email">Enter your email</string>
 
-    <string name="enter_username_or_email_input_text">Enter your username or email</string>
-    <string name="password_input_text">Enter your password</string>
-    <string name="enter_username_input_text">Enter your username</string>
-    <string name="verify_password_input_text">Enter your email</string>
 
-
-    <string name="alert_on_confirm_text">Login or register</string>
-    <string name="alert_dismiss_text">Close</string>
+    <string name="login_or_register">Login or register</string>
+    <string name="close">Close</string>
     <string name="alert_dialog_text">You have to be logged to access profile, you can continue as guest or login to your existing account or create new account</string>
     <string name="alert_dialog_title">Guest</string>
 
@@ -41,67 +41,66 @@
     <string name="expired">Expired</string>
 
 
-    <string name="friends_text">Friends</string>
-    <string name="search_users_button">Search Users</string>
-    <string name="event_center_button">Event center</string>
-    <string name="settings_text">Settings</string>
-    <string name="notification_text">Notifications</string>
-    <string name="darkmode_text">Dark mode</string>
-    <string name="language_text">Language</string>
-    <string name="longout_text">Logout</string>
-    <string name="editprofile_button">Edit profile</string>
+    <string name="friends_not_found">Friends not found :(</string>
+    <string name="no_friends">No friends :(</string>
+    <string name="find_friend">Find friend</string>
+    <string name="you_are_friends">You are friends</string>
+    <string name="friends">Friends</string>
+    <string name="search_for_user">Search for User</string>
+    <string name="search_users">Search Users</string>
+    <string name="event_center">Event center</string>
+    <string name="settings">Settings</string>
+    <string name="notification">Notifications</string>
+    <string name="darkmode">Dark mode</string>
+    <string name="language">Language</string>
+    <string name="logout">Logout</string>
+    <string name="edit_profile">Edit profile</string>
 
 
-    <string name="firstname_label">Firstname</string>
-    <string name="lastname_label">Lastname</string>
+    <string name="firstname">Firstname</string>
+    <string name="lastname">Lastname</string>
+    <string name="old_email">Old email</string>
+    <string name="new_email">New email</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
 
-    <string name="old_email_label">Old email</string>
-    <string name="new_email_label">New email</string>
-    <string name="old_password_label">Old password</string>
-    <string name="new_password_label">New password</string>
 
-    <string name="firstname_input">Language</string>
-    <string name="lastname_input">Logout</string>
-    <string name="old_email_input">Edit profile</string>
-    <string name="new_email_input">Language</string>
-    <string name="old_password_input">Logout</string>
-    <string name="new_password_input">Edit profile</string>
-
-    <string name="save_button">Save</string>
+    <string name="save">Save</string>
     <string name="save_dialog_label">Saved</string>
-    <string name="save_dialog_on_confirm_text">OK</string>
-
-    <string name="create_your_evetn_text">Create your event</string>
-
-    <string name="search_user_welcome_text">Search User</string>
-    <string name="search_label">Search</string>
-    <string name="search_input">Search</string>
-    <string name="friends_not_found">Friends not found</string>
+    <string name="save_dialog_on_confirm">OK</string>
 
 
-    <string name="tittle_label">Title</string>
-    <string name="tittle_input">Title</string>
-    <string name="description_label">Description</string>
-    <string name="description_input">Description</string>
+    <string name="no_events_found">No events found</string>
+    <string name="to_event_center">To event center</string>
+    <string name="event_created">Event created</string>
+    <string name="your_event_was_created">Your event was created</string>
+    <string name="error_creating_event">Error creating event</string>
+    <string name="create_your_event">Create your event</string>
+    <string name="create">Create</string>
 
+    <string name="search_user_welcome">Search User</string>
+    <string name="search">Search</string>
+
+
+    <string name="address">Address</string>
+    <string name="tittle">Title</string>
     <string name="description">Description</string>
     <string name="no_description">No description</string>
 
-    <string name="location_button">Location</string>
+    <string name="location">Location</string>
     <string name="performers">Performers</string>
     <string name="remove">Remove</string>
-    <string name="you_dont_have_friends_text">You don’t have friends to add :(</string>
+    <string name="you_dont_have_friends">You don’t have friends to add :(</string>
 
-    <string name="add_performers_button">Add performers</string>
+    <string name="add_performers">Add performers</string>
+    <string name="add_friend">Add friend</string>
 
-    <string name="add_friend_button">Add friend</string>
-
-    <string name="where_to_find_us_text">Where to find us</string>
-    <string name="comments_text">Comments</string>
-    <string name="publish_your_comment_text">Publish your comment</string>
-    <string name="insert_your_comment_text">Insert your comment</string>
-    <string name="organizator_text">Organizator</string>
-    <string name="notify_me_text">Notify me</string>
-    <string name="somewhere_text">Somewhere</string>
-    <string name="over_the_rainbow_text">Over the rainbow</string>
+    <string name="where_to_find_us">Where to find us</string>
+    <string name="comments">Comments</string>
+    <string name="publish_your_comment">Publish your comment</string>
+    <string name="insert_your_comment">Insert your comment</string>
+    <string name="organizator">Organizator</string>
+    <string name="notify_me">Notify me</string>
+    <string name="somewhere">Somewhere</string>
+    <string name="over_the_rainbow">Over the rainbow</string>
 </resources>

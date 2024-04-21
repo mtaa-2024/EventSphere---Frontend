@@ -11,13 +11,15 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun EditEventRoute (
     id: Int,
     mainViewModel: MainViewModel,
-    toEvent: (id: Int) -> Unit
+    toBack: () -> Unit,
+    toEvent: () -> Unit
 ) {
     val editEventViewModel: EditEventViewModel = viewModel(factory = EditEventViewModelFactory(id))
 
     EditEventScreen (
         mainViewModel = mainViewModel,
         editEventViewModel = editEventViewModel,
+        back = toBack,
         toUpdatedEvent = toEvent
     )
 }

@@ -51,9 +51,9 @@ import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.FriendPerformer
-import stuba.fiit.sk.eventsphere.ui.activities.profile.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
@@ -158,9 +158,12 @@ fun PerformersRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             createEventViewModel.event.value?.performers?.forEach { performer ->
-                FriendBox(
-                    firstname = performer.firstname ?: "",
-                    lastname = performer.lastname ?: "",
+                val firstname = if (performer.firstname == null) "Firstname" else performer.firstname ?: ""
+                val lastname = if (performer.lastname == null) "Lastname" else performer.lastname ?: ""
+                val id = performer.id ?: 0
+                FriendBox (
+                    firstname = firstname,
+                    lastname =lastname,
                     onClick = {
                         if (isSelectedPerformer && selectedPerformer == performer) {
                             isSelectedPerformer = false
@@ -173,7 +176,7 @@ fun PerformersRow(
                             selectedPerformer = performer
                         }
                     },
-                    id = performer.id!!,
+                    id = id,
                     image = performer.profile_picture
                 )
             }
@@ -251,21 +254,19 @@ fun PerformersRow(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         createEventViewModel.friendsList.forEach { friend ->
-                            FriendBox(
-                                firstname = friend.firstname ?: "Firstname",
-                                lastname = friend.lastname ?: "Lastname",
+                            val firstname = if (friend.firstname == null) "Firstname" else friend.firstname ?: ""
+                            val lastname = if (friend.lastname == null) "Lastname" else friend.lastname ?: ""
+                            val id = friend.id ?: 0
+                            FriendBox (
+                                firstname = firstname,
+                                lastname =lastname,
                                 onClick = {
                                     createEventViewModel.addPerformer(friend)
                                     addPerformer = false
                                 },
-                                id = friend.id!!,
+                                id = id,
                                 image = friend.profile_picture
                             )
-                            Spacer (
-                                modifier = Modifier
-                                    .width(20.dp)
-                            )
-
                         }
                     }
                 }

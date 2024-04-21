@@ -3,109 +3,93 @@
     <string name="app_name">EventSphere</string>
 
     <string name="login_button">Prihlásiť sa</string>
-    <string name="register_button">Registrovať sa</string>
+    <string name="register_button">Registrovať</string>
 
-
-    <string name="welcome_text">Odomkni bránu k nezabudnuteľným chvíľam!</string>
-    <string name="login_welcome_text">Vitaj späť</string>
-    <string name="register_welcome_text">Vstúp do zajtrajšieho sveta udalostí bez námahy!</string>
-    <string name="home_welcome_text">Pozrime sa na udalosti, ktoré by sa ti mohli páčiť</string>
-
+    <string name="welcome_text">Odomknite bránu do sveta nezabudnuteľných chvíľ!</string>
+    <string name="login_welcome_text">Vitajte späť</string>
+    <string name="register_welcome_text">Vstúpte do sveta zajtrajších udalostí bez námahy!</string>
+    <string name="home_welcome_text">Pozrime sa na udalosti, ktoré by sa vám mohli páčiť</string>
 
     <string name="guest_continue">Pokračovať ako</string>
     <string name="guest">hosť</string>
 
+    <string name="username_or_email">Používateľské meno alebo email</string>
+    <string name="password">Heslo</string>
+    <string name="username">Používateľské meno</string>
+    <string name="email">Email</string>
+    <string name="verify_password">Overte svoje heslo</string>
 
-    <string name="username_or_email_label">Používateľské meno alebo email</string>
-    <string name="password_label">Heslo</string>
-    <string name="username_label">Používateľské meno</string>
-    <string name="email_label">Email</string>
-    <string name="verify_password_label">Over heslo</string>
+    <string name="enter_username_or_email">Zadajte svoje používateľské meno alebo email</string>
+    <string name="enter_password">Zadajte svoje heslo</string>
+    <string name="enter_username">Zadajte svoje používateľské meno</string>
+    <string name="enter_email">Zadajte svoj email</string>
 
-
-    <string name="enter_username_or_email_input_text">Zadaj svoje používateľské meno alebo email</string>
-    <string name="password_input_text">Zadaj svoje heslo</string>
-    <string name="enter_username_input_text">Zadaj svoje používateľské meno</string>
-    <string name="verify_password_input_text">Zadaj svoj email</string>
-
-
-    <string name="alert_on_confirm_text">Prihlásiť sa alebo registrovať</string>
-    <string name="alert_dismiss_text">Zavrieť</string>
-    <string name="alert_dialog_text">Pre prístup k profilu sa musíš prihlásiť, môžeš pokračovať ako hosť, alebo sa prihlásiť do svojho účtu alebo vytvoriť nový účet</string>
+    <string name="login_or_register">Prihlásiť sa alebo registrovať</string>
+    <string name="close">Zavrieť</string>
+    <string name="alert_dialog_text">Pre prístup k profilu musíte byť prihlásený, môžete pokračovať ako hosť, prihlásiť sa do svojho účtu alebo si vytvoriť nový účet</string>
     <string name="alert_dialog_title">Hosť</string>
-
 
     <string name="upcoming">Nadchádzajúce</string>
     <string name="attending">Zúčastním sa</string>
     <string name="invited">Pozvaný</string>
     <string name="expired">Vypršané</string>
 
+    <string name="friends_not_found">Priatelia nenájdení :(</string>
+    <string name="no_friends">Žiadni priatelia :(</string>
+    <string name="find_friend">Nájsť priateľa</string>
+    <string name="you_are_friends">Ste priatelia</string>
+    <string name="friends">Priatelia</string>
+    <string name="search_for_user">Hľadať používateľa</string>
+    <string name="search_users">Hľadať používateľov</string>
+    <string name="event_center">Centrum udalostí</string>
+    <string name="settings">Nastavenia</string>
+    <string name="notification">Notifikácie</string>
+    <string name="darkmode">Tmavý režim</string>
+    <string name="language">Jazyk</string>
+    <string name="logout">Odhlásiť sa</string>
+    <string name="edit_profile">Upraviť profil</string>
 
-    <string name="friends_text">Priatelia</string>
-    <string name="search_users_button">Hľadať užívateľov</string>
-    <string name="event_center_button">Centrum udalostí</string>
-    <string name="settings_text">Nastavenia</string>
-    <string name="notification_text">Notifikácie</string>
-    <string name="darkmode_text">Tmavý režim</string>
-    <string name="language_text">Jazyk</string>
-    <string name="longout_text">Odhlásiť sa</string>
-    <string name="editprofile_button">Upraviť profil</string>
+    <string name="firstname">Meno</string>
+    <string name="lastname">Priezvisko</string>
+    <string name="old_email">Starý email</string>
+    <string name="new_email">Nový email</string>
+    <string name="old_password">Staré heslo</string>
+    <string name="new_password">Nové heslo</string>
 
-    //EDIT PROFILE SCREEN
-    <string name="firstname_label">Meno</string>
-    <string name="lastname_label">Priezvisko</string>
-
-    <string name="old_email_label">Starý email</string>
-    <string name="new_email_label">Nový email</string>
-    <string name="old_password_label">Staré heslo</string>
-    <string name="new_password_label">Nové heslo</string>
-
-    <string name="firstname_input">Jazyk</string>
-    <string name="lastname_input">Odhlásiť sa</string>
-    <string name="old_email_input">Upraviť profil</string>
-    <string name="new_email_input">Jazyk</string>
-    <string name="old_password_input">Odhlásiť sa</string>
-    <string name="new_password_input">Upraviť profil</string>
-
-    <string name="save_button">Uložiť</string>
+    <string name="save">Uložiť</string>
     <string name="save_dialog_label">Uložené</string>
-    <string name="save_dialog_on_confirm_text">OK</string>
+    <string name="save_dialog_on_confirm">OK</string>
 
-    <string name="create_your_evetn_text">Vytvor svoju udalosť</string>
+    <string name="no_events_found">Žiadne udalosti nenájdené</string>
+    <string name="to_event_center">Do centra udalostí</string>
+    <string name="event_created">Udalosť vytvorená</string>
+    <string name="your_event_was_created">Vaša udalosť bola vytvorená</string>
+    <string name="error_creating_event">Chyba pri vytváraní udalosti</string>
+    <string name="create_your_event">Vytvorte svoju udalosť</string>
+    <string name="create">Vytvoriť</string>
 
+    <string name="search_user_welcome">Hľadať používateľa</string>
+    <string name="search">Hľadať</string>
 
-    <string name="search_user_welcome_text">Hľadať užívateľa</string>
-    <string name="search_label">Hľadaj</string>
-    <string name="search_input">Hľadaj</string>
-    <string name="friends_not_found">Priatelia nenájdení</string>
-
-
-    <string name="tittle_label">Titul</string>
-    <string name="tittle_input">Titul</string>
-    <string name="description_label">Popis</string>
-    <string name="description_input">Popis</string>
-
+    <string name="address">Adresa</string>
+    <string name="tittle">Názov</string>
     <string name="description">Popis</string>
     <string name="no_description">Bez popisu</string>
 
-    <string name="location_button">Lokalita</string>
+    <string name="location">Poloha</string>
     <string name="performers">Účinkujúci</string>
     <string name="remove">Odstrániť</string>
-    <string name="you_dont_have_friends_text">Nemáš pridaných priateľov :(</string>
+    <string name="you_dont_have_friends">Nemáte priateľov na pridanie :(</string>
 
-    <string name="add_performers_button">Pridať účinkujúcich</string>
+    <string name="add_performers">Pridať účinkujúcich</string>
+    <string name="add_friend">Pridať priateľa</string>
 
-
-    <string name="add_friend_button">Pridať priateľa</string>
-
-
-    <string name="where_to_find_us_text">Kde nás nájdete</string>
-    <string name="comments_text">Komentáre</string>
-    <string name="publish_your_comment_text">Publikuj svoj komentár</string>
-    <string name="insert_your_comment_text">Vlož svoj komentár</string>
-    <string name="organizator_text">Organizátor</string>
-    <string name="notify_me_text">Informuj ma</string>
-    <string name="somewhere_text">Niečo</string>
-    <string name="over_the_rainbow_text">Za dúhou</string>
-
+    <string name="where_to_find_us">Kde nás nájdete</string>
+    <string name="comments">Komentáre</string>
+    <string name="publish_your_comment">Zverejniť váš komentár</string>
+    <string name="insert_your_comment">Vložte váš komentár</string>
+    <string name="organizator">Organizátor</string>
+    <string name="notify_me">Upozorni ma</string>
+    <string name="somewhere">Niečo</string>
+    <string name="over_the_rainbow">Za dúhou</string>
 </resources>

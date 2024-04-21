@@ -18,22 +18,53 @@ class EditEventViewModel (id: Int) : ViewModel() {
     private val _event = MutableLiveData<EventOutput>()
     val event: LiveData<EventOutput> = _event
 
+    private val performersList: MutableList<FriendPerformer> = mutableListOf()
+    val friendsList: MutableList<FriendPerformer> = mutableListOf()
+
     init {
         viewModelScope.launch {
             getEvent()
+            getFriends()
+        }
+    }
+
+    suspend fun getFriends() {
+        try {
+            val fetchedJson = apiService.getFriends(_event.value?.owner_id)
+            if (fetchedJson.get("result").asBoolean) {
+                friendsList.clear()
+                val friendsArray = fetchedJson.getAsJsonArray("friends").asJsonArray
+                friendsArray.forEach { friendsElement ->
+                    val friendsObject = friendsElement.asJsonObject
+                    val friendsView = FriendPerformer(
+                        id = if (friendsObject.get("id").isJsonNull) null else friendsObject.get("id").asInt,
+                        firstname = if (friendsObject.get("firstname").isJsonNull) null else friendsObject.get(
+                            "firstname"
+                        ).asString,
+                        lastname = if (friendsObject.get("lastname").isJsonNull) null else friendsObject.get(
+                            "lastname"
+                        ).asString,
+                        profile_picture = null,
+                    )
+                    if (_event.value?.performers?.contains(friendsView) == false)
+                        friendsList.add(friendsView)
+                }
+            }
+
+        } catch (e: Exception) {
+            println("Error: $e")
         }
     }
 
     private suspend fun getEvent() {
         try {
             val fetchedJson = apiService.getEvent(eventId)
-
-            val performersList = mutableListOf<FriendPerformer>()
             val commentsList = mutableListOf<CommentStruct>()
 
             println(fetchedJson)
 
             if (!fetchedJson.get("performers").isJsonNull) {
+                performersList.clear()
                 val performersArray = fetchedJson.getAsJsonArray("performers").asJsonArray
                 if (!performersArray.isEmpty) {
                     performersArray.forEach { performerElement ->
@@ -68,7 +99,7 @@ class EditEventViewModel (id: Int) : ViewModel() {
             val eventObject = fetchedJson.getAsJsonArray("event").get(0).asJsonObject
 
             val location = LocationData (
-                address = eventObject.get("location").asString ?: "",
+                address = if (eventObject.get("location").isJsonNull) "" else eventObject.get("location").asString ?: "",
                 latitude = eventObject.get("latitude").asDouble,
                 longitude = eventObject.get("longitude").asDouble
             )
@@ -90,10 +121,39 @@ class EditEventViewModel (id: Int) : ViewModel() {
                 comments = commentsList
             )
             _event.value = event
-            println(event)
+            println(_event.value)
         } catch (e: Exception) {
             println("Error: $e")
         }
+    }
+
+    fun updateEvent(): Pair<Boolean, String> {
+
+        return Pair(true, "")
+    }
+
+    fun updateDescription(s: String) {
+        _event.value?.description = s
+    }
+
+    fun updateTitle(s: String) {
+        _event.value?.title = s
+    }
+
+    fun addPerformer(friend: FriendPerformer) {
+        _event.value?.performers?.add(friend)
+    }
+
+    fun removePerformer(performer: FriendPerformer?) {
+        if (performer != null) {
+            _event.value?.performers?.remove(performer)
+            if ((performer.id ?: -1) != -1)
+                friendsList.add(performer)
+        }
+    }
+
+    fun updateLocation(input: LocationData) {
+        _event.value?.location = input
     }
 
 }

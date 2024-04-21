@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
@@ -158,15 +159,16 @@ fun ProfileScreen (
                     )
                 } else {
                     friends?.listFriends?.forEach { friend ->
-                        if (friend.firstname != null && friend.lastname != null) {
-                            FriendBox(
-                                firstname = friend.firstname!!,
-                                lastname = friend.lastname!!,
-                                onClick = toFriend,
-                                id = friend.id!!,
-                                image = friend.profile_picture
-                            )
-                        }
+                        val firstname = if (friend.firstname == null) "Firstname" else friend.firstname ?: ""
+                        val lastname = if (friend.lastname == null) "Lastname" else friend.lastname ?: ""
+                        val id = friend.id ?: 0
+                        FriendBox (
+                            firstname = firstname,
+                            lastname =lastname,
+                            onClick = toFriend,
+                            id = id,
+                            image = friend.profile_picture
+                        )
                     }
                 }
             }
@@ -237,7 +239,7 @@ fun ProfileScreen (
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = stringResource(id = R.string.notification_text),
+                                    text = stringResource(id = R.string.notification),
                                     style = labelStyle,
                                     fontSize = 18.sp
                                 )
@@ -246,7 +248,7 @@ fun ProfileScreen (
                                         .height(10.dp)
                                 )
                                 Text(
-                                    text = stringResource(id = R.string.darkmode_text),
+                                    text = stringResource(id = R.string.darkmode),
                                     style = labelStyle,
                                     fontSize = 18.sp
                                 )
@@ -255,11 +257,10 @@ fun ProfileScreen (
                                         .height(10.dp)
                                 )
                                 Text(
-                                    text = stringResource(id = R.string.language_text),
+                                    text = stringResource(id = R.string.language),
                                     style = labelStyle,
                                     fontSize = 18.sp,
                                 )
-
                             }
 
                             Column(
@@ -369,36 +370,5 @@ fun ProfileTopBar (
                 onClick = { toEditProfile() }
             )
         }
-    }
-}
-
-@Composable
-fun FriendBox (
-    firstname: String,
-    lastname: String,
-    image: ImageBitmap?,
-    onClick: (id: Int?) -> Unit,
-    id: Int
-) {
-    Column (
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box (
-            modifier = Modifier
-                .clickable(
-                    onClick = { onClick(id) }
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            FriendImageComponent (
-                image = image,
-            )
-        }
-        Text(
-            text = "$firstname $lastname",
-            style = labelStyle,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 13.sp,
-        )
     }
 }

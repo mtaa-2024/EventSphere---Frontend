@@ -137,7 +137,10 @@ fun EventSphereNavHost(
             EditEventRoute(
                 id = id,
                 mainViewModel = mainViewModel,
-                toEvent = { id ->
+                toBack = {
+                    navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
+                },
+                toEvent = {
                     navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
                 }
             )

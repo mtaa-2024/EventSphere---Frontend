@@ -57,9 +57,9 @@ data class EventInput(
 
 data class EventOutput (
     val event_id: Int,
-    val title: String,
-    val description: String,
-    val location: LocationData,
+    var title: String,
+    var description: String,
+    var location: LocationData,
     val estimated_end: String,
     val category: Int,
     val owner_id: Int,

@@ -34,13 +34,6 @@ import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.viewmodel.EventCenterViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
-@Preview(showBackground = true)
-@Composable
-fun Preview () {
-    EventCenterScreen(viewModel = MainViewModel(), eventCenterViewModel = EventCenterViewModel(
-        MainViewModel()
-    ), back = {}, toEvent = {}, toCreateEvent = {})
-}
 
 @Composable
 fun EventCenterScreen (

@@ -67,7 +67,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -91,6 +90,38 @@ import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import java.util.Locale
 import kotlin.reflect.KSuspendFunction1
 
+
+@Composable
+fun FriendBox (
+    firstname: String,
+    lastname: String,
+    image: ImageBitmap?,
+    onClick: (id: Int?) -> Unit,
+    id: Int
+) {
+
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box (
+            modifier = Modifier
+                .clickable(
+                    onClick = { onClick(id) }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            FriendImageComponent (
+                image = image,
+            )
+        }
+        Text(
+            text = "$firstname $lastname",
+            style = labelStyle,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 13.sp,
+        )
+    }
+}
 
 @Composable
 fun ProfileImageComponent (

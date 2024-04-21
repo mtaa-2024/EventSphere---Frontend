@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -28,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
-import stuba.fiit.sk.eventsphere.ui.activities.profile.FriendBox
+import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.SearchBarComponent
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
@@ -105,11 +106,14 @@ fun SearchUserScreen (
                 )
             } else {
                 friends?.listFriends?.forEach { friend ->
-                    FriendBox(
-                        firstname = friend.firstname ?: "Firstname",
-                        lastname = friend.lastname ?: "Lastname",
+                    val firstname = if (friend.firstname == null) "Firstname" else friend.firstname ?: ""
+                    val lastname = if (friend.lastname == null) "Lastname" else friend.lastname ?: ""
+                    val id = friend.id ?: 0
+                    FriendBox (
+                        firstname = firstname,
+                        lastname =lastname,
                         onClick = toFriends,
-                        id = friend.id!!,
+                        id = id,
                         image = friend.profile_picture
                     )
                 }
@@ -128,7 +132,7 @@ fun SearchFriendTopBar (
         Image(
             painter = painterResource(id = R.drawable.top_bar),
             contentDescription = "welcome_background",
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()

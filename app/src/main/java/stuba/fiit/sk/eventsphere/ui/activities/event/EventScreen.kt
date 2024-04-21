@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.CommentBanner
+import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
@@ -290,28 +291,24 @@ fun PerformersViewWidget (
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(90.dp)
                 .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             eventViewModel.event.value?.performers?.forEach { performer ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    FriendImageComponent(image = performer.profile_picture)
-                    Text(
-                        text = "${performer.firstname.toString()} ${performer.lastname.toString()}",
-                        style = smallButton,
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSecondary
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .width(10.dp)
-                    )
-                }
+                val firstname = if (performer.firstname == null) "Firstname" else performer.firstname ?: ""
+                val lastname = if (performer.lastname == null) "Lastname" else performer.lastname ?: ""
+                val id = performer.id ?: 0
+                FriendBox (
+                    firstname = firstname,
+                    lastname =lastname,
+                    onClick = {},
+                    id = id,
+                    image = performer.profile_picture
+                )
             }
+
         }
     }
 }

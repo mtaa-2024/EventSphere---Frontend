@@ -24,7 +24,7 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     private val performersList: MutableList<FriendPerformer> = mutableListOf()
     val friendsList: MutableList<FriendPerformer> = mutableListOf()
 
-    var timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
+    var timestamp: String = ""
 
     fun updateTimestamp() {
         timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
@@ -119,6 +119,7 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
     }
 
     suspend fun createEvent(): Pair<Boolean, String> {
+        updateTimestamp()
 
         if (_event.value?.title == "" || _event.value?.title == "Title") {
             return Pair(false, "Title must be initialized")
