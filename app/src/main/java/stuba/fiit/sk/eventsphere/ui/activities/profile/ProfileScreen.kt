@@ -160,7 +160,7 @@ fun ProfileScreen (
                 } else {
                     friends?.listFriends?.forEach { friend ->
                         val firstname = if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname ?: ""
-                        val lastname = if (friend.lastname == null) stringResource(id = R.string.firstname) else friend.lastname ?: ""
+                        val lastname = if (friend.lastname == null) stringResource(id = R.string.lastname) else friend.lastname ?: ""
                         val id = friend.id ?: 0
                         FriendBox (
                             firstname = firstname,
