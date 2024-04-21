@@ -25,9 +25,8 @@
 
     <string name="enter_username_or_email_input_text">Zadaj svoje používateľské meno alebo email</string>
     <string name="password_input_text">Zadaj svoje heslo</string>
-    <string name="enter_email_input_text">Zadaj svoj email</string>
     <string name="enter_username_input_text">Zadaj svoje používateľské meno</string>
-    <string name="verify_password_input_text">Over svoje heslo</string>
+    <string name="verify_password_input_text">Zadaj svoj email</string>
 
 
     <string name="alert_on_confirm_text">Prihlásiť sa alebo registrovať</string>
@@ -41,7 +40,7 @@
     <string name="invited">Pozvaný</string>
     <string name="expired">Vypršané</string>
 
-    <string name="you_are_friends_text">Ste priatelia</string>
+
     <string name="friends_text">Priatelia</string>
     <string name="search_users_button">Hľadať užívateľov</string>
     <string name="event_center_button">Centrum udalostí</string>
@@ -49,9 +48,8 @@
     <string name="notification_text">Notifikácie</string>
     <string name="darkmode_text">Tmavý režim</string>
     <string name="language_text">Jazyk</string>
-    <string name="logout_text">Odhlásiť sa</string>
+    <string name="longout_text">Odhlásiť sa</string>
     <string name="editprofile_button">Upraviť profil</string>
-    <string name="not_events_found">Eventy nenájdene</string>
 
     //EDIT PROFILE SCREEN
     <string name="firstname_label">Meno</string>
@@ -73,7 +71,7 @@
     <string name="save_dialog_label">Uložené</string>
     <string name="save_dialog_on_confirm_text">OK</string>
 
-    <string name="create_your_event_text">Vytvor svoju udalosť</string>
+    <string name="create_your_evetn_text">Vytvor svoju udalosť</string>
 
 
     <string name="search_user_welcome_text">Hľadať užívateľa</string>
@@ -93,13 +91,12 @@
     <string name="location_button">Lokalita</string>
     <string name="performers">Účinkujúci</string>
     <string name="remove">Odstrániť</string>
-    <string name="you_dont_have_friends_text">Nemáš pridaných priateľov</string>
+    <string name="you_dont_have_friends_text">Nemáš pridaných priateľov :(</string>
 
     <string name="add_performers_button">Pridať účinkujúcich</string>
 
 
     <string name="add_friend_button">Pridať priateľa</string>
-    <string name="find_friends_text">Nadi priateľa</string>
 
 
     <string name="where_to_find_us_text">Kde nás nájdete</string>
@@ -110,11 +107,5 @@
     <string name="notify_me_text">Informuj ma</string>
     <string name="somewhere_text">Niečo</string>
     <string name="over_the_rainbow_text">Za dúhou</string>
-
-    <string name="event_created_text">Event vytvorený</string>
-    <string name="your_event_was_created_text">Tvoj event bol vytvorený</string>
-    <string name="to_event_center_text">Späťna event center</string>
-    <string name="error_creating_event">Chyba vytvorenia eventu</string>
-    <string name="close">Zavrieť</string>
 
 </resources>

@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,12 +46,6 @@ import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.EditProfileViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
-@Preview(showBackground = true)
-@Composable
-fun Preview () {
-    EditProfileScreen(back = {}, viewModel = MainViewModel(), editProfileViewModel = EditProfileViewModel())
-}
-
 
 @Composable
 fun EditProfileScreen (
@@ -60,13 +53,6 @@ fun EditProfileScreen (
     viewModel: MainViewModel,
     editProfileViewModel: EditProfileViewModel
 ) {
-    editProfileViewModel.userNewData.value?.firstname = stringResource(id = R.string.firstname_input)
-    editProfileViewModel.userNewData.value?.lastname = stringResource(id = R.string.lastname_input)
-    editProfileViewModel.userNewData.value?.oldEmail = stringResource(id = R.string.old_email_input)
-    editProfileViewModel.userNewData.value?.newEmail = stringResource(id = R.string.new_email_input)
-    editProfileViewModel.userNewData.value?.oldPassword = stringResource(id = R.string.old_password_input)
-    editProfileViewModel.userNewData.value?.newPassword = stringResource(id = R.string.new_password_input)
-
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -80,7 +66,8 @@ fun EditProfileScreen (
 
         Column (
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(
@@ -123,8 +110,8 @@ fun EditProfileScreen (
                     .height(5.dp)
             )
 
-            val firstName = viewModel.loggedUser.value?.firstname ?: stringResource(id = R.string.firstname_label)
-            val lastName = viewModel.loggedUser.value?.lastname ?: stringResource(id = R.string.lastname_label)
+            val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
+            val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
 
             Text(
                 text = "$firstName $lastName",
@@ -138,17 +125,15 @@ fun EditProfileScreen (
                     .height(30.dp)
             )
 
-            val scrollState = rememberScrollState()
 
             Column (
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(30.dp, 0.dp)
-                    .verticalScroll(scrollState)
             ) {
 
                 InputFieldComponent(
-                    label = stringResource(id = R.string.firstname_label),
+                    label = "Firstname",
                     text = editProfileViewModel.userNewData.value?.firstname.toString(),
                     onUpdate = editProfileViewModel::updateFirstname,
                     keyboardType = KeyboardType.Text,
@@ -159,11 +144,11 @@ fun EditProfileScreen (
 
                 Spacer(
                     modifier = Modifier
-                        .height(20.dp)
+                        .height(15.dp)
                 )
 
                 InputFieldComponent(
-                    label = stringResource(id = R.string.lastname_label),
+                    label = "Lastname",
                     text = editProfileViewModel.userNewData.value?.lastname.toString(),
                     onUpdate = editProfileViewModel::updateLastname,
                     keyboardType = KeyboardType.Text,
@@ -174,11 +159,11 @@ fun EditProfileScreen (
 
                 Spacer(
                     modifier = Modifier
-                        .height(30.dp)
+                        .height(25.dp)
                 )
 
                 InputFieldComponent(
-                    label = stringResource(id = R.string.old_email_label),
+                    label = "Old email",
                     text = editProfileViewModel.userNewData.value?.oldEmail.toString(),
                     onUpdate = editProfileViewModel::updateOldEmail,
                     keyboardType = KeyboardType.Text,
@@ -189,11 +174,11 @@ fun EditProfileScreen (
 
                 Spacer(
                     modifier = Modifier
-                        .height(20.dp)
+                        .height(15.dp)
                 )
 
                 InputFieldComponent(
-                    label = stringResource(id = R.string.new_email_label),
+                    label = "New email",
                     text = editProfileViewModel.userNewData.value?.newEmail.toString(),
                     onUpdate = editProfileViewModel::updateNewEmail,
                     keyboardType = KeyboardType.Text,
@@ -204,11 +189,11 @@ fun EditProfileScreen (
 
                 Spacer(
                     modifier = Modifier
-                        .height(30.dp)
+                        .height(25.dp)
                 )
 
                 InputFieldComponent(
-                    label = stringResource(id = R.string.old_password_label),
+                    label = "Old password",
                     text = editProfileViewModel.userNewData.value?.oldPassword.toString(),
                     onUpdate = editProfileViewModel::updateOldPassword,
                     keyboardType = KeyboardType.Password,
@@ -219,11 +204,11 @@ fun EditProfileScreen (
 
                 Spacer(
                     modifier = Modifier
-                        .height(20.dp)
+                        .height(15.dp)
                 )
 
                 InputFieldComponent(
-                    label = stringResource(id = R.string.new_password_label),
+                    label = "New password",
                     text = editProfileViewModel.userNewData.value?.newPassword.toString(),
                     onUpdate = editProfileViewModel::updateNewPassword,
                     keyboardType = KeyboardType.Password,
@@ -232,10 +217,6 @@ fun EditProfileScreen (
                         .fillMaxWidth()
                 )
             }
-            Spacer(
-                modifier = Modifier
-                    .height(50.dp)
-            )
         }
     }
 }
@@ -292,7 +273,7 @@ fun EditProfileTopBar (
                     }
                     openSaveDialog.value = true
                 },
-                text = stringResource(id = R.string.save_button),
+                text = "Save",
                 isSelected = false
             )
             if(openSaveDialog.value) {
@@ -302,10 +283,10 @@ fun EditProfileTopBar (
                         openSaveDialog.value = false
                         back()
                     },
-                    dialogTitle = stringResource(id = R.string.save_dialog_label),
-                    dialogText = "\uD83D\uDC3B\u200D❄\uFE0F",
-                    onDismissText = "",
-                    onConfirmText = stringResource(id = R.string.save_dialog_on_confirm_text)
+                    dialogTitle = "Saved",
+                    dialogText = "Cigis",
+                    onDismissText = "pipik",
+                    onConfirmText = "ok"
                 )
             }
 

@@ -9,7 +9,7 @@ import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModelFactory
 import java.util.Locale
 
 @Composable
-fun ProfileRoute (
+fun ProfileRoute(
     onNavigationToLogout: () -> Unit,
     onNavigationToEventCenter: () -> Unit,
     onNavigationToBack: ()-> Unit,
@@ -18,13 +18,13 @@ fun ProfileRoute (
     onNavigationToSearchUserScreen: () -> Unit,
     setLanguage: (Locale) -> Unit,
     setTheme: (Boolean) -> Unit,
-    mainViewModel: MainViewModel,
+    mainViewModel: MainViewModel
 ) {
     val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(mainViewModel.loggedUser.value?.id ?:0))
     ProfileScreen (
         toLogout = onNavigationToLogout,
-        back = onNavigationToBack,
         toEventCenter = onNavigationToEventCenter,
+        back = onNavigationToBack,
         toEditProfile = onNavigationToEditProfile,
         toFriend = onNavigationToFriendsScreen,
         toSearchUser = onNavigationToSearchUserScreen,

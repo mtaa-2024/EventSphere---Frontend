@@ -25,9 +25,8 @@
 
     <string name="enter_username_or_email_input_text">Enter your username or email</string>
     <string name="password_input_text">Enter your password</string>
-    <string name="enter_email_input_text">Enter your email</string>
     <string name="enter_username_input_text">Enter your username</string>
-    <string name="verify_password_input_text">Verify your password</string>
+    <string name="verify_password_input_text">Enter your email</string>
 
 
     <string name="alert_on_confirm_text">Login or register</string>
@@ -41,7 +40,7 @@
     <string name="invited">Invited</string>
     <string name="expired">Expired</string>
 
-    <string name="you_are_friends_text">You are friends</string>
+
     <string name="friends_text">Friends</string>
     <string name="search_users_button">Search Users</string>
     <string name="event_center_button">Event center</string>
@@ -49,9 +48,8 @@
     <string name="notification_text">Notifications</string>
     <string name="darkmode_text">Dark mode</string>
     <string name="language_text">Language</string>
-    <string name="logout_text">Logout</string>
+    <string name="longout_text">Logout</string>
     <string name="editprofile_button">Edit profile</string>
-    <string name="not_events_found">Not events found</string>
 
 
     <string name="firstname_label">Firstname</string>
@@ -73,7 +71,7 @@
     <string name="save_dialog_label">Saved</string>
     <string name="save_dialog_on_confirm_text">OK</string>
 
-    <string name="create_your_event_text">Create your event</string>
+    <string name="create_your_evetn_text">Create your event</string>
 
     <string name="search_user_welcome_text">Search User</string>
     <string name="search_label">Search</string>
@@ -92,12 +90,11 @@
     <string name="location_button">Location</string>
     <string name="performers">Performers</string>
     <string name="remove">Remove</string>
-    <string name="you_dont_have_friends_text">You don’t have friends to add</string>
+    <string name="you_dont_have_friends_text">You don’t have friends to add :(</string>
 
     <string name="add_performers_button">Add performers</string>
 
     <string name="add_friend_button">Add friend</string>
-    <string name="find_friends_text">Find friends</string>
 
     <string name="where_to_find_us_text">Where to find us</string>
     <string name="comments_text">Comments</string>
@@ -107,10 +104,4 @@
     <string name="notify_me_text">Notify me</string>
     <string name="somewhere_text">Somewhere</string>
     <string name="over_the_rainbow_text">Over the rainbow</string>
-
-    <string name="event_created_text">Event created</string>
-    <string name="your_event_was_created_text">Your event was created</string>
-    <string name="to_event_center_text">To event center</string>
-    <string name="error_creating_event">Error creating event</string>
-    <string name="close">Close</string>
 </resources>

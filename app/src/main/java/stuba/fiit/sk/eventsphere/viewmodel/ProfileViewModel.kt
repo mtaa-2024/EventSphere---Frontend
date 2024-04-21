@@ -29,7 +29,7 @@ class ProfileViewModel(id:Int) : ViewModel() {
         _friends.value = FriendList(emptyList())
     }
 
-    private suspend fun getProfileData(id: Int) {
+    suspend fun getProfileData(id: Int) {
         try {
             val fetchedJson = apiService.getFriends(id)
             val friendsList = mutableListOf<Friend>()

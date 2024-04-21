@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import stuba.fiit.sk.eventsphere.R
@@ -78,7 +77,7 @@ fun EventCenterScreen (
                 onClick = { toCreateEvent() },
                 fillColor = MaterialTheme.colorScheme.primary,
                 textColor = MaterialTheme.colorScheme.background,
-                text = stringResource(id = R.string.create_your_event_text),
+                text = "Create your event",
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -94,7 +93,7 @@ fun EventCenterScreen (
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 SmallButtonComponent (
-                    text = stringResource(id = R.string.upcoming),
+                    text = "Upcoming",
                     isSelected = eventCenterViewModel.eventSelectStates.value?.upcoming ?: false,
                     onClick = {
                         eventCenterViewModel.onUpcomingSelect(viewModel)
@@ -103,7 +102,7 @@ fun EventCenterScreen (
                     }
                 )
                 SmallButtonComponent (
-                    text = stringResource(id = R.string.expired),
+                    text = "Expired",
                     isSelected = eventCenterViewModel.eventSelectStates.value?.expired ?: false,
                     onClick = {
                         eventCenterViewModel.onExpiredSelect(viewModel)

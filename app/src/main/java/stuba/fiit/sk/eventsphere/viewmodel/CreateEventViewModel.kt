@@ -152,7 +152,7 @@ class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
         }
 
         try {
-            var jsonBody = JsonObject()
+            val jsonBody = JsonObject()
             jsonBody.addProperty("title", _event.value?.title)
             jsonBody.addProperty("user_id", _event.value?.user_id)
             jsonBody.addProperty("description", _event.value?.description)

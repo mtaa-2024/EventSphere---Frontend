@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,13 +39,6 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 fun Preview () {
     LoginScreen(toHome = {}, back = {}, viewModel = MainViewModel(), loginViewModel = LoginViewModel())
 }
-
-@Preview(showBackground = true, locale = "sk")
-@Composable
-fun PreviewSk () {
-    LoginScreen(toHome = {}, back = {}, viewModel = MainViewModel(), loginViewModel = LoginViewModel())
-}
-
 @Composable
 fun LoginScreen (
     toHome: () -> Unit,
@@ -54,9 +46,6 @@ fun LoginScreen (
     viewModel: MainViewModel,
     loginViewModel: LoginViewModel
 ) {
-    loginViewModel.login.value?.user = stringResource(id = R.string.enter_username_or_email_input_text)
-    loginViewModel.login.value?.password = stringResource(id = R.string.password_input_text)
-
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -71,7 +60,7 @@ fun LoginScreen (
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text (
-                text = stringResource(id = R.string.login_welcome_text),
+                text = "Welcome back",
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
@@ -82,7 +71,7 @@ fun LoginScreen (
             )
 
             InputFieldComponent (
-                label = stringResource(id = R.string.username_or_email_label),
+                label = "Username or email",
                 text = loginViewModel.login.value?.user.toString(),
                 onUpdate = loginViewModel::updateUser,
                 keyboardType = KeyboardType.Text,
@@ -97,7 +86,7 @@ fun LoginScreen (
             )
 
             InputFieldComponent (
-                label = stringResource(id = R.string.password_label),
+                label = "Password",
                 text = loginViewModel.login.value?.password.toString(),
                 onUpdate = loginViewModel::updatePassword,
                 keyboardType = KeyboardType.Password,
@@ -112,9 +101,9 @@ fun LoginScreen (
             )
 
             ButtonComponent (
+                text = "Login",
                 fillColor = MaterialTheme.colorScheme.primary,
                 textColor = MaterialTheme.colorScheme.background,
-                text = stringResource(id = R.string.login_button),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp),

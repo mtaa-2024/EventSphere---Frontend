@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -99,8 +98,8 @@ fun FriendsScreen (
                     modifier = Modifier
                         .height(15.dp)
                 )
-                val firstName = friendsViewModel.friend.value?.firstname ?: stringResource(id = R.string.firstname_label)
-                val lastName = friendsViewModel.friend.value?.lastname ?: stringResource(id = R.string.lastname_label)
+                val firstName = friendsViewModel.friend.value?.firstname ?: "Firstname"
+                val lastName = friendsViewModel.friend.value?.lastname ?: "Lastname"
 
                 Text(
                     text = "$firstName $lastName",
@@ -115,7 +114,7 @@ fun FriendsScreen (
                 var canBeAdded by remember { mutableStateOf(friendsViewModel.canBeAdded) }
 
                 SmallButtonComponent (
-                    text = if (canBeAdded) stringResource(id = R.string.add_friend_button) else stringResource(id = R.string.you_are_friends_text),
+                    text = if (canBeAdded) "Add friend" else "You are friends",
                     isSelected = !canBeAdded,
                     onClick = {
                         if (canBeAdded) {
