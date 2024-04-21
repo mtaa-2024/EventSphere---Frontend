@@ -14,6 +14,7 @@
 
     <string name="guest_continue">Continue as</string>
     <string name="guest">guest</string>
+    <string name="no_internet_connection">No internet connection available</string>
 
 
     <string name="username_or_email">Username or email</string>
@@ -27,6 +28,14 @@
     <string name="enter_password">Enter your password</string>
     <string name="enter_username">Enter your username</string>
     <string name="enter_email">Enter your email</string>
+    <string name="enter_firstname">Enter your firstname</string>
+    <string name="enter_lastname">Enter your lastname</string>
+    <string name="enter_old_email">Enter your old email</string>
+    <string name="enter_new_email">Enter your new email</string>
+    <string name="enter_old_password">Enter your old password</string>
+    <string name="enter_new_password">Enter your new password</string>
+    <string name="ok">OK</string>
+    <string name="edit">Edit</string>
 
 
     <string name="login_or_register">Login or register</string>

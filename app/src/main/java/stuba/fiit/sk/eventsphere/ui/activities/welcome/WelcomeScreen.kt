@@ -129,7 +129,7 @@ fun WelcomeTopBar (
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 color = Color.White,
-                maxLines = 2,
+                maxLines = 3,
                 lineHeight = 35.sp,
                 letterSpacing = 2.sp,
             )
@@ -149,12 +149,13 @@ fun GuestButton (
         verticalAlignment = Alignment.CenterVertically
     ) {
         val context = LocalContext.current
+        val string = stringResource(id = R.string.no_internet_connection)
         TextButton(
             onClick = {
                 if(isInternetAvailable(context)) {
                     toHome()
                 }else{
-                    Toast.makeText(context, "No internet connection available.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
 
                 }
             }

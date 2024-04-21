@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,7 +65,7 @@ fun SearchUserScreen (
             )
 
             Text(
-                text = "Search for User",
+                text = stringResource(id = R.string.search_for_user),
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
@@ -98,7 +99,7 @@ fun SearchUserScreen (
 
             if (friends?.listFriends?.isEmpty() == true) {
                 Text (
-                    text = "Friends not found",
+                    text = stringResource(id = R.string.friends_not_found),
                     style = welcomeStyle,
                     fontSize = 20.sp,
                     modifier = Modifier.fillMaxWidth(),
@@ -106,8 +107,8 @@ fun SearchUserScreen (
                 )
             } else {
                 friends?.listFriends?.forEach { friend ->
-                    val firstname = if (friend.firstname == null) "Firstname" else friend.firstname ?: ""
-                    val lastname = if (friend.lastname == null) "Lastname" else friend.lastname ?: ""
+                    val firstname = if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname ?: ""
+                    val lastname = if (friend.lastname == null) stringResource(id = R.string.lastname) else friend.lastname ?: ""
                     val id = friend.id ?: 0
                     FriendBox (
                         firstname = firstname,

@@ -101,8 +101,8 @@ fun ProfileScreen (
                     .height(10.dp)
             )
 
-            val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
-            val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
+            val firstName = if (viewModel.loggedUser.value?.firstname == null) stringResource(id = R.string.firstname) else viewModel.loggedUser.value?.firstname ?: ""
+            val lastName = if (viewModel.loggedUser.value?.lastname == null) stringResource(id = R.string.lastname) else viewModel.loggedUser.value?.lastname ?: ""
 
             Text(
                 text = "$firstName $lastName",
@@ -124,13 +124,13 @@ fun ProfileScreen (
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text (
-                    text = "Friends",
+                    text = stringResource(id = R.string.friends),
                     style = welcomeStyle,
                     fontSize = 20.sp
                 )
 
                 SmallButtonComponent (
-                    text = "Find friend",
+                    text = stringResource(id = R.string.find_friend),
                     isSelected = false,
                     onClick = { toSearchUser() }
                 )
@@ -151,7 +151,7 @@ fun ProfileScreen (
 
                 if (friends?.listFriends?.isEmpty() == true) {
                     Text (
-                        text = "No friends :(",
+                        text = stringResource(id = R.string.no_friends),
                         style = welcomeStyle,
                         fontSize = 18.sp,
                         modifier = Modifier.fillMaxWidth(),
@@ -159,8 +159,8 @@ fun ProfileScreen (
                     )
                 } else {
                     friends?.listFriends?.forEach { friend ->
-                        val firstname = if (friend.firstname == null) "Firstname" else friend.firstname ?: ""
-                        val lastname = if (friend.lastname == null) "Lastname" else friend.lastname ?: ""
+                        val firstname = if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname ?: ""
+                        val lastname = if (friend.lastname == null) stringResource(id = R.string.firstname) else friend.lastname ?: ""
                         val id = friend.id ?: 0
                         FriendBox (
                             firstname = firstname,
@@ -188,7 +188,7 @@ fun ProfileScreen (
                     onClick = { toEventCenter() },
                     fillColor = MaterialTheme.colorScheme.primary,
                     textColor = MaterialTheme.colorScheme.background,
-                    text = "Event center",
+                    text = stringResource(id = R.string.event_center),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
@@ -217,7 +217,7 @@ fun ProfileScreen (
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text (
-                            text = "Settings",
+                            text = stringResource(id = R.string.settings),
                             style = labelStyle,
                             fontSize = 24.sp
                         )
@@ -302,9 +302,9 @@ fun ProfileScreen (
                                     text = if (language == "en") "English" else "Slovak",
                                     isSelected = false,
                                     onClick = {
-                                        onLanguageChange(Locale(language))
                                         if (language == "en") language = "sk" else
                                         if (language == "sk") language = "en"
+                                        onLanguageChange(Locale(language))
                                     }
                                 )
                             }
@@ -318,7 +318,7 @@ fun ProfileScreen (
             )
 
             SmallButtonComponent (
-                text = "Logout",
+                text = stringResource(id = R.string.logout),
                 isSelected = false,
                 onClick = toLogout,
             )
@@ -365,7 +365,7 @@ fun ProfileTopBar (
                 )
             }
             SmallButtonComponent (
-                text = "Edit profile",
+                text = stringResource(id = R.string.edit_profile),
                 isSelected = false,
                 onClick = { toEditProfile() }
             )

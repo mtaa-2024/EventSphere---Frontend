@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,9 @@ fun LoginScreen (
     viewModel: MainViewModel,
     loginViewModel: LoginViewModel
 ) {
+    loginViewModel.login.value?.user = stringResource(id = R.string.username_or_email)
+    loginViewModel.login.value?.password = stringResource(id = R.string.enter_password)
+
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -63,7 +67,7 @@ fun LoginScreen (
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text (
-                text = "Welcome back",
+                text = stringResource(id = R.string.login_welcome_text),
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
@@ -74,7 +78,7 @@ fun LoginScreen (
             )
 
             InputFieldComponent (
-                label = "Username or email",
+                label = stringResource(id = R.string.username_or_email),
                 text = loginViewModel.login.value?.user.toString(),
                 onUpdate = loginViewModel::updateUser,
                 keyboardType = KeyboardType.Text,
@@ -89,7 +93,7 @@ fun LoginScreen (
             )
 
             InputFieldComponent (
-                label = "Password",
+                label = stringResource(id = R.string.password),
                 text = loginViewModel.login.value?.password.toString(),
                 onUpdate = loginViewModel::updatePassword,
                 keyboardType = KeyboardType.Password,
@@ -103,8 +107,9 @@ fun LoginScreen (
                     .weight(1f)
             )
             val context = LocalContext.current
+            val string = stringResource(id = R.string.no_internet_connection)
             ButtonComponent (
-                text = "Login",
+                text = stringResource(id = R.string.login_button),
                 fillColor = MaterialTheme.colorScheme.primary,
                 textColor = MaterialTheme.colorScheme.background,
                 modifier = Modifier
@@ -118,7 +123,7 @@ fun LoginScreen (
                             }
                         }
                     }else {
-                        Toast.makeText(context, "No internet connection available.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
                     }
                 }
             )

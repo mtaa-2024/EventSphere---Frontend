@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -132,7 +133,7 @@ fun MapViewWidget (
             .fillMaxWidth()
     ) {
         Text(
-            text = "Where to find us",
+            text = stringResource(id = R.string.where_to_find_us),
             style = welcomeStyle,
             fontSize = 17.sp
         )
@@ -171,7 +172,7 @@ fun CommentsViewWidget(
         horizontalAlignment = Alignment.End
     ) {
         Text (
-            text = "Comments",
+            text = stringResource(id = R.string.comments),
             style = welcomeStyle,
             fontSize = 20.sp,
             modifier = Modifier.padding(15.dp, 0.dp)
@@ -185,8 +186,8 @@ fun CommentsViewWidget(
         events?.comments?.forEach { comment ->
             CommentBanner(
                 id = comment.id,
-                firstname = comment.firstname ?: "Firstname",
-                lastname = comment.lastname ?: "Lastname",
+                firstname = if (mainViewModel.loggedUser.value?.firstname == null) stringResource(id = R.string.firstname) else mainViewModel.loggedUser.value?.firstname ?: "",
+                lastname = if (mainViewModel.loggedUser.value?.lastname == null) stringResource(id = R.string.lastname) else mainViewModel.loggedUser.value?.lastname ?: "",
                 text = comment.text ?: "",
                 image = comment.profile_image,
                 onPublish = { },
@@ -207,7 +208,7 @@ fun CommentsViewWidget(
         horizontalAlignment = Alignment.End
     ) {
         Text (
-            text = "Publish your comment",
+            text = stringResource(id = R.string.publish_your_comment),
             style = welcomeStyle,
             fontSize = 14.sp,
             modifier = Modifier
@@ -220,9 +221,9 @@ fun CommentsViewWidget(
 
         CommentBanner (
             id = mainViewModel.loggedUser.value?.id ?: 0,
-            firstname = mainViewModel.loggedUser.value?.firstname ?: "Firstname",
-            lastname = mainViewModel.loggedUser.value?.firstname ?: "Lastname",
-            text = "Insert your comment",
+            firstname = if (mainViewModel.loggedUser.value?.firstname == null) stringResource(id = R.string.firstname) else mainViewModel.loggedUser.value?.firstname ?: "",
+            lastname = if (mainViewModel.loggedUser.value?.lastname == null) stringResource(id = R.string.lastname) else mainViewModel.loggedUser.value?.lastname ?: "",
+            text = stringResource(id = R.string.insert_your_comment),
             image = mainViewModel.loggedUser.value?.profile_image,
             isForPublish = true,
             onPublish = { comment ->
@@ -246,7 +247,7 @@ fun DescriptionViewWidget (
             .padding(30.dp, 0.dp)
     ) {
         Text (
-            text = "Description",
+            text = stringResource(id = R.string.description),
             style = welcomeStyle,
             fontSize = 18.sp
         )
@@ -260,7 +261,7 @@ fun DescriptionViewWidget (
                 .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(15.dp))
         ) {
             Text(
-                text = eventViewModel.event.value?.description ?: "No description",
+                text = eventViewModel.event.value?.description ?: stringResource(id = R.string.no_description),
                 style = labelStyle,
                 fontSize = 17.sp,
                 modifier = Modifier.padding(15.dp)
@@ -278,7 +279,7 @@ fun PerformersViewWidget (
             .fillMaxWidth()
     ) {
         Text(
-            text = "Performers",
+            text = stringResource(id = R.string.performers),
             style = welcomeStyle,
             fontSize = 20.sp,
             modifier = Modifier.padding(25.dp, 0.dp)
@@ -297,8 +298,8 @@ fun PerformersViewWidget (
             verticalAlignment = Alignment.CenterVertically
         ) {
             eventViewModel.event.value?.performers?.forEach { performer ->
-                val firstname = if (performer.firstname == null) "Firstname" else performer.firstname ?: ""
-                val lastname = if (performer.lastname == null) "Lastname" else performer.lastname ?: ""
+                val firstname = if (performer.firstname == null) stringResource(id = R.string.firstname) else performer.firstname ?: ""
+                val lastname = if (performer.lastname == null) stringResource(id = R.string.lastname) else performer.lastname ?: ""
                 val id = performer.id ?: 0
                 FriendBox (
                     firstname = firstname,
@@ -334,7 +335,7 @@ fun OrganizatorViewWidget (
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Organizator",
+                text = stringResource(id = R.string.organizator),
                 style = welcomeStyle,
                 fontSize = 17.sp,
                 color = MaterialTheme.colorScheme.onBackground
@@ -390,13 +391,13 @@ fun EventTopBar (
                 Box() {}
                 if (eventViewModel.event.value?.owner_id != viewModel.loggedUser.value?.id) {
                     SmallButtonComponent(
-                        text = "Notify me",
+                        text = stringResource(id = R.string.notify_me),
                         isSelected = false,
                         onClick = {}
                     )
                 } else {
                     SmallButtonComponent(
-                        text = "Edit",
+                        text = stringResource(id = R.string.edit),
                         isSelected = false,
                         onClick = {
                             toEdit(eventViewModel.event.value?.event_id!!)
@@ -411,7 +412,7 @@ fun EventTopBar (
                     .padding(8.dp)
             ) {
                 Text(
-                    text = eventViewModel.event.value?.title ?: "Title",
+                    text = if(eventViewModel.event.value?.title == null) stringResource(id = R.string.tittle)else eventViewModel.event.value?.title ?: "",
                     style = labelStyle,
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center,
@@ -419,14 +420,14 @@ fun EventTopBar (
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = eventViewModel.event.value?.location?.address ?: "Somewhere",
+                    text = if(eventViewModel.event.value?.location?.address == null) stringResource(id = R.string.somewhere)else eventViewModel.event.value?.location?.address ?: "",
                     style = labelStyle,
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.background
                 )
                 Text(
-                    text = eventViewModel.event.value?.estimated_end ?: "Over the rainbow",
+                    text = if(eventViewModel.event.value?.estimated_end == null) stringResource(id = R.string.over_the_rainbow)else eventViewModel.event.value?.estimated_end ?: "",
                     style = labelStyle,
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,

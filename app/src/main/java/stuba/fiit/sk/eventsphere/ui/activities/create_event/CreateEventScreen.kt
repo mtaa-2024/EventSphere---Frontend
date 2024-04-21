@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -131,7 +132,7 @@ fun PerformersRow(
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = "Performers",
+            text = stringResource(id = R.string.performers),
             style = buttonStyle,
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
@@ -158,8 +159,8 @@ fun PerformersRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             createEventViewModel.event.value?.performers?.forEach { performer ->
-                val firstname = if (performer.firstname == null) "Firstname" else performer.firstname ?: ""
-                val lastname = if (performer.lastname == null) "Lastname" else performer.lastname ?: ""
+                val firstname = if (performer.firstname == null) stringResource(id = R.string.friends) else performer.firstname ?: ""
+                val lastname = if (performer.lastname == null) stringResource(id = R.string.lastname) else performer.lastname ?: ""
                 val id = performer.id ?: 0
                 FriendBox (
                     firstname = firstname,
@@ -196,7 +197,7 @@ fun PerformersRow(
         ) {
             if (isSelectedPerformer) {
                 SmallButtonComponent(
-                    text = "Remove",
+                    text = stringResource(id = R.string.remove),
                     isSelected = false,
                     onClick = {
                         createEventViewModel.removePerformer(selectedPerformer)
@@ -223,7 +224,7 @@ fun PerformersRow(
                 onClick = { addPerformer = true },
                 fillColor = MaterialTheme.colorScheme.primary,
                 textColor = MaterialTheme.colorScheme.background,
-                text = "Add performer",
+                text = stringResource(id = R.string.add_performers),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -240,7 +241,7 @@ fun PerformersRow(
                     Text(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        text = "No friends to add :(",
+                        text = stringResource(id = R.string.no_friends),
                         style = labelStyle,
                         textAlign = TextAlign.Center
                     )
@@ -254,8 +255,8 @@ fun PerformersRow(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         createEventViewModel.friendsList.forEach { friend ->
-                            val firstname = if (friend.firstname == null) "Firstname" else friend.firstname ?: ""
-                            val lastname = if (friend.lastname == null) "Lastname" else friend.lastname ?: ""
+                            val firstname = if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname ?: ""
+                            val lastname = if (friend.lastname == null) stringResource(id = R.string.lastname) else friend.lastname ?: ""
                             val id = friend.id ?: 0
                             FriendBox (
                                 firstname = firstname,
@@ -287,7 +288,7 @@ fun EventDetailInput (
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputFieldComponent(
-            label = "Title",
+            label = stringResource(id = R.string.tittle),
             text = createEventViewModel.event.value?.title.toString(),
             onUpdate = createEventViewModel::updateTitle,
             keyboardType = KeyboardType.Text,
@@ -302,7 +303,7 @@ fun EventDetailInput (
         )
 
         InputFieldComponent(
-            label = "Description",
+            label = stringResource(id = R.string.description),
             text = createEventViewModel.event.value?.description.toString(),
             onUpdate = createEventViewModel::updateDescription,
             keyboardType = KeyboardType.Text,
@@ -410,12 +411,13 @@ fun EventDetailInput (
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 SmallButtonComponent(
-                    text = "Location",
+                    text = stringResource(id = R.string.location),
                     isSelected = false,
                     onClick = { onMapShow() }
                 )
                 Text (
-                    text = createEventViewModel.event.value?.location?.address ?: "Address",
+                    text = if(createEventViewModel.event.value?.location?.address == null) stringResource(
+                        id = R.string.address)else createEventViewModel.event.value?.location?.address ?: "",
                     style = paragraph,
                     fontSize = 14.sp
                 )
@@ -666,7 +668,7 @@ fun CreateEventTopBar (
                     }
                     if (!openErrorDialog.value) openSaveDialog.value = true
                 },
-                text = "Create",
+                text = stringResource(id = R.string.create),
                 isSelected = false
             )
             if(openSaveDialog.value) {
@@ -676,10 +678,10 @@ fun CreateEventTopBar (
                         openSaveDialog.value = false
                         back()
                     },
-                    dialogTitle = "Event created",
-                    dialogText = "Your event was created",
+                    dialogTitle = stringResource(id = R.string.event_created),
+                    dialogText = stringResource(id = R.string.your_event_was_created),
                     onDismissText = "",
-                    onConfirmText = "To event center"
+                    onConfirmText = stringResource(id = R.string.to_event_center)
                 )
             } else if (openErrorDialog.value) {
                 AlertDialogComponent(
@@ -687,10 +689,10 @@ fun CreateEventTopBar (
                     onConfirmation = {
                         openErrorDialog.value = false
                     },
-                    dialogTitle = "Error creating event",
+                    dialogTitle = stringResource(id = R.string.error_creating_event),
                     dialogText = errorMessage.value,
                     onDismissText = "",
-                    onConfirmText = "Close"
+                    onConfirmText = stringResource(id = R.string.close)
                 )
             }
 

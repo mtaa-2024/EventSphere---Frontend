@@ -13,12 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.activities.login.TopBar
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
@@ -41,6 +43,10 @@ fun RegisterScreen (
     registerViewModel: RegisterViewModel
 
 ) {
+    registerViewModel.register.value?.username = stringResource(id = R.string.enter_username)
+    registerViewModel.register.value?.email = stringResource(id = R.string.enter_email)
+    registerViewModel.register.value?.password = stringResource(id = R.string.enter_password)
+    registerViewModel.register.value?.verifyPassword = stringResource(id = R.string.verify_password)
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -56,7 +62,7 @@ fun RegisterScreen (
         ) {
 
             Text (
-                text = "Step into tomorrow's world of events, effortlessly!",
+                text = stringResource(id = R.string.register_welcome_text),
                 style = welcomeStyle,
                 fontSize = 25.sp
             )
@@ -67,7 +73,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Username",
+                label = stringResource(id = R.string.username),
                 text = registerViewModel.register.value?.username.toString(),
                 onUpdate = registerViewModel::updateUsername,
                 onCheck = registerViewModel::checkUsername,
@@ -82,7 +88,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Email",
+                label = stringResource(id = R.string.email),
                 text = registerViewModel.register.value?.email.toString(),
                 onUpdate = registerViewModel::updateEmail,
                 onCheck =  registerViewModel::checkEmail,
@@ -97,7 +103,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Password",
+                label = stringResource(id = R.string.password),
                 text = registerViewModel.register.value?.password.toString(),
                 onUpdate = registerViewModel::updatePassword,
                 onCheck = null,
@@ -112,7 +118,7 @@ fun RegisterScreen (
             )
 
             InputFieldComponent (
-                label = "Verify password",
+                label = stringResource(id = R.string.verify_password),
                 text = registerViewModel.register.value?.verifyPassword.toString(),
                 onUpdate = registerViewModel::updateRepeatedPassword,
                 onCheck = null,
@@ -125,9 +131,10 @@ fun RegisterScreen (
                 modifier = Modifier
                     .weight(1f)
             )
+            val string = stringResource(id = R.string.no_internet_connection)
             val context = LocalContext.current
             ButtonComponent (
-                text = "Register",
+                text = stringResource(id = R.string.register_button),
                 fillColor = MaterialTheme.colorScheme.primary,
                 textColor = MaterialTheme.colorScheme.background,
                 modifier = Modifier
@@ -139,7 +146,7 @@ fun RegisterScreen (
                                 toHome()
                             }
                         }else{
-                            Toast.makeText(context, "No internet connection available.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

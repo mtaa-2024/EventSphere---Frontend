@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,7 +72,7 @@ fun HomeScreen (
                     .height(25.dp)
             )
             Text(
-                text = "Let’s explore events you might like",
+                text = stringResource(id = R.string.home_welcome_text),
                 style = welcomeStyle,
                 fontSize = 22.sp
             )
@@ -149,7 +150,7 @@ fun HomeScreen (
             val eventsState = observeLiveData(homeViewModel.events)
             if (eventsState?.events?.isEmpty() == true) {
                 Text (
-                    text = "No events found",
+                    text = stringResource(id = R.string.no_events_found),
                     style = welcomeStyle,
                     fontSize = 20.sp,
                     modifier = Modifier.fillMaxWidth(),
@@ -219,7 +220,7 @@ fun HomeTopBar(
             Box {
                 Image(
                     painter = painterResource(id = R.drawable.notification),
-                    contentDescription = "notification"
+                    contentDescription = stringResource(id = R.string.notification)
                 )
             }
         }
@@ -230,10 +231,10 @@ fun HomeTopBar(
             onConfirmation = {
                 openAlertDialog = false
                 toBack() },
-            onConfirmText = "Login or register",
-            onDismissText = "Close",
-            dialogText = "You have to be logged to access profile, you can continue as guest or login to your existing account or create new account",
-            dialogTitle = "Guest"
+            onConfirmText = stringResource(id = R.string.login_or_register),
+            onDismissText = stringResource(id = R.string.close),
+            dialogText = stringResource(id = R.string.alert_dialog_text),
+            dialogTitle = stringResource(id = R.string.alert_dialog_title)
         )
     }
 }
@@ -253,7 +254,7 @@ fun EventViewButtons (
         var isSelectedInvited by remember { mutableStateOf(homeViewModel.eventSelectStates.value?.invited?: false) }
 
         SmallButtonComponent (
-            text = "Upcoming",
+            text = stringResource(id = R.string.upcoming),
             isSelected = isSelectedUpcoming,
             onClick = {
                 homeViewModel.onUpcomingSelect()
@@ -264,7 +265,7 @@ fun EventViewButtons (
         )
 
         SmallButtonComponent (
-            text = "Attending",
+            text = stringResource(id = R.string.attending),
             isSelected = isSelectedAttending,
             onClick = {
                 homeViewModel.onAttendingSelect()
@@ -275,7 +276,7 @@ fun EventViewButtons (
         )
 
         SmallButtonComponent (
-            text = "Invited",
+            text = stringResource(id = R.string.invited),
             isSelected = isSelectedInvited,
             onClick = {
                 homeViewModel.onInvitedSelect()

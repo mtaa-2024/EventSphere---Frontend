@@ -12,6 +12,8 @@
 
     <string name="guest_continue">Pokračovať ako</string>
     <string name="guest">hosť</string>
+    <string name="no_internet_connection">Žiadny prístp na internet</string>
+
 
     <string name="username_or_email">Používateľské meno alebo email</string>
     <string name="password">Heslo</string>
@@ -23,6 +25,14 @@
     <string name="enter_password">Zadajte svoje heslo</string>
     <string name="enter_username">Zadajte svoje používateľské meno</string>
     <string name="enter_email">Zadajte svoj email</string>
+    <string name="enter_firstname">Zadaj svoje meno</string>
+    <string name="enter_lastname">Zadaj svoje priezvisko</string>
+    <string name="enter_old_email">Zadaj svoj stary email</string>
+    <string name="enter_new_email">Zadaj svoj novy email</string>
+    <string name="enter_old_password">Zadaj svoje stare heslo</string>
+    <string name="enter_new_password">Zadaj svoje nove heslo</string>
+    <string name="ok">OK</string>
+    <string name="edit">Upraviť</string>
 
     <string name="login_or_register">Prihlásiť sa alebo registrovať</string>
     <string name="close">Zavrieť</string>

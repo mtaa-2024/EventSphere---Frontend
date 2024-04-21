@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,14 +39,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.ui.activities.login.LoginScreen
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.EditProfileViewModel
+import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
+@Preview(showBackground = true, locale = "sk")
+@Composable
+fun Preview () {
+    EditProfileScreen(back = {}, viewModel = MainViewModel(), editProfileViewModel = EditProfileViewModel())
+}
 
 @Composable
 fun EditProfileScreen (
@@ -53,6 +61,14 @@ fun EditProfileScreen (
     viewModel: MainViewModel,
     editProfileViewModel: EditProfileViewModel
 ) {
+    editProfileViewModel.userNewData.value?.firstname = stringResource(id = R.string.enter_firstname)
+    editProfileViewModel.userNewData.value?.lastname = stringResource(id = R.string.enter_lastname)
+    editProfileViewModel.userNewData.value?.oldEmail = stringResource(id = R.string.enter_old_email)
+    editProfileViewModel.userNewData.value?.newEmail = stringResource(id = R.string.enter_new_email)
+    editProfileViewModel.userNewData.value?.oldPassword = stringResource(id = R.string.enter_old_password)
+    editProfileViewModel.userNewData.value?.newPassword = stringResource(id = R.string.enter_new_password)
+
+
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -110,8 +126,8 @@ fun EditProfileScreen (
                     .height(5.dp)
             )
 
-            val firstName = viewModel.loggedUser.value?.firstname ?: "Firstname"
-            val lastName = viewModel.loggedUser.value?.lastname ?: "Lastname"
+            val firstName = if (viewModel.loggedUser.value?.firstname == null) stringResource(id = R.string.firstname) else viewModel.loggedUser.value?.firstname ?: ""
+            val lastName = if (viewModel.loggedUser.value?.lastname == null) stringResource(id = R.string.lastname) else viewModel.loggedUser.value?.lastname ?: ""
 
             Text(
                 text = "$firstName $lastName",
@@ -133,7 +149,7 @@ fun EditProfileScreen (
             ) {
 
                 InputFieldComponent(
-                    label = "Firstname",
+                    label = stringResource(id = R.string.firstname),
                     text = editProfileViewModel.userNewData.value?.firstname.toString(),
                     onUpdate = editProfileViewModel::updateFirstname,
                     keyboardType = KeyboardType.Text,
@@ -148,7 +164,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "Lastname",
+                    label = stringResource(id = R.string.lastname),
                     text = editProfileViewModel.userNewData.value?.lastname.toString(),
                     onUpdate = editProfileViewModel::updateLastname,
                     keyboardType = KeyboardType.Text,
@@ -163,7 +179,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "Old email",
+                    label = stringResource(id = R.string.old_email),
                     text = editProfileViewModel.userNewData.value?.oldEmail.toString(),
                     onUpdate = editProfileViewModel::updateOldEmail,
                     keyboardType = KeyboardType.Text,
@@ -178,7 +194,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "New email",
+                    label = stringResource(id = R.string.new_email),
                     text = editProfileViewModel.userNewData.value?.newEmail.toString(),
                     onUpdate = editProfileViewModel::updateNewEmail,
                     keyboardType = KeyboardType.Text,
@@ -193,7 +209,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "Old password",
+                    label = stringResource(id = R.string.old_password),
                     text = editProfileViewModel.userNewData.value?.oldPassword.toString(),
                     onUpdate = editProfileViewModel::updateOldPassword,
                     keyboardType = KeyboardType.Password,
@@ -208,7 +224,7 @@ fun EditProfileScreen (
                 )
 
                 InputFieldComponent(
-                    label = "New password",
+                    label = stringResource(id = R.string.new_password),
                     text = editProfileViewModel.userNewData.value?.newPassword.toString(),
                     onUpdate = editProfileViewModel::updateNewPassword,
                     keyboardType = KeyboardType.Password,
@@ -273,7 +289,7 @@ fun EditProfileTopBar (
                     }
                     openSaveDialog.value = true
                 },
-                text = "Save",
+                text = stringResource(id = R.string.save),
                 isSelected = false
             )
             if(openSaveDialog.value) {
@@ -283,10 +299,10 @@ fun EditProfileTopBar (
                         openSaveDialog.value = false
                         back()
                     },
-                    dialogTitle = "Saved",
-                    dialogText = "Cigis",
-                    onDismissText = "pipik",
-                    onConfirmText = "ok"
+                    dialogTitle = stringResource(id = R.string.save_dialog_label),
+                    dialogText = "",
+                    onDismissText = "",
+                    onConfirmText = stringResource(id = R.string.ok)
                 )
             }
 
