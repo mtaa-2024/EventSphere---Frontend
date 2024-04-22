@@ -12,6 +12,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
 
+val invitedUiState = InvitedUiState()
+class InvitedUiState () {
+    private val _invites: MutableList<String> = mutableListOf()
+    val invites: List<String> = _invites
+
+    fun addEvent(id: String) {
+        _invites.add(id)
+    }
+}
+
 data class LoginInput (
     var user: String,
     var password: String

@@ -123,7 +123,7 @@ interface ApiService {
     suspend fun updateEvent(
         @Body body: JsonObject
     ): JsonObject
-    
+
 }
 
 val retrofit = Retrofit.Builder()
