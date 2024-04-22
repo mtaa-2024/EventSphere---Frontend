@@ -41,21 +41,23 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType.Companion.Text
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.ChatUiState
 import stuba.fiit.sk.eventsphere.model.chatUiState
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.model.webSocket
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
+import stuba.fiit.sk.eventsphere.viewmodel.GroupChatViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
 
 @Composable
 fun GroupChat (
     toBack: () -> Unit,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    groupChatViewModel: GroupChatViewModel
 ) {
     Column ( modifier = Modifier
         .fillMaxSize()
@@ -85,7 +87,6 @@ fun GroupChat (
                 .weight(1f)
         )
         InputMessage (
-            onSave = webSocket::onMessage,
             modifier = Modifier,
             mainViewModel = viewModel
         )
@@ -95,7 +96,6 @@ fun GroupChat (
 
 @Composable
 fun InputMessage (
-    onSave: (message: String) -> Unit,
     modifier: Modifier,
     mainViewModel: MainViewModel
 ) {
@@ -127,7 +127,7 @@ fun InputMessage (
         trailingIcon = {
             IconButton (
                 onClick = {
-                    onSave("{\"message\":\"${value}\", \"id\":${mainViewModel.loggedUser.value?.id}}")
+                    webSocket.onMessage(ChatUiState.MessageSend(mainViewModel.loggedUser.value?.id ?: 0, value))
                     value = "Aa" },
             ) {
                 Icon(

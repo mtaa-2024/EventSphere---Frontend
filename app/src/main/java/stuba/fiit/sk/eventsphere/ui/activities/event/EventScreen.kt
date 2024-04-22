@@ -386,7 +386,7 @@ fun EventTopBar (
                         contentDescription = "Back"
                     )
                 }
-                Box() {}
+                Box {}
 
                 val context = LocalContext.current
                 if (eventViewModel.event.value?.owner_id != viewModel.loggedUser.value?.id) {

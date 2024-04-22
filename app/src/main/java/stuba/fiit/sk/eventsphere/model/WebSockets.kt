@@ -2,12 +2,11 @@ package stuba.fiit.sk.eventsphere.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import org.json.JSONException
 import org.json.JSONObject
 
 
@@ -23,7 +22,12 @@ class WebSockets {
         val request: Request = Request.Builder().url("ws://10.0.2.2:8002").build()
         val listener = object: WebSocketListener() {
             override fun onMessage(webSocket: WebSocket, text: String) {
-                chatUiState.addMessage(text)
+                val jsonObject = JSONObject(text)
+
+                val message = jsonObject.getString("message")
+                val id = jsonObject.getInt("id")
+                ChatUiState.MessageSend(id, message)
+                chatUiState.addMessage(ChatUiState.MessageSend(id, message))
             }
 
             override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
@@ -34,32 +38,23 @@ class WebSockets {
     }
 
 
-    fun onMessage(input: String) {
-        ws?.send(input)
+    fun onMessage(input: ChatUiState.MessageSend) {
+        val sendText = "{\"message\":\"${input.message}\", \"id\":${input.id}}"
+        ws?.send(sendText)
     }
 }
 
 class ChatUiState {
-    private val _messages: MutableLiveData<List<MessageSend>> = MutableLiveData()
-    val messages: LiveData<List<MessageSend>> = _messages
+    //private val _messages: List<MessageSend> =
+    //val messages: LiveData<List<MessageSend>> = _messages
 
     data class MessageSend (
         val id: Int,
         val message: String
     )
 
-    fun addMessage(message: String) {
-        println(message)
-        try {
-            val jsonObject = JSONObject(message)
-            val message = jsonObject.getString("message")
-            val id = jsonObject.getInt("id")
+    fun addMessage(message: ChatUiState.MessageSend) {
 
-            val currentMessages = _messages.value?.toMutableList() ?: mutableListOf()
-            currentMessages.add(MessageSend(id, message))
-            _messages.value = currentMessages
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
+
     }
 }

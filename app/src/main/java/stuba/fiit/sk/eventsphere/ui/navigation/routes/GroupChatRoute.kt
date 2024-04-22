@@ -15,6 +15,7 @@ fun GroupChatRoute (
     val groupChatViewModel: GroupChatViewModel = viewModel(factory = GroupChatViewModelFactory())
     GroupChat (
         toBack = onNavigationToBack,
-        viewModel = mainViewModel
+        viewModel = mainViewModel,
+        groupChatViewModel = groupChatViewModel
     )
 }
