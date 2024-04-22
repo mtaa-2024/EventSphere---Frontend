@@ -2,10 +2,11 @@ package stuba.fiit.sk.eventsphere.viewmodel
 
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,9 +18,11 @@ import stuba.fiit.sk.eventsphere.api.apiService
 import java.io.IOException
 
 
-class EditProfileViewModel() : ViewModel() {
+class EditProfileViewModel(mainViewModel: MainViewModel) : ViewModel() {
     private val _updateProfileData = MutableLiveData<updateProfileClass>()
     val userNewData: LiveData<updateProfileClass> = _updateProfileData
+
+    private val mainViewModel = mainViewModel
 
     init {
         _updateProfileData.value = updateProfileClass (
@@ -70,7 +73,6 @@ class EditProfileViewModel() : ViewModel() {
         }
         try {
             val fetchedJson = apiService.editUser(editUserData)
-            println(fetchedJson)
             if (fetchedJson.get("result").asBoolean) {
                 return true
             }
@@ -82,24 +84,8 @@ class EditProfileViewModel() : ViewModel() {
         return false
     }
 
-    fun resizeImageToTargetSize(imagePath: String?): Bitmap {
-        val targetFileSizeInBytes = (25 * 1024 * 1024).toLong() // 25MB in bytes
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(imagePath, options)
-        val imageWidth = options.outWidth
-        val imageHeight = options.outHeight
-        var scaleFactor = 1
-
-        while (imageWidth / scaleFactor * (imageHeight / scaleFactor) * 4 > targetFileSizeInBytes) {
-            scaleFactor *= 2
-        }
-        options.inJustDecodeBounds = false
-        options.inSampleSize = scaleFactor
-        return BitmapFactory.decodeFile(imagePath, options)
-    }
-
     fun uriToByteArray(context: Context, uri: Uri?, userId: Int?) {
+        println("changing picture")
         uri ?: return
         try {
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -111,7 +97,18 @@ class EditProfileViewModel() : ViewModel() {
                     addProperty("id", userId)
                 }
                 viewModelScope.launch {
-                    apiService.updateImage(body)
+                    val image = apiService.updateImage(body)
+                    if (image.get("result").asBoolean) {
+                        var bitmap: ImageBitmap? = null
+                        val imageArray = if (image.get("profile_image").isJsonNull) null else image.getAsJsonObject("profile_image").getAsJsonArray("data")
+                        if (imageArray != null) {
+                            val img = jsonArrayToByteArray(imageArray).decodeToString()
+                            val decodedByteArray = Base64.decode(img, Base64.DEFAULT)
+                            val imageBitMap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
+                            bitmap = imageBitMap.asImageBitmap()
+                        }
+                        mainViewModel.loggedUser.value?.profile_image = bitmap
+                    }
                 }
             }
         } catch (e: IOException) {
@@ -121,11 +118,11 @@ class EditProfileViewModel() : ViewModel() {
 
 }
 
-class EditProfileViewModelFactory : ViewModelProvider.Factory {
+class EditProfileViewModelFactory(private val mainViewModel: MainViewModel) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EditProfileViewModel::class.java)) {
-            return EditProfileViewModel() as T
+            return EditProfileViewModel(mainViewModel) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

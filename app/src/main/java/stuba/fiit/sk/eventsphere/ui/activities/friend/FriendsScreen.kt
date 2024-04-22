@@ -14,10 +14,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
@@ -41,92 +38,97 @@ fun FriendsScreen (
     viewModel: MainViewModel,
     friendsViewModel: FriendsViewModel
 ) {
-    Column (
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.top_bar),
-                contentDescription = "welcome_background",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .matchParentSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Button(
-                    onClick = toProfile,
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "Back"
-                    )
-                }
-            }
-        }
+    if (friendsViewModel.canBeAdded.isInitialized) {
         Column (
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Column (
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.top_bar),
+                    contentDescription = "welcome_background",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                Row(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .matchParentSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Button(
+                        onClick = toProfile,
+                        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.back_arrow),
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            }
+            Column(
                 modifier = Modifier
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Spacer(
+                Column(
                     modifier = Modifier
-                        .height(30.dp)
-                )
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
-                ProfileImageComponent (
-                    image = friendsViewModel.friend.value?.profile_image
-                )
+                    Spacer(
+                        modifier = Modifier
+                            .height(30.dp)
+                    )
 
-                Spacer(
-                    modifier = Modifier
-                        .height(15.dp)
-                )
+                    ProfileImageComponent(
+                        image = friendsViewModel.friend.value?.profile_image
+                    )
 
-                val firstName = if (friendsViewModel.friend.value?.firstname == null) stringResource(id = R.string.firstname) else friendsViewModel.friend.value?.firstname ?: ""
-                val lastName = if (friendsViewModel.friend.value?.lastname  == null) stringResource(id = R.string.lastname) else friendsViewModel.friend.value?.lastname ?: ""
+                    Spacer(
+                        modifier = Modifier
+                            .height(15.dp)
+                    )
 
-                Text(
-                    text = "$firstName $lastName",
-                    style = welcomeStyle,
-                    fontSize = 20.sp,
-                )
+                    val firstName =
+                        if (friendsViewModel.friend.value?.firstname == null) stringResource(id = R.string.firstname) else friendsViewModel.friend.value?.firstname
+                            ?: ""
+                    val lastName =
+                        if (friendsViewModel.friend.value?.lastname == null) stringResource(id = R.string.lastname) else friendsViewModel.friend.value?.lastname
+                            ?: ""
 
-                Spacer (
-                    modifier = Modifier.height(25.dp)
-                )
+                    Text(
+                        text = "$firstName $lastName",
+                        style = welcomeStyle,
+                        fontSize = 20.sp,
+                    )
 
-                var canBeAdded by remember { mutableStateOf(friendsViewModel.canBeAdded) }
+                    Spacer(
+                        modifier = Modifier.height(25.dp)
+                    )
+                    
+                    val select = observeLiveData(liveData = friendsViewModel.canBeAdded)
 
-                SmallButtonComponent (
-                    text = if (canBeAdded) stringResource(id = R.string.add_friend) else stringResource(id = R.string.you_are_friends),
-                    isSelected = !canBeAdded,
-                    onClick = {
-                        if (canBeAdded) {
+                    SmallButtonComponent(
+                        text = if (select == true) stringResource(id = R.string.add_friend) else stringResource(
+                            id = R.string.you_are_friends
+                        ),
+                        isSelected = if (select == true) false else true,
+                        onClick = {
                             friendsViewModel.viewModelScope.launch {
-                                friendsViewModel.addFriend()
-                                canBeAdded = friendsViewModel.canBeAdded
+                                friendsViewModel.addAsFriend().toString()
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

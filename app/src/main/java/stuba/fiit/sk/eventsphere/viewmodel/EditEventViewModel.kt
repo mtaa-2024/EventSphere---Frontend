@@ -122,7 +122,6 @@ class EditEventViewModel (id: Int) : ViewModel() {
                 comments = commentsList
             )
             _event.value = event
-            println(_event.value)
         } catch (e: Exception) {
             println("Error: $e")
         }

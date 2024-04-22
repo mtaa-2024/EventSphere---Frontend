@@ -41,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -63,7 +62,6 @@ import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.paragraph
 import stuba.fiit.sk.eventsphere.viewmodel.CreateEventViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
-
 
 
 @Composable

@@ -18,22 +18,39 @@ class FriendsViewModel(friendId: Int, userId: Int) : ViewModel() {
     private val _friend = MutableLiveData<User>()
     val friend: LiveData<User> = _friend
 
-    var canBeAdded = true
+    private val _canBeAdded = MutableLiveData<Boolean>()
+    val canBeAdded: MutableLiveData<Boolean> = _canBeAdded
+
     private val friend_id = friendId
     private val user_id = userId
 
     init {
         viewModelScope.launch {
-            getFriend()
             isFriend()
+            getFriend()
         }
     }
 
-    suspend fun isFriend() {
+    private suspend fun isFriend() {
         try {
-            canBeAdded = !apiService.isFriend(user_id, friend_id).get("result").asBoolean
+            val fetchedJson = apiService.isFriend(user_id, friend_id).getAsJsonObject()
+            _canBeAdded.value = fetchedJson.get("result").asBoolean
         } catch (e: Exception) {
             println(e)
+        }
+    }
+
+    suspend fun addAsFriend() {
+        if (_canBeAdded.value == true) {
+            try {
+                val addFriendData = JsonObject()
+                addFriendData.addProperty("user_id", user_id)
+                addFriendData.addProperty("friend_id", friend_id)
+                val fetchedJson = apiService.addFriend(addFriendData)
+                isFriend()
+            } catch (e: Exception) {
+                println("Error: $e")
+            }
         }
     }
 
@@ -73,20 +90,6 @@ class FriendsViewModel(friendId: Int, userId: Int) : ViewModel() {
             }
         } catch (e: Exception) {
                 println("Error: $e")
-        }
-    }
-
-    suspend fun addFriend () {
-        if (canBeAdded) {
-            try {
-                val addFriendData = JsonObject()
-                addFriendData.addProperty("user_id", user_id)
-                addFriendData.addProperty("friend_id", friend_id)
-                canBeAdded = !apiService.add(addFriendData).get("result").asBoolean
-
-            } catch (e: Exception) {
-                println("Error: $e")
-            }
         }
     }
 }

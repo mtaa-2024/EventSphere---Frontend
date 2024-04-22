@@ -12,7 +12,7 @@ fun EditProfileRoute(
     onNavigationToProfile: () -> Unit,
     mainViewModel: MainViewModel
 ) {
-    val editProfileViewModel: EditProfileViewModel = viewModel(factory = EditProfileViewModelFactory())
+    val editProfileViewModel: EditProfileViewModel = viewModel(factory = EditProfileViewModelFactory(mainViewModel))
     EditProfileScreen (
         back = onNavigationToProfile,
         viewModel = mainViewModel,

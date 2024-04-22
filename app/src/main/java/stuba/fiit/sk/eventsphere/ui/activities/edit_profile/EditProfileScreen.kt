@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,33 +30,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.ui.activities.login.LoginScreen
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
-import stuba.fiit.sk.eventsphere.ui.theme.LightColorScheme
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.EditProfileViewModel
-import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
-@Preview(showBackground = true, locale = "sk")
-@Composable
-fun Preview () {
-    EditProfileScreen(back = {}, viewModel = MainViewModel(), editProfileViewModel = EditProfileViewModel())
-}
 
 @Composable
 fun EditProfileScreen (
@@ -94,10 +87,12 @@ fun EditProfileScreen (
 
             val context = LocalContext.current
             val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-                suspend { editProfileViewModel.uriToByteArray(context, uri, viewModel.loggedUser.value?.id ?: 0) }
+                uri?.let {
+                    editProfileViewModel.viewModelScope.launch {
+                        editProfileViewModel.uriToByteArray(context, it, viewModel.loggedUser.value?.id ?: 0)
+                    }
+                }
             }
-
-
             Box (
                 modifier = Modifier
                     .clickable {
@@ -106,17 +101,17 @@ fun EditProfileScreen (
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profilescreenbackground),
+                    painter = painterResource(id = R.drawable.profile_default),
                     contentDescription = "Profile background",
                     contentScale = ContentScale.Inside,
-                    colorFilter = ColorFilter.tint(LightColorScheme.primary)
+                    modifier = Modifier
+                        .size(100.dp)
                 )
-
-                Image(
-                    painter = painterResource(id = R.drawable.profilescreenbackground),
-                    contentDescription = "Profile background",
-                    colorFilter = ColorFilter.tint(LightColorScheme.background),
-                    modifier = Modifier.size(140.dp, 140.dp)
+                Box(
+                    modifier = Modifier
+                        .background(Color.Transparent)
+                        .border(3.dp, shape = RoundedCornerShape(75.dp), color = MaterialTheme.colorScheme.primary)
+                        .size(120.dp),
                 )
             }
 

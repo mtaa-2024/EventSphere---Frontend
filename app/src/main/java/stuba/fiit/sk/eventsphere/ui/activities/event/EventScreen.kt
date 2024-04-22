@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,10 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -43,17 +42,16 @@ import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
+import stuba.fiit.sk.eventsphere.model.scheduleNotification
 import stuba.fiit.sk.eventsphere.ui.components.CommentBanner
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
-import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.EventViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
-
 
 @Composable
 fun EventScreen (
@@ -270,6 +268,7 @@ fun DescriptionViewWidget (
     }
 }
 
+
 @Composable
 fun PerformersViewWidget (
     eventViewModel: EventViewModel
@@ -389,11 +388,15 @@ fun EventTopBar (
                     )
                 }
                 Box() {}
+
+                val context = LocalContext.current
                 if (eventViewModel.event.value?.owner_id != viewModel.loggedUser.value?.id) {
                     SmallButtonComponent(
                         text = stringResource(id = R.string.notify_me),
                         isSelected = false,
-                        onClick = {}
+                        onClick = {
+                            scheduleNotification(context, 20)
+                        }
                     )
                 } else {
                     SmallButtonComponent(

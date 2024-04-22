@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -90,9 +89,8 @@ fun SearchUserScreen (
         Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(25.dp, 15.dp)
+                .padding(50.dp, 15.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.SpaceEvenly
         ) {
 
             val friends = observeLiveData(searchUserViewModel.friends)
@@ -117,6 +115,7 @@ fun SearchUserScreen (
                         id = id,
                         image = friend.profile_picture
                     )
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
@@ -152,6 +151,7 @@ fun SearchFriendTopBar (
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.back_arrow),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
                     contentDescription = "Back"
                 )
             }

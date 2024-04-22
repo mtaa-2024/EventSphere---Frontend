@@ -33,7 +33,7 @@ interface ApiService {
     ): JsonObject
 
     @POST("friend/add")
-    suspend fun add(
+    suspend fun addFriend(
         @Body addFriendData: JsonObject
     ): JsonObject
 

@@ -9,18 +9,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import org.json.JSONException
+import org.json.JSONObject
 
-
-val invitedUiState = InvitedUiState()
-class InvitedUiState () {
-    private val _invites: MutableList<String> = mutableListOf()
-    val invites: List<String> = _invites
-
-    fun addEvent(id: String) {
-        _invites.add(id)
-    }
-}
 
 data class LoginInput (
     var user: String,
@@ -92,7 +86,7 @@ data class User (
     val email: String,
     val firstname: String?,
     val lastname: String?,
-    val profile_image: ImageBitmap?
+    var profile_image: ImageBitmap?
 )
 
 

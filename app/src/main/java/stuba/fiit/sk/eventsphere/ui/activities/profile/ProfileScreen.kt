@@ -1,11 +1,12 @@
 package stuba.fiit.sk.eventsphere.ui.activities.profile
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,7 +45,6 @@ import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
-import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
@@ -55,6 +54,7 @@ import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModel
 import java.util.Locale
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileScreen (
     toLogout: () -> Unit,
@@ -267,11 +267,14 @@ fun ProfileScreen (
                                 modifier = Modifier,
                                 verticalArrangement = Arrangement.Center
                             ) {
-                                Text(
-                                    text = "Set",
-                                    style = labelStyle,
-                                    fontSize = 18.sp
+                                SmallButtonComponent(
+                                    text = stringResource(id = R.string.notification),
+                                    isSelected = false,
+                                    onClick = {
+
+                                    }
                                 )
+
                                 Spacer (
                                     modifier = Modifier
                                         .height(10.dp)
@@ -290,7 +293,6 @@ fun ProfileScreen (
                                     }
                                 )
 
-                                println(modeChange)
 
                                 Spacer (
                                     modifier = Modifier

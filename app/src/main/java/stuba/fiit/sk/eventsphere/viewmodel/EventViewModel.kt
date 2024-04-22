@@ -95,7 +95,6 @@ class EventViewModel(id: Int) : ViewModel() {
                 comments = commentsList
             )
             _event.value = event
-            println(event)
         } catch (e: Exception) {
             println("Error: $e")
         }
@@ -160,3 +159,4 @@ class EventViewModelFactory(private val id: Int) : ViewModelProvider.Factory {
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+

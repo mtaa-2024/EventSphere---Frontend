@@ -10,6 +10,7 @@ import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 @Composable
 fun HomeRoute (
     onNavigationToProfile: () -> Unit,
+    onNavigationToGroupChat: () -> Unit,
     onNavigationToEvent: (Int) -> Unit,
     onNavigationToBack: () -> Unit,
     mainViewModel: MainViewModel
@@ -20,6 +21,7 @@ fun HomeRoute (
         viewModel = mainViewModel,
         toEvent = onNavigationToEvent,
         toBack = onNavigationToBack,
+        toGroupChat = onNavigationToGroupChat,
         homeViewModel = homeViewModel
     )
 }

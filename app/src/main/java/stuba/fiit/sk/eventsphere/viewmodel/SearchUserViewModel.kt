@@ -80,7 +80,6 @@ class SearchUserViewModel(id: Int) : ViewModel() {
                     listFriends = friendsList
                 )
                 _friends.value = friends
-                println(_friends.value)
             }
         } catch (e: Exception) {
             println("Error: $e")
