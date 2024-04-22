@@ -2,8 +2,13 @@ package stuba.fiit.sk.eventsphere.ui.components
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -81,6 +86,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.AlarmReceiver
 import stuba.fiit.sk.eventsphere.model.LocationData
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
@@ -910,3 +916,22 @@ fun AlertDialogComponent(
     )
 }
 
+@SuppressLint("ScheduleExactAlarm")
+fun scheduleNotification(context: Context, delay: Long) {
+    Log.d("MainActivity", "scheduleNotification called with delay: $delay milliseconds")
+
+    val intent = Intent(context, AlarmReceiver::class.java)
+    val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        0,
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT
+    )
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    alarmManager.setExact(
+        AlarmManager.RTC_WAKEUP,
+        System.currentTimeMillis() + delay,
+        pendingIntent
+    )
+}

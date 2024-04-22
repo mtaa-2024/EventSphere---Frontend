@@ -47,6 +47,7 @@ import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.scheduleNotification
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.EventViewModel
@@ -394,7 +395,7 @@ fun EventTopBar (
                         text = stringResource(id = R.string.notify_me),
                         isSelected = false,
                         onClick = {
-                            //scheduleNotification(A, 20)
+                            scheduleNotification(context, 600000)
                         }
                     )
                 } else {

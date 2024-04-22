@@ -43,7 +43,7 @@ class WebSockets {
         ws?.send(sendText)
     }
 }
-
+/*
 class ChatUiState {
     //private val _messages: List<MessageSend> =
     //val messages: LiveData<List<MessageSend>> = _messages
@@ -56,5 +56,21 @@ class ChatUiState {
     fun addMessage(message: ChatUiState.MessageSend) {
 
 
+    }
+}*/
+
+class ChatUiState {
+    private val _messages = MutableLiveData<List<MessageSend>>(emptyList())
+    val messages: LiveData<List<MessageSend>> = _messages
+
+    data class MessageSend(
+        val id: Int,
+        val message: String
+    )
+
+    fun addMessage(message: MessageSend) {
+        val currentMessages = _messages.value.orEmpty().toMutableList()
+        currentMessages.add(message)
+        _messages.value = currentMessages
     }
 }
