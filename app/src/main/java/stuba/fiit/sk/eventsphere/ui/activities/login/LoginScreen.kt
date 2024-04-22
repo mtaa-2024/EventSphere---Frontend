@@ -16,6 +16,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +57,7 @@ fun LoginScreen (
 ) {
     loginViewModel.login.value?.user = stringResource(id = R.string.username_or_email)
     loginViewModel.login.value?.password = stringResource(id = R.string.enter_password)
+
 
     Column (
         modifier = Modifier
@@ -102,6 +108,16 @@ fun LoginScreen (
                     .fillMaxWidth()
             )
 
+            var text by remember { mutableStateOf(viewModel.error.value) }
+
+            Text (
+                text = text ?: "",
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
             Spacer (
                 modifier = Modifier
                     .weight(1f)
@@ -119,7 +135,10 @@ fun LoginScreen (
                     if(isInternetAvailable(context)) {
                         viewModel.viewModelScope.launch {
                             if (viewModel.authenticateUser(loginViewModel.login.value)) {
+                                text = ""
                                 toHome()
+                            } else {
+                                text = viewModel.error.value
                             }
                         }
                     }else {

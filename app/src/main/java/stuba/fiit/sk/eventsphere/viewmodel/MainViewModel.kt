@@ -18,6 +18,8 @@ class MainViewModel() : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()
     val loggedUser: LiveData<User> = _loggedUser
 
+    var error = MutableLiveData<String>()
+
     suspend fun authenticateUser(input: LoginInput?): Boolean {
         if (input?.user != "" && input?.user != "Enter your username or email" && input?.password != "" && input?.password != "Enter your password") {
             try {
@@ -45,8 +47,7 @@ class MainViewModel() : ViewModel() {
                     )
                     _loggedUser.value = loggedUser
                     return true
-                }
-            } catch (e: Exception) {
+                }            } catch (e: Exception) {
                 println("Error: $e")
                 return false
             }

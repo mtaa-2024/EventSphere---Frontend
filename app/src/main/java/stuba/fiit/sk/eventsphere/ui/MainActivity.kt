@@ -49,48 +49,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    override fun onResume() {
-        super.onResume()
-        start()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stop()
-    }
-
-    private val client by lazy { OkHttpClient() }
-    private var ws: WebSocket? = null
-
-    private fun start() {
-        val request: Request = Request.Builder().url("ws://10.0.2.2:8002?id=1").build()
-        val listener = object: WebSocketListener() {
-            override fun onMessage(webSocket: WebSocket, id: String) {
-               // invitedUiState.addEvent(id)
-            }
-
-            override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
-                super.onOpen(webSocket, response)
-            }
-        }
-        ws = client.newWebSocket(request, listener)
-    }
-
-
-    private fun stop() {
-        ws?.close(1000, "Stop")
-    }
-
-    private fun onInvite(recipientId: Int, invitationId: Int) {
-        val message = "{\"id\":\"$recipientId\",\"invitationId\":$invitationId}"
-        ws?.send(message)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //client.dispatcher().executorService().shutdown()
-    }
-
 
     private fun SetLocale (
         locale: Locale

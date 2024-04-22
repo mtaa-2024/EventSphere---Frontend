@@ -74,12 +74,8 @@ fun GroupChat (
 
             val chat = observeLiveData(liveData = chatUiState.messages)
 
-            chat?.forEach { message ->
-                MessageBox (
-                    text = message.message,
-                    id = message.id,
-                    mainViewModel = viewModel
-                )
+            chat?.messages?.forEach { message ->
+                MessageBox(text = message.message, id = message.id, mainViewModel = viewModel)
             }
         }
         Spacer (

@@ -26,12 +26,19 @@ class WebSockets {
 
                 val message = jsonObject.getString("message")
                 val id = jsonObject.getInt("id")
-                ChatUiState.MessageSend(id, message)
                 chatUiState.addMessage(ChatUiState.MessageSend(id, message))
             }
 
             override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
                 super.onOpen(webSocket, response)
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                super.onClosed(webSocket, code, reason)
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
+                super.onFailure(webSocket, t, response)
             }
         }
         ws = client.newWebSocket(request, listener)
@@ -43,34 +50,33 @@ class WebSockets {
         ws?.send(sendText)
     }
 }
-/*
+
 class ChatUiState {
-    //private val _messages: List<MessageSend> =
-    //val messages: LiveData<List<MessageSend>> = _messages
+    private val _messages = MutableLiveData<Messages>()
+    val messages: LiveData<Messages>
+        get() = _messages
 
     data class MessageSend (
         val id: Int,
         val message: String
     )
 
-    fun addMessage(message: ChatUiState.MessageSend) {
-
-
-    }
-}*/
-
-class ChatUiState {
-    private val _messages = MutableLiveData<List<MessageSend>>(emptyList())
-    val messages: LiveData<List<MessageSend>> = _messages
-
-    data class MessageSend(
-        val id: Int,
-        val message: String
+    data class Messages (
+        var messages: List<MessageSend>?
     )
 
+
     fun addMessage(message: MessageSend) {
-        val currentMessages = _messages.value.orEmpty().toMutableList()
-        currentMessages.add(message)
-        _messages.value = currentMessages
+        val messagesList = mutableListOf<MessageSend>()
+        _messages.value?.messages?.forEach {
+            messagesList.add(it)
+        }
+        println(messagesList)
+        messagesList.add(message)
+        val messages = Messages(
+            messages = messagesList
+        )
+        _messages.value = messages
+        println(_messages.value)
     }
 }
