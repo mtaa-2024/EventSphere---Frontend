@@ -42,7 +42,6 @@ import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.observeLiveData
-import stuba.fiit.sk.eventsphere.model.scheduleNotification
 import stuba.fiit.sk.eventsphere.ui.components.CommentBanner
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
@@ -395,7 +394,7 @@ fun EventTopBar (
                         text = stringResource(id = R.string.notify_me),
                         isSelected = false,
                         onClick = {
-                            scheduleNotification(context, 20)
+                            //scheduleNotification(A, 20)
                         }
                     )
                 } else {
