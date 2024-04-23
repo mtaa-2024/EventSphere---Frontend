@@ -44,10 +44,8 @@ import androidx.compose.ui.text.input.KeyboardType.Companion.Text
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.model.ChatUiState
-import stuba.fiit.sk.eventsphere.model.chatUiState
+import stuba.fiit.sk.eventsphere.model.MessageSend
 import stuba.fiit.sk.eventsphere.model.observeLiveData
-import stuba.fiit.sk.eventsphere.model.webSocket
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.viewmodel.GroupChatViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
@@ -72,9 +70,8 @@ fun GroupChat (
                 .verticalScroll(rememberScrollState())
         ) {
 
-            val chat = observeLiveData(liveData = chatUiState.messages)
-
-            chat?.messages?.forEach { message ->
+            val chat = observeLiveData(liveData = groupChatViewModel.listener.messages)
+            chat?.forEach { message ->
                 MessageBox(text = message.message, id = message.id, mainViewModel = viewModel)
             }
         }
@@ -84,7 +81,8 @@ fun GroupChat (
         )
         InputMessage (
             modifier = Modifier,
-            mainViewModel = viewModel
+            mainViewModel = viewModel,
+            groupChatViewModel = groupChatViewModel
         )
 
     }
@@ -93,7 +91,8 @@ fun GroupChat (
 @Composable
 fun InputMessage (
     modifier: Modifier,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    groupChatViewModel: GroupChatViewModel
 ) {
     var value by remember { mutableStateOf("Aa") }
     var isFocused by remember { mutableStateOf(false) }
@@ -123,7 +122,9 @@ fun InputMessage (
         trailingIcon = {
             IconButton (
                 onClick = {
-                    webSocket.onMessage(ChatUiState.MessageSend(mainViewModel.loggedUser.value?.id ?: 0, value))
+                    val message = MessageSend(mainViewModel.loggedUser.value?.id ?: 0, value)
+                    groupChatViewModel.listener.addMessage(message)
+                    groupChatViewModel.ws.send("{\"message\":\"${value}\", \"id\":${mainViewModel.loggedUser.value?.id ?: 0}}")
                     value = "Aa" },
             ) {
                 Icon(

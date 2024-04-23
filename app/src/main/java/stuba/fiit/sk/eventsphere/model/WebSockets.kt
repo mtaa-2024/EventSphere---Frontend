@@ -12,71 +12,45 @@ import org.json.JSONObject
 
 val webSocket = WebSockets()
 
-val chatUiState = ChatUiState()
+class WebSockets: WebSocketListener() {
 
-class WebSockets {
-    private val client by lazy { OkHttpClient() }
-    private var ws: WebSocket? = null
-
-    fun start() {
-        val request: Request = Request.Builder().url("ws://10.0.2.2:8002").build()
-        val listener = object: WebSocketListener() {
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                val jsonObject = JSONObject(text)
-
-                val message = jsonObject.getString("message")
-                val id = jsonObject.getInt("id")
-                chatUiState.addMessage(ChatUiState.MessageSend(id, message))
-            }
-
-            override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
-                super.onOpen(webSocket, response)
-            }
-
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                super.onClosed(webSocket, code, reason)
-            }
-
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
-                super.onFailure(webSocket, t, response)
-            }
-        }
-        ws = client.newWebSocket(request, listener)
-    }
-
-
-    fun onMessage(input: ChatUiState.MessageSend) {
-        val sendText = "{\"message\":\"${input.message}\", \"id\":${input.id}}"
-        ws?.send(sendText)
-    }
-}
-
-class ChatUiState {
-    private val _messages = MutableLiveData<Messages>()
-    val messages: LiveData<Messages>
+    private val _messages = MutableLiveData<List<MessageSend>>()
+    val messages: LiveData<List<MessageSend>>
         get() = _messages
 
-    data class MessageSend (
-        val id: Int,
-        val message: String
-    )
+    override fun onMessage(webSocket: WebSocket, text: String) {
+        val jsonObject = JSONObject(text)
+        val message = jsonObject.getString("message")
+        val id = jsonObject.getInt("id")
+        val messageSend = MessageSend(id, message)
+        addMessage(messageSend)
+    }
 
-    data class Messages (
-        var messages: List<MessageSend>?
-    )
-
-
-    fun addMessage(message: MessageSend) {
-        val messagesList = mutableListOf<MessageSend>()
-        _messages.value?.messages?.forEach {
-            messagesList.add(it)
-        }
-        println(messagesList)
-        messagesList.add(message)
-        val messages = Messages(
-            messages = messagesList
-        )
-        _messages.value = messages
+    fun addMessage(messageSend: MessageSend) {
+        val currentMessages = _messages.value.orEmpty().toMutableList()
+        currentMessages.add(messageSend)
+        _messages.postValue(currentMessages)
         println(_messages.value)
     }
+
+    override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
+        super.onOpen(webSocket, response)
+        println("open")
+    }
+
+    override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        super.onClosed(webSocket, code, reason)
+        println("close")
+    }
+
+    override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
+        super.onFailure(webSocket, t, response)
+        println("WebSocket failure: ${t.message}")
+        t.printStackTrace()
+    }
 }
+
+data class MessageSend (
+    val id: Int,
+    val message: String
+)
