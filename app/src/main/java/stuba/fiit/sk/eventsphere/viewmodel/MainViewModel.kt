@@ -1,144 +1,116 @@
 package stuba.fiit.sk.eventsphere.viewmodel
-import android.graphics.BitmapFactory
-import android.util.Base64
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.LoginInput
-import stuba.fiit.sk.eventsphere.model.RegisterInput
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
+import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.LoginData
+import stuba.fiit.sk.eventsphere.model.RegisterData
 import stuba.fiit.sk.eventsphere.model.User
+import stuba.fiit.sk.eventsphere.model.WebSockets
+import stuba.fiit.sk.eventsphere.model.apiCalls
+import stuba.fiit.sk.eventsphere.model.handler
+import stuba.fiit.sk.eventsphere.model.service
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
-class MainViewModel() : ViewModel() {
+val emailRegex = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\$")
+fun isEmailValid(email: String): Boolean {
+    return emailRegex.matches(email)
+}
+
+
+class MainViewModel : ViewModel() {
     private val _loggedUser = MutableLiveData<User>()
     val loggedUser: LiveData<User> = _loggedUser
 
-    var error = MutableLiveData<String>()
+    private val _friendsData = MutableLiveData<FriendList>()
+    var friendsData: LiveData<FriendList> = _friendsData
 
-    suspend fun authenticateUser(input: LoginInput?): Boolean {
-        if (input?.user != "" && input?.user != "Enter your username or email" && input?.password != "" && input?.password != "Enter your password") {
-            try {
-                val fetchedJson = apiService.getUser(input?.user, input?.password)
+    private var loginDataS: LoginData? = null
+    private var loginDataCopyS: LoginData? = null
 
-                if (fetchedJson.get("result").asBoolean) {
-                    val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
-                    var bitmap: ImageBitmap? = null
+    private val client = OkHttpClient()
+    val listener = WebSockets()
+    var ws: WebSocket? = null
 
-                    val imageArray = if (userObject.get("profile_image").isJsonNull) null else userObject.getAsJsonObject("profile_image").getAsJsonArray("data")
-                    if (imageArray != null) {
-                        val image = jsonArrayToByteArray(imageArray).decodeToString()
-                        val decodedByteArray = Base64.decode(image, Base64.DEFAULT)
-                        val imageBitMap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
-                        bitmap= imageBitMap.asImageBitmap()
+    init {
+        _friendsData.value = FriendList (
+            friends = null
+        )
+        service.scheduleWithFixedDelay({
+            handler.run {
+                viewModelScope.launch {
+                    if (loginDataS != null && loginDataCopyS != null) {
+                        authenticateUser(loginDataS, loginDataCopyS!!)
+                        println("Authenticate")
                     }
-
-                    val loggedUser = User(
-                        id = userObject.get("id").asInt,
-                        username = userObject.get("username").asString,
-                        email = userObject.get("email").asString,
-                        firstname = if (userObject.get("firstname").isJsonNull) { null } else { userObject.get("firstname")?.asString },
-                        lastname = if (userObject.get("lastname").isJsonNull) { null } else { userObject.get("lastname")?.asString },
-                        profile_image = bitmap,
-                    )
-                    _loggedUser.value = loggedUser
-                    return true
-                }            } catch (e: Exception) {
-                println("Error: $e")
-                return false
-            }
-        }
-        return false
-    }
-
-    suspend fun registerNewUser(input: RegisterInput?): Boolean {
-        if (input?.username != "Enter your username" && input?.email != "Enter your email" && input?.password != "Enter your password" && input?.verifyPassword != "Verify password") {
-            if (input?.password != input?.verifyPassword) {
-
-                return false
-            }
-            if ((input?.password?.length ?: 0) < 8) {
-
-                return false
-            }
-            try {
-                val registrationData = JsonObject()
-                registrationData.addProperty("username", input?.username)
-                registrationData.addProperty("email", input?.email)
-                registrationData.addProperty("password", input?.password)
-
-                val fetchedJson = apiService.register(registrationData)
-
-                if (fetchedJson.get("result").asBoolean) {
-                    val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
-                    var bitmap: ImageBitmap? = null
-
-                    val imageArray = if (userObject.get("profile_image").isJsonNull) null else userObject.getAsJsonObject("profile_image").getAsJsonArray("data")
-                    if (imageArray != null) {
-                        val image = jsonArrayToByteArray(imageArray).decodeToString()
-                        val decodedByteArray = Base64.decode(image, Base64.DEFAULT)
-                        val imageBitMap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
-                        bitmap= imageBitMap.asImageBitmap()
-                    }
-
-                    val loggedUser = User(
-                        id = userObject.get("id").asInt,
-                        username = userObject.get("username").asString,
-                        email = userObject.get("email").asString,
-                        firstname = if (userObject.get("firstname").isJsonNull) { null } else { userObject.get("firstname")?.asString },
-                        lastname = if (userObject.get("lastname").isJsonNull) { null } else { userObject.get("lastname")?.asString },
-                        profile_image = bitmap,
-                    )
-                    _loggedUser.value = loggedUser
-                    return true
-                } else {
-
-                    return false
                 }
-
-            } catch (e: Exception) {
-                println("Error: $e")
-                return false
             }
-        }
-
-        return false
+        }, 0, 2, TimeUnit.MINUTES);
     }
 
-    suspend fun updateUser(){
+    suspend fun registerNewUser(registration: RegisterData?, registerDataCopy: RegisterData): Pair<Boolean, Int> {
+        if (registration?.username == registerDataCopy.username || registration?.username == "")
+            return Pair(false, R.string.username_initialize)
+        if (registration?.email == registerDataCopy.email || registration?.email == "")
+            return Pair(false, R.string.email_initialize)
+        if (!isEmailValid(registration?.email.toString()))
+            return Pair(false, R.string.email_format)
+        if (registration?.password == registerDataCopy.password)
+            return Pair(false, R.string.password_initialize)
+        if (registration?.verifyPassword == registerDataCopy.verifyPassword)
+            return Pair(false, R.string.password_initialize)
+        if (registration?.password != registration?.verifyPassword)
+            return Pair(false, R.string.password_match)
+        if (registration?.password?.length!! < 8)
+            return Pair(false, R.string.password_length)
+        if (!registration.password.any { it.isDigit() })
+            return Pair(false, R.string.password_digit)
+        if (!registration.password.any { it.isUpperCase() })
+            return Pair(false, R.string.password_upper)
         try {
-            val fetchedJson = apiService.getUserData(loggedUser.value?.id?: 0)
-            println(fetchedJson)
-            if (fetchedJson.get("result").asBoolean) {
-                val userObject = fetchedJson.getAsJsonArray("user")[0].asJsonObject
-                var bitmap: ImageBitmap? = null
-
-                val imageArray = if (userObject.get("profile_image").isJsonNull) null else userObject.getAsJsonObject("profile_image").getAsJsonArray("data")
-                if (imageArray != null) {
-                    val image = jsonArrayToByteArray(imageArray).decodeToString()
-                    val decodedByteArray = Base64.decode(image, Base64.DEFAULT)
-                    val imageBitMap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
-                    bitmap= imageBitMap.asImageBitmap()
-                }
-                val loggedUser = User (
-                    id = userObject.get("id").asInt,
-                    username = userObject.get("username").asString,
-                    email = userObject.get("email").asString,
-                    firstname = if (userObject.get("firstname").isJsonNull) { null } else { userObject.get("firstname")?.asString },
-                    lastname = if (userObject.get("lastname").isJsonNull) { null } else { userObject.get("lastname")?.asString },
-                    profile_image = bitmap,
-                )
-                _loggedUser.value = loggedUser
+            val user = registration.let { apiCalls.createUser(it) }
+            if (user != null) {
+                _loggedUser.value = user.copy()
+                if (ws == null)
+                    ws = client.newWebSocket(Request.Builder().url("https://websockets-en52qho2eq-uc.a.run.app/").build(), listener)
+                return Pair(true, -1)
             }
-        } catch (e: Exception) {
-            println("Error: $e")
+            return Pair(false, R.string.check_internet)
+        } catch (e: IOException) {
+            return Pair(false, R.string.check_internet)
         }
     }
+
+    suspend fun authenticateUser(login: LoginData?, loginDataCopy: LoginData): Pair<Boolean, Int> {
+        loginDataS = login?.copy()!!
+        loginDataCopyS = loginDataCopy.copy()
+        if (login.username == loginDataCopy.username || login.username == "")
+            return Pair(false, R.string.username_initialize)
+        if (login.password == loginDataCopy.password || login.password == "")
+            return Pair(false, R.string.password_initialize)
+        val user = apiCalls.loginUser(login)
+        if (user != null) {
+            _loggedUser.value = user.copy()
+            if (ws == null)
+                ws = client.newWebSocket(Request.Builder().url("https://websockets-en52qho2eq-uc.a.run.app/").build(), listener)
+            return Pair(true, -1)
+        }
+        return Pair(false, R.string.check_internet)
+    }
+
+    fun updateUser(user: User) {
+        _loggedUser.value = user
+    }
+
 }
+
 
 class MainViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
@@ -148,14 +120,4 @@ class MainViewModelFactory : ViewModelProvider.Factory {
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
-}
-
-fun jsonArrayToByteArray(jsonArray: JsonArray): ByteArray {
-    val byteArray = ByteArray(jsonArray.size())
-
-    for (i in 0 until jsonArray.size()) {
-        byteArray[i] = jsonArray[i].asInt.toByte()
-    }
-
-    return byteArray
 }

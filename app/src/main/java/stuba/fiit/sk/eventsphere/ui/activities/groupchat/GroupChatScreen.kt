@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType.Companion.Text
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.MessageSend
 import stuba.fiit.sk.eventsphere.model.observeLiveData
+import stuba.fiit.sk.eventsphere.ui.navigation.mainViewModel
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.viewmodel.GroupChatViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
@@ -63,21 +65,25 @@ fun GroupChat (
         ChatTopBar(
             back = toBack
         )
+        Spacer (
+            modifier = Modifier
+                .weight(1f)
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(15.dp, 15.dp)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
         ) {
 
-            val chat = observeLiveData(liveData = groupChatViewModel.listener.messages)
+            val chat = observeLiveData(liveData = viewModel.listener.messages)
             chat?.forEach { message ->
-                MessageBox(text = message.message, id = message.id, mainViewModel = viewModel)
+                MessageBox(text = message.message, username = message.username, mainViewModel = viewModel)
             }
         }
         Spacer (
             modifier = Modifier
-                .weight(1f)
+                .height(20.dp)
         )
         InputMessage (
             modifier = Modifier,
@@ -122,13 +128,16 @@ fun InputMessage (
         trailingIcon = {
             IconButton (
                 onClick = {
-                    val message = MessageSend(mainViewModel.loggedUser.value?.id ?: 0, value)
-                    groupChatViewModel.listener.addMessage(message)
-                    groupChatViewModel.ws.send("{\"message\":\"${value}\", \"id\":${mainViewModel.loggedUser.value?.id ?: 0}}")
+                    val message = MessageSend(mainViewModel.loggedUser.value?.username ?: "", value)
+                    mainViewModel.listener.addMessage(message)
+                    val messageParse = "{\"message\":\"${value}\", \"username\":\"${mainViewModel.loggedUser.value?.username ?: ""}\"}"
+                    if (mainViewModel.ws != null)
+                        mainViewModel.ws?.send(messageParse)
                     value = "Aa" },
             ) {
                 Icon(
                     painterResource(id = R.drawable.send),
+                    tint = MaterialTheme.colorScheme.background,
                     contentDescription = "Icon"
                 )
             }
@@ -149,16 +158,16 @@ fun InputMessage (
 @Composable
 fun MessageBox (
     text: String,
-    id: Int,
+    username: String,
     mainViewModel: MainViewModel
 ) {
    Column (
        modifier = Modifier
            .fillMaxWidth(),
-       horizontalAlignment = if (id == mainViewModel.loggedUser.value?.id) Alignment.End else Alignment.Start
+       horizontalAlignment = if (username == mainViewModel.loggedUser.value?.username) Alignment.End else Alignment.Start
    ) {
        Text (
-           text = "Firstname Lastname",
+           text = if (username == mainViewModel.loggedUser.value?.username) "You" else username,
            fontSize = 10.sp,
            style = labelStyle,
        )
@@ -169,7 +178,7 @@ fun MessageBox (
        Box (
            modifier = Modifier
                .clip(RoundedCornerShape(15.dp))
-               .background(if (id == mainViewModel.loggedUser.value?.id) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
+               .background(if (username == mainViewModel.loggedUser.value?.username) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer)
                .padding(8.dp)
        ) {
            Text(

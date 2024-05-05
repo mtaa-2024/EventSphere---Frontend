@@ -1,7 +1,5 @@
 package stuba.fiit.sk.eventsphere.ui.activities.create_event
 
-import android.app.TimePickerDialog
-import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -50,16 +46,17 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.model.FriendPerformer
+import stuba.fiit.sk.eventsphere.model.User
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.DateTimePicker
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
-import stuba.fiit.sk.eventsphere.ui.theme.paragraph
 import stuba.fiit.sk.eventsphere.viewmodel.CreateEventViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
@@ -79,7 +76,8 @@ fun CreateEventScreen(
         MapLocationPicker(
             properties = properties,
             uiSettings = uiSettings,
-            userLocationInput = LatLng(0.0, 0.0),
+            latitude = 0.0,
+            longitude = 0.0,
             isForPicking = true,
             onAdd = { input ->
                 createEventViewModel.updateLocation(input)
@@ -114,7 +112,8 @@ fun CreateEventScreen(
                         .height(10.dp)
                 )
                 PerformersRow (
-                    createEventViewModel = createEventViewModel
+                    createEventViewModel = createEventViewModel,
+                    mainViewModel = viewModel
                 )
             }
         }
@@ -124,7 +123,8 @@ fun CreateEventScreen(
 
 @Composable
 fun PerformersRow(
-    createEventViewModel: CreateEventViewModel
+    createEventViewModel: CreateEventViewModel,
+    mainViewModel: MainViewModel
 ) {
     Column (
         modifier = Modifier.fillMaxSize()
@@ -146,7 +146,7 @@ fun PerformersRow(
 
         val performerScroll = rememberScrollState()
         var isSelectedPerformer by remember { mutableStateOf(false) }
-        var selectedPerformer by remember { mutableStateOf<FriendPerformer?>(null) }
+        var selectedPerformer by remember { mutableStateOf<User?>(null) }
 
         Row(
             modifier = Modifier
@@ -156,10 +156,9 @@ fun PerformersRow(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            createEventViewModel.event.value?.performers?.forEach { performer ->
+            createEventViewModel.performers.forEach { performer ->
                 val firstname = if (performer.firstname == null) stringResource(id = R.string.friends) else performer.firstname ?: ""
                 val lastname = if (performer.lastname == null) stringResource(id = R.string.lastname) else performer.lastname ?: ""
-                val id = performer.id ?: 0
                 FriendBox (
                     firstname = firstname,
                     lastname =lastname,
@@ -175,8 +174,8 @@ fun PerformersRow(
                             selectedPerformer = performer
                         }
                     },
-                    id = id,
-                    image = performer.profile_picture
+                    user = performer,
+                    image = performer.profileImage
                 )
             }
 
@@ -235,7 +234,7 @@ fun PerformersRow(
             if (addPerformer) {
                 val friendScrollState = rememberScrollState()
 
-                if (createEventViewModel.friendsList.isEmpty()) {
+                if (mainViewModel.friendsData.value?.friends?.isEmpty() == true || mainViewModel.friendsData.value?.friends == null) {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -252,10 +251,9 @@ fun PerformersRow(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        createEventViewModel.friendsList.forEach { friend ->
+                        mainViewModel.friendsData.value?.friends?.forEach { friend ->
                             val firstname = if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname ?: ""
                             val lastname = if (friend.lastname == null) stringResource(id = R.string.lastname) else friend.lastname ?: ""
-                            val id = friend.id ?: 0
                             FriendBox (
                                 firstname = firstname,
                                 lastname =lastname,
@@ -263,8 +261,8 @@ fun PerformersRow(
                                     createEventViewModel.addPerformer(friend)
                                     addPerformer = false
                                 },
-                                id = id,
-                                image = friend.profile_picture
+                                user = friend,
+                                image = friend.profileImage
                             )
                         }
                     }
@@ -286,8 +284,8 @@ fun EventDetailInput (
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputFieldComponent(
-            label = stringResource(id = R.string.tittle),
-            text = createEventViewModel.event.value?.title.toString(),
+            label = stringResource(id = R.string.title),
+            text = createEventViewModel.eventData.value?.title!!,
             onUpdate = createEventViewModel::updateTitle,
             keyboardType = KeyboardType.Text,
             onCheck = null,
@@ -302,7 +300,7 @@ fun EventDetailInput (
 
         InputFieldComponent(
             label = stringResource(id = R.string.description),
-            text = createEventViewModel.event.value?.description.toString(),
+            text = createEventViewModel.eventData.value?.description!!,
             onUpdate = createEventViewModel::updateDescription,
             keyboardType = KeyboardType.Text,
             onCheck = null,
@@ -320,14 +318,11 @@ fun EventDetailInput (
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
-
             SelectBoxesView (
                 onUpdate = {
                     createEventViewModel.onUpdateCategory(it)
                 }
-
             )
-
         }
 
         Spacer(
@@ -344,80 +339,29 @@ fun EventDetailInput (
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val date = observeLiveData(liveData = createEventViewModel.eventData)
+            DateTimePicker (
+                createEventViewModel::updateDate,
+                createEventViewModel::updateTime,
+                date?.estimatedEnd,
+            )
             Column (
-                modifier = Modifier
-                    .fillMaxHeight(),
+                modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                var estimatedEnd by remember { mutableStateOf(createEventViewModel.event.value?.estimated_end) }
-                val context = LocalContext.current
-
-
-                val datePicker = android.app.DatePickerDialog(
-                    context,
-                    { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-                        estimatedEnd?.let {
-                            it.day = selectedDayOfMonth
-                            it.month = selectedMonth
-                            it.year = selectedYear
-                        }
-                    },
-                    createEventViewModel.event.value?.estimated_end?.year ?: 0, createEventViewModel.event.value?.estimated_end?.month ?: 0, createEventViewModel.event.value?.estimated_end?.day ?: 0
-                )
-
-                val timePicker = TimePickerDialog(
-                    context,
-
-                    { _, selectedHour: Int, selectedMinute: Int ->
-                        estimatedEnd?.let {
-                            it.hour = selectedHour
-                            it.minutes = selectedMinute
-                        }
-                    },
-                    createEventViewModel.event.value?.estimated_end?.hour ?: 0, createEventViewModel.event.value?.estimated_end?.minutes ?: 0, false
-                )
-
-
-                Text (
-                    text = createEventViewModel.timestamp,
-                    style = paragraph,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.background
-                )
-
-                Box(
-                    modifier = Modifier
-                        .clickable(
-                            onClick = {
-                                timePicker.show()
-                                datePicker.show()
-                            }
-                        )
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.icon),
-                        contentDescription = "datepicker"
-                    )
-                }
-
-            }
-            Column (
-                modifier = Modifier
-                    .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 SmallButtonComponent(
                     text = stringResource(id = R.string.location),
                     isSelected = false,
                     onClick = { onMapShow() }
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+
                 Text (
-                    text = if(createEventViewModel.event.value?.location?.address == null) stringResource(
-                        id = R.string.address)else createEventViewModel.event.value?.location?.address ?: "",
-                    style = paragraph,
-                    fontSize = 14.sp
+                    text = if(createEventViewModel.eventLocation.value?.address == null) stringResource(
+                        id = R.string.address) else createEventViewModel.eventLocation.value?.address ?: "",
+                    style = labelStyle,
+                    color = MaterialTheme.colorScheme.background,
+                    fontSize = 13.sp
                 )
             }
         }
@@ -669,6 +613,8 @@ fun CreateEventTopBar (
                 text = stringResource(id = R.string.create),
                 isSelected = false
             )
+
+
             if(openSaveDialog.value) {
                 AlertDialogComponent(
                     onDismissRequest = { },

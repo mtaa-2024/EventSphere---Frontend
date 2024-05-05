@@ -2,29 +2,20 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="MainActivity">
+      <entry key="app">
         <State>
-          <multipleDevicesSelectedInDropDown value="true" />
-          <targetsSelectedWithDialog>
+          <runningDeviceTargetSelectedWithDropDown>
             <Target>
-              <type value="QUICK_BOOT_TARGET" />
+              <type value="RUNNING_DEVICE_TARGET" />
               <deviceKey>
                 <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\matus\.android\avd\Medium_Phone_API_30_1.avd" />
+                  <type value="SERIAL_NUMBER" />
+                  <value value="adb-R58R13MNQVX-XHN0JJ._adb-tls-connect._tcp" />
                 </Key>
               </deviceKey>
             </Target>
-            <Target>
-              <type value="QUICK_BOOT_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\matus\.android\avd\Medium_Phone_API_30_2.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </targetsSelectedWithDialog>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-05-01T09:15:32.080009700Z" />
         </State>
       </entry>
     </value>

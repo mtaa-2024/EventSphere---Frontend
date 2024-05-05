@@ -90,7 +90,7 @@ fun FriendsScreen (
                     )
 
                     ProfileImageComponent(
-                        image = friendsViewModel.friend.value?.profile_image
+                        image = friendsViewModel.friendData.profileImage
                     )
 
                     Spacer(
@@ -99,10 +99,10 @@ fun FriendsScreen (
                     )
 
                     val firstName =
-                        if (friendsViewModel.friend.value?.firstname == null) stringResource(id = R.string.firstname) else friendsViewModel.friend.value?.firstname
+                        if (friendsViewModel.friendData.firstname == null) stringResource(id = R.string.firstname) else friendsViewModel.friendData.firstname
                             ?: ""
                     val lastName =
-                        if (friendsViewModel.friend.value?.lastname == null) stringResource(id = R.string.lastname) else friendsViewModel.friend.value?.lastname
+                        if (friendsViewModel.friendData.lastname == null) stringResource(id = R.string.lastname) else friendsViewModel.friendData.lastname
                             ?: ""
 
                     Text(
@@ -114,17 +114,18 @@ fun FriendsScreen (
                     Spacer(
                         modifier = Modifier.height(25.dp)
                     )
-                    
-                    val select = observeLiveData(liveData = friendsViewModel.canBeAdded)
+
+
+                    val selected = observeLiveData(liveData = friendsViewModel.canBeAdded)
 
                     SmallButtonComponent(
-                        text = if (select == true) stringResource(id = R.string.add_friend) else stringResource(
+                        text = if (selected == true) stringResource(id = R.string.add_friend) else stringResource(
                             id = R.string.you_are_friends
                         ),
-                        isSelected = if (select == true) false else true,
+                        isSelected = selected != true,
                         onClick = {
                             friendsViewModel.viewModelScope.launch {
-                                friendsViewModel.addAsFriend().toString()
+                                friendsViewModel.addAsFriend()
                             }
                         }
                     )

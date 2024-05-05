@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import stuba.fiit.sk.eventsphere.model.Event
+import stuba.fiit.sk.eventsphere.model.User
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.CREATEEVENT_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EDITEVENT_ROUTE
 import stuba.fiit.sk.eventsphere.ui.navigation.Destinations.EDITPROFILE_ROUTE
@@ -52,14 +54,16 @@ object Destinations {
     const val GROUP_CHAT_ROUTE = "chat"
 }
 
+var mainViewModel: MainViewModel = MainViewModel()
+
 @Composable
 fun EventSphereNavHost(
     navController: NavHostController = rememberNavController(),
     setLanguage: (locale: Locale) -> Unit,
     setTheme: (Boolean) -> Unit
 ) {
-    var mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
-
+    var userToNavigate: User? = null
+    var eventToNavigate: Event? = null
 
     NavHost(
         navController = navController,
@@ -107,8 +111,9 @@ fun EventSphereNavHost(
                 onNavigationToProfile = {
                     navController.navigate(PROFILE_ROUTE)
                 },
-                onNavigationToEvent = { eventId: Int ->
-                    navController.navigate("$EVENT_ROUTE/$eventId/$HOME_ROUTE")
+                onNavigationToEvent = { event: Event ->
+                    eventToNavigate = event
+                    navController.navigate("$EVENT_ROUTE/$HOME_ROUTE")
                 },
                 onNavigationToBack = {
                     navController.navigate(WELCOME_ROUTE)
@@ -120,12 +125,10 @@ fun EventSphereNavHost(
             )
         }
 
-        composable("$EVENT_ROUTE/{eventId}/{route}") { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId")?.toIntOrNull() ?: -1
+        composable("$EVENT_ROUTE/{route}") {backStackEntry ->
             val route = backStackEntry.arguments?.getString("route")
-
             EventRoute(
-                eventId,
+                event = eventToNavigate!!,
                 mainViewModel = mainViewModel,
                 onNavigationBack = {
                     if (route == "home")
@@ -133,35 +136,29 @@ fun EventSphereNavHost(
                     else
                         navController.navigate(EVENTCENTER_ROUTE)
                 },
-                toEdit = { id ->
+                toEdit = { event ->
+                    eventToNavigate = event
                     if (route == "home") {
-                        navController.navigate("$EDITEVENT_ROUTE/$id/$HOME_ROUTE")
+                        navController.navigate("$EDITEVENT_ROUTE/$HOME_ROUTE")
                     } else {
-                        navController.navigate("$EDITEVENT_ROUTE/$id/$EVENTCENTER_ROUTE")
+                        navController.navigate("$EDITEVENT_ROUTE/$EVENTCENTER_ROUTE")
                     }
 
                 }
             )
         }
 
-        composable("$EDITEVENT_ROUTE/{id}/{route}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: -1
+        composable("$EDITEVENT_ROUTE/{route}") { backStackEntry ->
             val route = backStackEntry.arguments?.getString("route")
             EditEventRoute(
-                id = id,
+                event = eventToNavigate!!,
                 mainViewModel = mainViewModel,
                 toBack = {
                     if (route == "home")
-                        navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
+                        navController.navigate(HOME_ROUTE)
                     else
-                        navController.navigate("$EVENT_ROUTE/$id/$EVENTCENTER_ROUTE")
+                        navController.navigate(EVENTCENTER_ROUTE)
                 },
-                toEvent = {
-                    if (route == "home")
-                        navController.navigate("$EVENT_ROUTE/$id/$HOME_ROUTE")
-                    else
-                        navController.navigate("$EVENT_ROUTE/$id/$EVENTCENTER_ROUTE")
-                }
             )
         }
 
@@ -171,8 +168,9 @@ fun EventSphereNavHost(
                 onNavigationBack = {
                     navController.navigate(PROFILE_ROUTE)
                 },
-                onNavigationToEvent = { eventId: Int ->
-                    navController.navigate("$EVENT_ROUTE/$eventId/$EVENTCENTER_ROUTE")
+                onNavigationToEvent = { event: Event ->
+                    eventToNavigate = event
+                    navController.navigate("$EVENT_ROUTE/$EVENTCENTER_ROUTE")
                 },
                 onNavigationToCreateEvent = {
                     navController.navigate(CREATEEVENT_ROUTE)
@@ -194,8 +192,9 @@ fun EventSphereNavHost(
                 onNavigationToEditProfile = {
                     navController.navigate(EDITPROFILE_ROUTE)
                 },
-                onNavigationToFriendsScreen = { friendId: Int? ->
-                    navController.navigate("$FRIENDS_ROUTE/$friendId")
+                onNavigationToFriendsScreen = { friend: User ->
+                    userToNavigate = friend
+                    navController.navigate(FRIENDS_ROUTE)
                 },
                 onNavigationToSearchUserScreen = {
                     navController.navigate(SEARCHUSER_ROUTE)
@@ -215,11 +214,9 @@ fun EventSphereNavHost(
             )
         }
 
-        composable("$FRIENDS_ROUTE/{friend}") { backStackEntry ->
-            val friend = backStackEntry.arguments?.getString("friend")?.toIntOrNull() ?: -1
-
+        composable(FRIENDS_ROUTE) {
             FriendsRoute(
-                friendId = friend,
+                friend = userToNavigate!!,
                 onNavigationToProfile = {
                     navController.navigate(PROFILE_ROUTE)
                 },
@@ -241,8 +238,9 @@ fun EventSphereNavHost(
                 onNavigationToProfile = {
                     navController.navigate(PROFILE_ROUTE)
                 },
-                onNavigationToFriendsScreen = { friendId: Int? ->
-                    navController.navigate("$FRIENDS_ROUTE/$friendId")
+                onNavigationToFriendsScreen = { friend: User ->
+                    userToNavigate = friend
+                    navController.navigate(FRIENDS_ROUTE)
                 },
                 mainViewModel = mainViewModel
             )

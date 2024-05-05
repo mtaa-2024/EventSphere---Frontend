@@ -17,7 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -43,11 +42,6 @@ import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 
-@Preview(showBackground = true)
-@Composable
-fun Preview () {
-    LoginScreen(toHome = {}, back = {}, viewModel = MainViewModel(), loginViewModel = LoginViewModel())
-}
 @Composable
 fun LoginScreen (
     toHome: () -> Unit,
@@ -55,10 +49,6 @@ fun LoginScreen (
     viewModel: MainViewModel,
     loginViewModel: LoginViewModel
 ) {
-    loginViewModel.login.value?.user = stringResource(id = R.string.username_or_email)
-    loginViewModel.login.value?.password = stringResource(id = R.string.enter_password)
-
-
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -85,7 +75,7 @@ fun LoginScreen (
 
             InputFieldComponent (
                 label = stringResource(id = R.string.username_or_email),
-                text = loginViewModel.login.value?.user.toString(),
+                text = loginViewModel.loginData.value?.username!!,
                 onUpdate = loginViewModel::updateUser,
                 keyboardType = KeyboardType.Text,
                 onCheck = null,
@@ -100,7 +90,7 @@ fun LoginScreen (
 
             InputFieldComponent (
                 label = stringResource(id = R.string.password),
-                text = loginViewModel.login.value?.password.toString(),
+                text = loginViewModel.loginData.value?.password!!,
                 onUpdate = loginViewModel::updatePassword,
                 keyboardType = KeyboardType.Password,
                 onCheck = null,
@@ -108,10 +98,10 @@ fun LoginScreen (
                     .fillMaxWidth()
             )
 
-            var text by remember { mutableStateOf(viewModel.error.value) }
+            var errorMessage by remember { mutableIntStateOf(-1) }
 
             Text (
-                text = text ?: "",
+                text = if (errorMessage != -1) stringResource(id = errorMessage) else "" ,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.fillMaxWidth(),
@@ -134,11 +124,12 @@ fun LoginScreen (
                 onClick = {
                     if(isInternetAvailable(context)) {
                         viewModel.viewModelScope.launch {
-                            if (viewModel.authenticateUser(loginViewModel.login.value)) {
-                                text = ""
+                            val (result, message) = viewModel.authenticateUser(loginViewModel.loginData.value, loginViewModel.loginDataCopy)
+                            if (result) {
+                                errorMessage = message
                                 toHome()
                             } else {
-                                text = viewModel.error.value
+                                errorMessage = message
                             }
                         }
                     }else {

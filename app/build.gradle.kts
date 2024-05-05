@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.gson)
+    implementation(libs.face.detection)
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
     implementation(libs.androidx.lifecycle.livedata.ktx)

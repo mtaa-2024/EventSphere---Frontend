@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.Event
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.EventBanner
@@ -40,7 +41,7 @@ fun EventCenterScreen (
     viewModel: MainViewModel,
     eventCenterViewModel: EventCenterViewModel,
     back: () -> Unit,
-    toEvent: (Int) -> Unit,
+    toEvent: (event: Event) -> Unit,
     toCreateEvent: () -> Unit
 ) {
 
@@ -53,7 +54,7 @@ fun EventCenterScreen (
             back = back
         )
 
-        Spacer (
+        Spacer(
             modifier = Modifier
                 .height(30.dp)
         )
@@ -61,7 +62,9 @@ fun EventCenterScreen (
         var isSelectedUpcoming by remember { mutableStateOf(eventCenterViewModel.eventSelectStates.value?.upcoming) }
         var isSelectedExpired by remember { mutableStateOf(eventCenterViewModel.eventSelectStates.value?.expired) }
 
-        Column (
+
+
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(30.dp, 0.dp)
@@ -75,21 +78,22 @@ fun EventCenterScreen (
                     .fillMaxWidth()
             )
 
-            Spacer (
+            Spacer(
                 modifier = Modifier
                     .height(50.dp)
             )
 
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
+
                 SmallButtonComponent (
                     text = stringResource(id = R.string.upcoming),
                     isSelected = eventCenterViewModel.eventSelectStates.value?.upcoming ?: false,
                     onClick = {
-                        eventCenterViewModel.onUpcomingSelect(viewModel)
+                        eventCenterViewModel.onUpcomingSelect()
                         isSelectedUpcoming = true
                         isSelectedExpired = false
                     }
@@ -98,37 +102,44 @@ fun EventCenterScreen (
                     text = stringResource(id = R.string.expired),
                     isSelected = eventCenterViewModel.eventSelectStates.value?.expired ?: false,
                     onClick = {
-                        eventCenterViewModel.onExpiredSelect(viewModel)
+                        eventCenterViewModel.onExpiredSelect()
                         isSelectedUpcoming = false
                         isSelectedExpired = true
                     }
                 )
+
+
             }
 
-            Spacer (
+            Spacer(
                 modifier = Modifier
-                    .height(80.dp)
+                    .height(30.dp)
             )
         }
+
         var eventsState = observeLiveData(eventCenterViewModel.upcoming)
+
         if (isSelectedUpcoming == true) {
             eventsState = observeLiveData(eventCenterViewModel.upcoming)
         } else if (isSelectedExpired == true) {
             eventsState = observeLiveData(eventCenterViewModel.expired)
         }
-        Column (
+
+
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.Start
         ) {
+
             eventsState?.events?.forEach { event ->
                 EventBanner(
-                    id = event.id,
-                    title = event.title ?: "",
-                    date = event.date ?: "",
-                    location = event.location ?: "",
-                    icon = R.drawable.book_icon,
+                    event = event,
+                    title = event.title,
+                    date = event.estimatedEnd,
+                    location = event.location,
+                    icon = if (event.category == 1) R.drawable.book_icon else if (event.category == 2) R.drawable.music_icon else if (event.category == 3) R.drawable.burger_icon else if (event.category == 4) R.drawable.brush_icon else R.drawable.dribbble_icon,
                     toEvent = toEvent
                 )
                 Spacer(
@@ -144,7 +155,7 @@ fun EventCenterScreen (
 fun EventCenterTopBar (
     back: () -> Unit,
 ) {
-    Box(
+    Box (
         modifier = Modifier.fillMaxWidth()
     ) {
         Image(
@@ -172,7 +183,6 @@ fun EventCenterTopBar (
                     contentDescription = "Back"
                 )
             }
-
         }
     }
 }

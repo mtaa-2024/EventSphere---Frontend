@@ -4,78 +4,53 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.RegisterInput
-import java.util.Locale
+import stuba.fiit.sk.eventsphere.model.RegisterData
+import stuba.fiit.sk.eventsphere.model.apiCalls
 
-class RegisterViewModel() : ViewModel() {
+class RegisterViewModel(private val registerInitialize: RegisterData) : ViewModel() {
 
-    private val _register = MutableLiveData<RegisterInput>()
-    val register: LiveData<RegisterInput> = _register
+    private val _registerData = MutableLiveData<RegisterData>()
+    val registerData: LiveData<RegisterData> = _registerData
+    var registerDataCopy: RegisterData
+
+    var canBeCreated = true
 
     init {
-        _register.value = RegisterInput (
-            username = "Enter your username",
-            email = "Enter your email",
-            password = "Enter your password",
-            verifyPassword = "Verify password"
-
-        )
+        _registerData.value = registerInitialize
+        registerDataCopy = registerInitialize.copy()
     }
 
     fun updateUsername(input: String) {
-        _register.value?.username = input
+        _registerData.value?.username = input
     }
     fun updateEmail(input: String) {
-        _register.value?.email = input
+        _registerData.value?.email = input
     }
     fun updatePassword(input: String){
-        _register.value?.password = input
+        _registerData.value?.password = input
     }
     fun updateRepeatedPassword(input: String){
-        _register.value?.verifyPassword = input
+        _registerData.value?.verifyPassword = input
     }
 
-    suspend fun checkUsername(input: String): Pair<Boolean, String> {
-        try {
-            val result = apiService.usernameExists(input, Locale.getDefault().toString())
-            println(result)
-            if (result.get("result").asBoolean)
-                return Pair(true, result.get("text").asString)
-        } catch (e: Exception) {
-            println(e)
-        }
-        return Pair(false, "")
+    suspend fun checkUsername(input: String): String {
+        val (result, message) = apiCalls.checkIfUsernameExists(input)
+        canBeCreated = result
+        return message
     }
 
-    suspend fun checkEmail(input: String): Pair<Boolean, String> {
-        if (!isValidEmail(input)) {
-            return Pair(true, "Invalid email address")
-        }
-        try {
-            val result = apiService.emailExists(input, Locale.getDefault().toString())
-            if (result.get("result").asBoolean)
-                return Pair(true, result.get("text").asString)
-        } catch (e: Exception) {
-            println(e)
-        }
-        return Pair(false, "")
+    suspend fun checkEmail(input: String): String {
+        val (result, message) = apiCalls.checkIfEmailExists(input)
+        canBeCreated = result
+        return message
     }
-
-    fun isValidEmail(email: String): Boolean {
-        val emailRegex = Regex(pattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-        return emailRegex.matches(email)
-    }
-
 }
 
-data class Result(val result: Boolean, val message: String)
-
-class RegisterViewModelFactory : ViewModelProvider.Factory {
+class RegisterViewModelFactory(private val registrationData: RegisterData) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
-            return RegisterViewModel() as T
+            return RegisterViewModel(registrationData) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

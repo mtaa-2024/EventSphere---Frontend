@@ -16,10 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
 import stuba.fiit.sk.eventsphere.ui.navigation.EventSphereNavHost
 import stuba.fiit.sk.eventsphere.ui.theme.EventSphereTheme
 import java.util.Locale

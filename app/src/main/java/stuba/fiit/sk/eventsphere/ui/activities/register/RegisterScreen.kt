@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -25,15 +29,10 @@ import stuba.fiit.sk.eventsphere.ui.activities.login.TopBar
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.isInternetAvailable
+import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.RegisterViewModel
-
-@Preview(showBackground = true)
-@Composable
-fun Preview () {
-    RegisterScreen(toHome = {}, back = {}, viewModel = MainViewModel(), registerViewModel = RegisterViewModel())
-}
 
 @Composable
 fun RegisterScreen (
@@ -43,10 +42,6 @@ fun RegisterScreen (
     registerViewModel: RegisterViewModel
 
 ) {
-    registerViewModel.register.value?.username = stringResource(id = R.string.enter_username)
-    registerViewModel.register.value?.email = stringResource(id = R.string.enter_email)
-    registerViewModel.register.value?.password = stringResource(id = R.string.enter_password)
-    registerViewModel.register.value?.verifyPassword = stringResource(id = R.string.verify_password)
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -74,7 +69,7 @@ fun RegisterScreen (
 
             InputFieldComponent (
                 label = stringResource(id = R.string.username),
-                text = registerViewModel.register.value?.username.toString(),
+                text = registerViewModel.registerData.value?.username!!,
                 onUpdate = registerViewModel::updateUsername,
                 onCheck = registerViewModel::checkUsername,
                 keyboardType = KeyboardType.Text,
@@ -89,7 +84,7 @@ fun RegisterScreen (
 
             InputFieldComponent (
                 label = stringResource(id = R.string.email),
-                text = registerViewModel.register.value?.email.toString(),
+                text = registerViewModel.registerData.value?.email!!,
                 onUpdate = registerViewModel::updateEmail,
                 onCheck =  registerViewModel::checkEmail,
                 keyboardType = KeyboardType.Text,
@@ -104,7 +99,7 @@ fun RegisterScreen (
 
             InputFieldComponent (
                 label = stringResource(id = R.string.password),
-                text = registerViewModel.register.value?.password.toString(),
+                text = registerViewModel.registerData.value?.password!!,
                 onUpdate = registerViewModel::updatePassword,
                 onCheck = null,
                 keyboardType = KeyboardType.Password,
@@ -119,12 +114,28 @@ fun RegisterScreen (
 
             InputFieldComponent (
                 label = stringResource(id = R.string.verify_password),
-                text = registerViewModel.register.value?.verifyPassword.toString(),
+                text = registerViewModel.registerData.value?.verifyPassword!!,
                 onUpdate = registerViewModel::updateRepeatedPassword,
                 onCheck = null,
                 keyboardType = KeyboardType.Password,
                 modifier = Modifier
                     .fillMaxWidth()
+            )
+
+            Spacer (
+                modifier = Modifier
+                    .height(20.dp)
+            )
+
+            var errorMessage by remember { mutableIntStateOf(0) }
+
+            Text (
+                text = if (errorMessage != 0) stringResource(id = errorMessage) else "",
+                style = labelStyle,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp
             )
 
             Spacer (
@@ -142,11 +153,17 @@ fun RegisterScreen (
                     .height(55.dp),
                     onClick = { viewModel.viewModelScope.launch {
                         if (isInternetAvailable(context)) {
-                            if (viewModel.registerNewUser(registerViewModel.register.value)) {
-                                toHome()
+                            if (registerViewModel.canBeCreated) {
+                                val (result, message) = viewModel.registerNewUser(
+                                    registerViewModel.registerData.value,
+                                    registerViewModel.registerDataCopy
+                                )
+                                if (result) toHome() else errorMessage = message
+                            } else {
+                                errorMessage = R.string.check_data
                             }
-                        }else{
-                            Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, string, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

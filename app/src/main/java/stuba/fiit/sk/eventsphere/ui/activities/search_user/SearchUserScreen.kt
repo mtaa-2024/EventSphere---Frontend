@@ -27,19 +27,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.User
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.SearchBarComponent
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.SearchUserViewModel
+import java.util.UUID
 
 
 @Composable
 fun SearchUserScreen (
     toProfile: () -> Unit,
-    toFriends: (id:Int?) -> Unit,
+    toFriends: (user: User) -> Unit,
     viewModel: MainViewModel,
     searchUserViewModel: SearchUserViewModel
 ) {
@@ -75,7 +79,9 @@ fun SearchUserScreen (
 
             SearchBarComponent (
                 onUpdate = {
-                           searchUserViewModel.updateSearch(it)
+                    searchUserViewModel.viewModelScope.launch {
+                        searchUserViewModel.updateSearch(it)
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,11 +97,12 @@ fun SearchUserScreen (
                 .fillMaxWidth()
                 .padding(50.dp, 15.dp)
                 .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val friends = observeLiveData(searchUserViewModel.friendsData)
 
-            val friends = observeLiveData(searchUserViewModel.friends)
-
-            if (friends?.listFriends?.isEmpty() == true) {
+            if (friends?.friends.isNullOrEmpty() || friends?.friends?.contains(viewModel.loggedUser.value) == true) {
                 Text (
                     text = stringResource(id = R.string.friends_not_found),
                     style = welcomeStyle,
@@ -104,18 +111,26 @@ fun SearchUserScreen (
                     textAlign = TextAlign.Center
                 )
             } else {
-                friends?.listFriends?.forEach { friend ->
-                    val firstname = if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname ?: ""
-                    val lastname = if (friend.lastname == null) stringResource(id = R.string.lastname) else friend.lastname ?: ""
-                    val id = friend.id ?: 0
-                    FriendBox (
-                        firstname = firstname,
-                        lastname =lastname,
-                        onClick = toFriends,
-                        id = id,
-                        image = friend.profile_picture
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
+                friends?.friends?.forEach { friend ->
+                    if (friend.id != viewModel.loggedUser.value?.id) {
+                        val firstname =
+                            if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname
+                                ?: ""
+                        val lastname =
+                            if (friend.lastname == null) stringResource(id = R.string.lastname) else friend.lastname
+                                ?: ""
+                        FriendBox(
+                            firstname = firstname,
+                            lastname = lastname,
+                            onClick = toFriends,
+                            user = friend,
+                            image = friend.profileImage
+                        )
+                        Spacer(
+                            modifier = Modifier
+                                .height(40.dp)
+                        )
+                    }
                 }
             }
         }

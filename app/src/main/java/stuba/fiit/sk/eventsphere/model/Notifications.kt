@@ -7,7 +7,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.core.app.NotificationCompat
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -26,8 +30,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_menu_compass)
-            .setContentTitle("My Notification Title")
-            .setContentText("This is the content of my notification")
+            .setContentTitle("EventSphere")
+            .setContentText("Notification from EventSphere App")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         notificationManager.notify(notificationId, builder.build())
@@ -38,3 +42,6 @@ class AlarmReceiver : BroadcastReceiver() {
         private const val notificationId = 1
     }
 }
+
+val service: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+val handler = Handler(Looper.getMainLooper())

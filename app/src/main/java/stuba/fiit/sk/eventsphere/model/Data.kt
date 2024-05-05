@@ -1,5 +1,6 @@
 package stuba.fiit.sk.eventsphere.model
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,138 +10,79 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import org.json.JSONException
-import org.json.JSONObject
+import java.util.UUID
 
-
-data class LoginInput (
-    var user: String,
-    var password: String
+data class User (
+    val id: UUID,
+    val username: String,
+    val email: String,
+    var firstname: String?,
+    var lastname: String?,
+    var profileImage: ImageBitmap?
 )
 
-data class RegisterInput (
+data class RegisterData (
     var username: String,
     var email: String,
     var password: String,
     var verifyPassword: String
 )
 
-data class LocationData (
-    var address: String?,
-    var latitude: Double,
-    var longitude: Double
+data class LoginData (
+    var username: String,
+    var password: String
 )
 
-data class DateInput (
-    var day: Int,
-    var month: Int,
-    var year: Int,
-    var hour: Int,
-    var minutes: Int,
-)
-
-data class FriendPerformer (
-    var id: Int?,
+data class NewUserData (
     var firstname: String?,
     var lastname: String?,
-    var profile_picture: ImageBitmap?
+    var email: String?,
+    var newEmail: String?,
+    var profileImage: Uri?
 )
 
-data class EventInput(
+data class Event (
+    val id: UUID,
+    var ownerId: UUID,
     var title: String,
     var description: String,
-    var user_id: Int,
-    var location: LocationData,
-    var estimated_end: DateInput,
+    var location: String,
+    var latitude: Double,
+    var longitude: Double,
     var category: Int,
-    var performers: List<FriendPerformer>?
+    var estimatedEnd: String,
+    var performers: MutableList<User>?,
+    val comments: MutableList<Comment>?
 )
 
-data class EventOutput (
-    val event_id: Int,
-    var title: String,
-    var description: String,
-    var location: LocationData,
-    val estimated_end: String,
-    val category: Int,
-    val owner_id: Int,
-    val owner_firstname: String,
-    val owner_lastname: String,
-    val owner_profile_image: ImageBitmap?,
-    val performers: MutableList<FriendPerformer>?,
-    var comments: MutableList<CommentStruct>?
-)
-
-data class AddPerformerState (
-    var friend: Boolean,
-    var input: Boolean
-)
-
-
-data class User (
-    val id: Int,
-    val username: String,
-    val email: String,
+data class Comment (
+    val id: UUID,
+    val text: String,
     val firstname: String?,
     val lastname: String?,
-    var profile_image: ImageBitmap?
+    val profileImage: ImageBitmap?
 )
-
-
-data class CommentStruct (
-    val id: Int,
-    val firstname: String?,
-    val lastname: String?,
-    val profile_image: ImageBitmap?,
-    val text: String?
-)
-
-
-data class BannerStruct (
-    val id: Int,
-    val title: String?,
-    val location: String?,
-    val date: String?
-)
-
-data class Events (
-    var events: List<BannerStruct>?
-)
-
-data class CategorySelectStates (
+data class CategorySelector (
     var education: Boolean,
     var music: Boolean,
-    var art: Boolean,
     var food: Boolean,
+    var art: Boolean,
     var sport: Boolean
 )
 
-
-data class EventSelectStatesCenter (
-    var upcoming: Boolean,
-    var expired: Boolean
+data class LocationData (
+    var address: String,
+    var latitude: Double,
+    var longitude: Double,
 )
 
-
-
-data class EventSelectStates (
-    var upcoming: Boolean,
-    var attending: Boolean,
-    var invited: Boolean
-)
-
-data class Friend (
-    var id: Int?,
-    var firstname: String?,
-    var lastname: String?,
-    var profile_picture: ImageBitmap?
-)
-
-data class FriendList (
-    var listFriends: List<Friend>?
+data class DateInput (
+    var year: Int,
+    var month: Int,
+    var day: Int,
+    var hours: Int,
+    var minutes: Int
 )
 
 @Composable

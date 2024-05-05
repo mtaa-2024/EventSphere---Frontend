@@ -4,33 +4,32 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import stuba.fiit.sk.eventsphere.model.LoginInput
+import stuba.fiit.sk.eventsphere.model.LoginData
 
-class LoginViewModel() : ViewModel() {
+class LoginViewModel(private val loginInitialize: LoginData) : ViewModel() {
 
-    private val _login = MutableLiveData<LoginInput>()
-    val login: LiveData<LoginInput> = _login
+    private val _loginData = MutableLiveData<LoginData>()
+    val loginData: LiveData<LoginData> = _loginData
+    var loginDataCopy: LoginData
 
     init {
-        _login.value = LoginInput(
-            user = "Enter your username or email",
-            password = "Enter your password"
-        )
+        _loginData.value = loginInitialize
+        loginDataCopy = loginInitialize.copy()
     }
 
     fun updateUser(input: String) {
-        _login.value?.user = input
+        _loginData.value?.username = input
     }
     fun updatePassword(input: String) {
-        _login.value?.password = input
+        _loginData.value?.password = input
     }
 }
 
-class LoginViewModelFactory : ViewModelProvider.Factory {
+class LoginViewModelFactory(private val loginData: LoginData) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            return LoginViewModel() as T
+            return LoginViewModel(loginData) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

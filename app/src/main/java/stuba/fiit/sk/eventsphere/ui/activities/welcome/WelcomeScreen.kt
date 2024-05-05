@@ -17,20 +17,18 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.isInternetAvailable
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
-import android.text.Layout
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 
 @Composable
@@ -72,7 +70,7 @@ fun MobileWelcomeScreen (
             )
             Column (
                 modifier = Modifier
-                    .padding(40.dp),
+                    .padding(35.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
@@ -94,7 +92,7 @@ fun MobileWelcomeScreen (
                     color = Color.White,
                     maxLines = 3,
                     lineHeight = 35.sp,
-                    letterSpacing = 2.sp,
+                    letterSpacing = 1.sp,
                 )
             }
         }
@@ -195,7 +193,7 @@ fun TabletWelcomeScreen (
             contentAlignment = Alignment.TopCenter
         ) {
             Image (
-                painter = painterResource(id = R.drawable.welcome_background),///?
+                painter = painterResource(id = R.drawable.welcome_background),
                 contentDescription = "welcome_background",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -207,7 +205,7 @@ fun TabletWelcomeScreen (
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo),///?
+                    painter = painterResource(id = R.drawable.logo),
                     contentDescription = "",
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
@@ -218,12 +216,12 @@ fun TabletWelcomeScreen (
                         .height(35.dp)
                 )
                 Text(
-                    text = stringResource(id = R.string.welcome_text),////?
+                    text = stringResource(id = R.string.welcome_text),
                     style = welcomeStyle,
                     textAlign = TextAlign.Center,
                     fontSize = 28.sp,
                     color = Color.White,
-                    maxLines = 3,
+                    maxLines = 2,
                     lineHeight = 40.sp,
                     letterSpacing = 2.sp,
                 )
@@ -313,7 +311,6 @@ fun TabletWelcomeScreen (
 fun determineLayout(): Boolean {
     val context = LocalContext.current
     val screenWidthPx = context.resources.displayMetrics.widthPixels
-    println(screenWidthPx)
     val breakpoint = 1200.dp
     return screenWidthPx.dp >= breakpoint
 }

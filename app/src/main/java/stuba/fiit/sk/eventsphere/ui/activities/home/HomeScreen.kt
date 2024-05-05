@@ -11,10 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,15 +23,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.Event
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.CategoryBox
@@ -50,7 +52,7 @@ fun HomeScreen (
     toProfile: () -> Unit,
     toGroupChat: () -> Unit,
     viewModel: MainViewModel,
-    toEvent: (Int) -> Unit,
+    toEvent: (Event) -> Unit,
     toBack:() -> Unit,
     homeViewModel: HomeViewModel
 ) {
@@ -90,7 +92,9 @@ fun HomeScreen (
 
             SearchBarComponent(
                 onUpdate = {
-                    homeViewModel.onUpdateFilter(it)
+                    homeViewModel.viewModelScope.launch {
+                        homeViewModel.onUpdateFilter(it)
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -154,7 +158,7 @@ fun HomeScreen (
                 .verticalScroll(scrollState)
         ) {
             val eventsState = observeLiveData(homeViewModel.events)
-            if (eventsState?.events?.isEmpty() == true) {
+            if (eventsState?.events?.isEmpty() == true || eventsState?.events == null) {
                 Text (
                     text = stringResource(id = R.string.no_events_found),
                     style = welcomeStyle,
@@ -163,13 +167,13 @@ fun HomeScreen (
                     textAlign = TextAlign.Center
                 )
             } else {
-                eventsState?.events?.forEach { event ->
+                eventsState.events?.forEach { event ->
                     EventBanner(
-                        id = event.id,
-                        title = event.title ?: "",
-                        date = event.date ?: "",
-                        location = event.location ?: "",
-                        icon = R.drawable.book_icon,
+                        event = event,
+                        title = event.title,
+                        date = event.estimatedEnd,
+                        location = event.location,
+                        icon = if (event.category == 1) R.drawable.book_icon else if (event.category == 2) R.drawable.music_icon else if (event.category == 3) R.drawable.burger_icon else if (event.category == 4) R.drawable.brush_icon else R.drawable.dribbble_icon,
                         toEvent = toEvent
                     )
 
@@ -178,7 +182,11 @@ fun HomeScreen (
                             .height(10.dp)
                     )
                 }
+
+
             }
+
+
 
         }
     }
@@ -206,18 +214,19 @@ fun HomeTopBar(
         )
         Row(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(25.dp, 0.dp)
                 .matchParentSize(),
-            horizontalArrangement = Arrangement.SpaceAround,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Button (
-                onClick = toChat,
-                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+            Box (
+                modifier = Modifier
+                    .clickable { toChat() },
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.chat),
+                    modifier = Modifier.size(35.dp),
+                    painter = painterResource(id = R.drawable.chat_icon),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
                     contentDescription = "Back"
                 )
@@ -231,12 +240,14 @@ fun HomeTopBar(
                 )
             ) {
                 TopBarProfileComponent(
-                    image = viewModel.loggedUser.value?.profile_image,
+                    image = viewModel.loggedUser.value?.profileImage,
                 )
             }
+
             Box {
                 Image(
                     painter = painterResource(id = R.drawable.notification),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
                     contentDescription = stringResource(id = R.string.notification)
                 )
             }
@@ -263,9 +274,8 @@ fun EventViewButtons (
     Row (
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
-
         var isSelectedUpcoming by remember { mutableStateOf(homeViewModel.eventSelectStates.value?.upcoming?: false) }
         var isSelectedAttending by remember { mutableStateOf(homeViewModel.eventSelectStates.value?.attending?: false) }
         var isSelectedInvited by remember { mutableStateOf(homeViewModel.eventSelectStates.value?.invited?: false) }
@@ -302,6 +312,7 @@ fun EventViewButtons (
                 isSelectedInvited = true
             }
         )
+
 
     }
 

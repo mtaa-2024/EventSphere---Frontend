@@ -35,24 +35,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
-import stuba.fiit.sk.eventsphere.model.FriendPerformer
+import stuba.fiit.sk.eventsphere.model.User
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
+import stuba.fiit.sk.eventsphere.ui.components.DateTimePicker
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
+import stuba.fiit.sk.eventsphere.ui.navigation.mainViewModel
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.paragraph
@@ -64,7 +67,6 @@ fun EditEventScreen (
     mainViewModel: MainViewModel,
     back: () -> Unit,
     editEventViewModel: EditEventViewModel,
-    toUpdatedEvent: () -> Unit
 ) {
     var isMapSelected by remember { mutableStateOf(false) }
 
@@ -75,7 +77,8 @@ fun EditEventScreen (
         MapLocationPicker(
             properties = properties,
             uiSettings = uiSettings,
-            userLocationInput = LatLng(0.0, 0.0),
+            latitude = 0.0,
+            longitude = 0.0,
             isForPicking = true,
             onAdd = { input ->
                 editEventViewModel.updateLocation(input)
@@ -83,38 +86,35 @@ fun EditEventScreen (
             }
         )
     } else {
-        if (editEventViewModel.event.isInitialized) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            EditCreateEventTopBar(
+                toBack = back,
+                editEventViewModel = editEventViewModel
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                EditCreateEventTopBar(
-                    toBack = back,
-                    toUpdatedEvent = { toUpdatedEvent() },
+                EditEventDetailInput(
+                    editEventViewModel = editEventViewModel,
+                    onMapShow = { isMapSelected = true }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .height(10.dp)
+                )
+                EditPerformersRow(
                     editEventViewModel = editEventViewModel
                 )
-
-                Spacer(modifier = Modifier.height(5.dp))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    EditEventDetailInput(
-                        editEventViewModel = editEventViewModel,
-                        onMapShow = { isMapSelected = true }
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .height(10.dp)
-                    )
-                    EditPerformersRow(
-                        editEventViewModel = editEventViewModel
-                    )
-                }
             }
         }
     }
@@ -142,10 +142,9 @@ fun EditPerformersRow(
                 .height(20.dp)
         )
 
-
         val performerScroll = rememberScrollState()
         var isSelectedPerformer by remember { mutableStateOf(false) }
-        var selectedPerformer by remember { mutableStateOf<FriendPerformer?>(null) }
+        var selectedPerformer by remember { mutableStateOf<User?>(null) }
 
         Row(
             modifier = Modifier
@@ -155,10 +154,9 @@ fun EditPerformersRow(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            editEventViewModel.event.value?.performers?.forEach { performer ->
+            editEventViewModel.event.performers?.forEach { performer ->
                 val firstname = if (performer.firstname == null) "Firstname" else performer.firstname ?: ""
                 val lastname = if (performer.lastname == null) "Lastname" else performer.lastname ?: ""
-                val id = performer.id ?: 0
                 FriendBox (
                     firstname = firstname,
                     lastname = lastname,
@@ -174,10 +172,12 @@ fun EditPerformersRow(
                             selectedPerformer = performer
                         }
                     },
-                    id = id,
-                    image = performer.profile_picture
+                    user = performer,
+                    image = performer.profileImage
                 )
             }
+
+
 
         }
 
@@ -192,16 +192,19 @@ fun EditPerformersRow(
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             if (isSelectedPerformer) {
                 SmallButtonComponent(
                     text = "Remove",
                     isSelected = false,
                     onClick = {
-                        editEventViewModel.removePerformer(selectedPerformer)
+                        editEventViewModel.removePerformer(selectedPerformer!!)
                         isSelectedPerformer = false
                     },
                 )
             }
+
+
         }
 
 
@@ -233,8 +236,7 @@ fun EditPerformersRow(
 
             if (addPerformer) {
                 val friendScrollState = rememberScrollState()
-
-                if (editEventViewModel.friendsList.isEmpty()) {
+                if (mainViewModel.friendsData.value?.friends?.isEmpty() == true) {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -251,10 +253,10 @@ fun EditPerformersRow(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        editEventViewModel.friendsList.forEach { friend ->
+
+                        mainViewModel.friendsData.value?.friends?.forEach { friend ->
                             val firstname = if (friend.firstname == null) "Firstname" else friend.firstname ?: ""
                             val lastname = if (friend.lastname == null) "Lastname" else friend.lastname ?: ""
-                            val id = friend.id ?: 0
                             FriendBox (
                                 firstname = firstname,
                                 lastname =lastname,
@@ -262,8 +264,8 @@ fun EditPerformersRow(
                                     editEventViewModel.addPerformer(friend)
                                     addPerformer = false
                                 },
-                                id = id,
-                                image = friend.profile_picture
+                                user = friend,
+                                image = friend.profileImage
                             )
                             Spacer (
                                 modifier = Modifier
@@ -288,9 +290,10 @@ fun EditEventDetailInput (
             .padding(15.dp, 0.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         InputFieldComponent(
             label = "Title",
-            text = editEventViewModel.event.value?.title.toString(),
+            text = editEventViewModel.eventData.value?.title!!,
             onUpdate = editEventViewModel::updateTitle,
             keyboardType = KeyboardType.Text,
             onCheck = null,
@@ -302,10 +305,9 @@ fun EditEventDetailInput (
             modifier = Modifier
                 .height(10.dp)
         )
-
         InputFieldComponent(
             label = "Description",
-            text = editEventViewModel.event.value?.description.toString(),
+            text = editEventViewModel.eventData.value?.description!!,
             onUpdate = editEventViewModel::updateDescription,
             keyboardType = KeyboardType.Text,
             onCheck = null,
@@ -313,6 +315,8 @@ fun EditEventDetailInput (
                 .fillMaxWidth()
                 .height(100.dp),
         )
+
+
 
         Spacer (
             modifier = Modifier.height(10.dp)
@@ -326,8 +330,9 @@ fun EditEventDetailInput (
 
             SelectBoxesView (
                 onUpdate = {
-
-                }
+                    editEventViewModel.updateCategory(it)
+                },
+                editEventViewModel = editEventViewModel
 
             )
 
@@ -347,47 +352,30 @@ fun EditEventDetailInput (
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            val dateTime = observeLiveData(liveData = editEventViewModel.eventData)
+            DateTimePicker (
+                editEventViewModel::updateDate,
+                editEventViewModel::updateTime,
+                date = dateTime?.estimatedEnd
+            )
             Column (
-                modifier = Modifier
-                    .fillMaxHeight(),
+                modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-
-
-
-                Text (
-                    text = editEventViewModel.event.value?.estimated_end ?: "",
-                    style = paragraph,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.background
-                )
-
-                Box(
-
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.icon),
-                        contentDescription = "datepicker"
-                    )
-                }
-
-            }
-            Column (
-                modifier = Modifier
-                    .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 SmallButtonComponent(
-                    text = "Location",
+                    text = stringResource(id = R.string.location),
                     isSelected = false,
                     onClick = { onMapShow() }
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+
                 Text (
-                    text = editEventViewModel.event.value?.location?.address ?: "Address",
-                    style = paragraph,
-                    fontSize = 14.sp
+                    text = if(editEventViewModel.eventData.value?.location == null) stringResource(
+                        id = R.string.address) else editEventViewModel.eventData.value?.location ?: "",
+                    style = labelStyle,
+                    color = MaterialTheme.colorScheme.background,
+                    fontSize = 13.sp
                 )
             }
         }
@@ -396,13 +384,14 @@ fun EditEventDetailInput (
 
 @Composable
 fun SelectBoxesView(
-    onUpdate: (id: Int) -> Unit
+    onUpdate: (id: Int) -> Unit,
+    editEventViewModel: EditEventViewModel
 ) {
-    var isSelectedEducation by remember { mutableStateOf(false) }
-    var isSelectedMusic by remember { mutableStateOf(false) }
-    var isSelectedFood by remember { mutableStateOf(false) }
-    var isSelectedArt by remember { mutableStateOf(false) }
-    var isSelectedSport by remember { mutableStateOf(false) }
+    var isSelectedEducation by remember { mutableStateOf(editEventViewModel.event.category == 1) }
+    var isSelectedMusic by remember { mutableStateOf(editEventViewModel.event.category == 2) }
+    var isSelectedFood by remember { mutableStateOf(editEventViewModel.event.category == 3) }
+    var isSelectedArt by remember { mutableStateOf(editEventViewModel.event.category == 4) }
+    var isSelectedSport by remember { mutableStateOf(editEventViewModel.event.category == 5) }
 
     Box (
         modifier = Modifier
@@ -590,7 +579,6 @@ fun SelectBoxesView(
 
 @Composable
 fun EditCreateEventTopBar (
-    toUpdatedEvent: () -> Unit,
     toBack: () -> Unit,
     editEventViewModel: EditEventViewModel
 ) {
@@ -628,6 +616,7 @@ fun EditCreateEventTopBar (
             var openErrorDialog = remember { mutableStateOf(false) }
             var errorMessage = remember { mutableStateOf("") }
 
+
             SmallButtonComponent(
                 onClick = {
                     editEventViewModel.viewModelScope.launch {
@@ -640,12 +629,14 @@ fun EditCreateEventTopBar (
                 text = "Update",
                 isSelected = false
             )
+
+
             if(openSaveDialog.value) {
                 AlertDialogComponent(
                     onDismissRequest = { },
                     onConfirmation = {
                         openSaveDialog.value = false
-                        toUpdatedEvent()
+                        toBack()
                     },
                     dialogTitle = "Event updated",
                     dialogText = "Your event was updated",

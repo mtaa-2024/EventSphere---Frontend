@@ -2,9 +2,6 @@ package stuba.fiit.sk.eventsphere.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.JsonObject
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
@@ -21,8 +18,8 @@ class WebSockets: WebSocketListener() {
     override fun onMessage(webSocket: WebSocket, text: String) {
         val jsonObject = JSONObject(text)
         val message = jsonObject.getString("message")
-        val id = jsonObject.getInt("id")
-        val messageSend = MessageSend(id, message)
+        val username = jsonObject.getString("username")
+        val messageSend = MessageSend(username, message)
         addMessage(messageSend)
     }
 
@@ -30,7 +27,6 @@ class WebSockets: WebSocketListener() {
         val currentMessages = _messages.value.orEmpty().toMutableList()
         currentMessages.add(messageSend)
         _messages.postValue(currentMessages)
-        println(_messages.value)
     }
 
     override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
@@ -51,6 +47,6 @@ class WebSockets: WebSocketListener() {
 }
 
 data class MessageSend (
-    val id: Int,
+    val username: String,
     val message: String
 )

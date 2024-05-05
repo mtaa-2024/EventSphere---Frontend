@@ -2,6 +2,7 @@ package stuba.fiit.sk.eventsphere.ui.activities.event
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,12 +36,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.Event
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.CommentBanner
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
@@ -48,6 +49,7 @@ import stuba.fiit.sk.eventsphere.ui.components.FriendImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.MapLocationPicker
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.scheduleNotification
+import stuba.fiit.sk.eventsphere.ui.navigation.mainViewModel
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.EventViewModel
@@ -58,66 +60,64 @@ fun EventScreen (
     viewModel: MainViewModel,
     eventViewModel: EventViewModel,
     toBack: () -> Unit,
-    toEdit: (id: Int) -> Unit
+    toEdit: (event: Event) -> Unit
 ) {
     Column (
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
-        if (eventViewModel.event.isInitialized) {
-            EventTopBar(
-                eventViewModel = eventViewModel,
-                toBack = toBack,
-                viewModel = viewModel,
-                toEdit = toEdit
+        EventTopBar(
+            eventViewModel = eventViewModel,
+            toBack = toBack,
+            viewModel = viewModel,
+            toEdit = toEdit
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Spacer (
+                modifier = Modifier
+                    .height(20.dp)
+            )
+            OrganizatorViewWidget (
+                eventViewModel = eventViewModel
+            )
+            Spacer (
+                modifier = Modifier
+                    .height(20.dp)
+            )
+            PerformersViewWidget (
+                eventViewModel = eventViewModel
+            )
+            Spacer (
+                modifier = Modifier
+                    .height(20.dp)
             )
 
-            Column(
+            DescriptionViewWidget (
+                eventViewModel = eventViewModel
+            )
+
+            Spacer (
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                Spacer (
-                    modifier = Modifier
-                        .height(20.dp)
-                )
-                OrganizatorViewWidget (
-                    eventViewModel = eventViewModel
-                )
-                Spacer (
-                    modifier = Modifier
-                        .height(20.dp)
-                )
-                PerformersViewWidget (
-                    eventViewModel = eventViewModel
-                )
-                Spacer (
-                    modifier = Modifier
-                        .height(20.dp)
-                )
+                    .height(20.dp)
+            )
 
-                DescriptionViewWidget (
-                    eventViewModel = eventViewModel
-                )
+            CommentsViewWidget (
+                eventViewModel = eventViewModel,
+                mainViewModel = viewModel
+            )
 
-                Spacer (
-                    modifier = Modifier
-                        .height(20.dp)
-                )
+            Spacer (
+                modifier = Modifier.height(20.dp)
+            )
 
-                CommentsViewWidget (
-                    eventViewModel = eventViewModel,
-                    mainViewModel = viewModel
-                )
-
-                Spacer (
-                    modifier = Modifier.height(20.dp)
-                )
-
-                MapViewWidget (
-                    eventViewModel = eventViewModel
-                )
-            }
+            MapViewWidget (
+                eventViewModel = eventViewModel
+            )
         }
     }
 }
@@ -146,11 +146,11 @@ fun MapViewWidget (
         ) {
             val properties by remember { mutableStateOf(MapProperties(mapType = MapType.TERRAIN)) }
             val uiSettings by remember { mutableStateOf(MapUiSettings(zoomControlsEnabled = false, compassEnabled = true, mapToolbarEnabled = false, zoomGesturesEnabled = true, scrollGesturesEnabled = true)) }
-            val location = LatLng(eventViewModel.event.value?.location?.latitude ?: 0.0, eventViewModel.event.value?.location?.longitude ?: 0.0)
 
             MapLocationPicker (
                 onAdd = {},
-                userLocationInput = location ,
+                latitude = eventViewModel.event.latitude,
+                longitude = eventViewModel.event.longitude,
                 properties = properties,
                 uiSettings = uiSettings,
                 isForPicking = false
@@ -180,15 +180,15 @@ fun CommentsViewWidget(
                 .height(20.dp)
         )
 
-        val events = observeLiveData(eventViewModel.event)
-        events?.comments?.forEach { comment ->
+        val comments = observeLiveData(liveData = eventViewModel.comments)
+
+        comments?.comments?.forEach { comment ->
             CommentBanner(
-                id = comment.id,
-                firstname = if (mainViewModel.loggedUser.value?.firstname == null) stringResource(id = R.string.firstname) else mainViewModel.loggedUser.value?.firstname ?: "",
-                lastname = if (mainViewModel.loggedUser.value?.lastname == null) stringResource(id = R.string.lastname) else mainViewModel.loggedUser.value?.lastname ?: "",
-                text = comment.text ?: "",
-                image = comment.profile_image,
-                onPublish = { },
+                firstname = comment.firstname ?: stringResource(id = R.string.firstname),
+                lastname = comment.lastname ?: stringResource(id = R.string.lastname),
+                text = comment.text,
+                image = comment.profileImage,
+                onPublish = {},
                 isForPublish = false,
             )
             Spacer (modifier = Modifier
@@ -218,21 +218,22 @@ fun CommentsViewWidget(
         )
 
         CommentBanner (
-            id = mainViewModel.loggedUser.value?.id ?: 0,
             firstname = if (mainViewModel.loggedUser.value?.firstname == null) stringResource(id = R.string.firstname) else mainViewModel.loggedUser.value?.firstname ?: "",
             lastname = if (mainViewModel.loggedUser.value?.lastname == null) stringResource(id = R.string.lastname) else mainViewModel.loggedUser.value?.lastname ?: "",
             text = stringResource(id = R.string.insert_your_comment),
-            image = mainViewModel.loggedUser.value?.profile_image,
+            image = mainViewModel.loggedUser.value?.profileImage,
             isForPublish = true,
             onPublish = { comment ->
                 eventViewModel.viewModelScope.launch {
-                    eventViewModel.insertCommentNew(comment, mainViewModel.loggedUser)
+                    if (eventViewModel.insertCommentNew(comment))  {
+                        println("yes")
+                    } else {
+                        println("No")
+                    }
                 }
             }
         )
-
     }
-
 }
 
 @Composable
@@ -259,7 +260,7 @@ fun DescriptionViewWidget (
                 .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(15.dp))
         ) {
             Text(
-                text = eventViewModel.event.value?.description ?: stringResource(id = R.string.no_description),
+                text = eventViewModel.event.description,
                 style = labelStyle,
                 fontSize = 17.sp,
                 modifier = Modifier.padding(15.dp)
@@ -287,29 +288,44 @@ fun PerformersViewWidget (
             modifier = Modifier
                 .height(10.dp)
         )
+        if (!eventViewModel.event.performers.isNullOrEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp)
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                eventViewModel.event.performers?.forEach { performer ->
+                    val firstname =
+                        if (performer.firstname == null) stringResource(id = R.string.firstname) else performer.firstname
+                            ?: ""
+                    val lastname =
+                        if (performer.lastname == null) stringResource(id = R.string.lastname) else performer.lastname
+                            ?: ""
+                    FriendBox(
+                        user = performer,
+                        firstname = firstname,
+                        lastname = lastname,
+                        onClick = {},
+                        image = performer.profileImage
+                    )
+                }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(90.dp)
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            eventViewModel.event.value?.performers?.forEach { performer ->
-                val firstname = if (performer.firstname == null) stringResource(id = R.string.firstname) else performer.firstname ?: ""
-                val lastname = if (performer.lastname == null) stringResource(id = R.string.lastname) else performer.lastname ?: ""
-                val id = performer.id ?: 0
-                FriendBox (
-                    firstname = firstname,
-                    lastname =lastname,
-                    onClick = {},
-                    id = id,
-                    image = performer.profile_picture
-                )
             }
-
+        } else {
+            Text (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = stringResource(id = R.string.no_perfromers),
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                style = labelStyle,
+                fontSize = 17.sp
+            )
         }
+
     }
 }
 @Composable
@@ -325,7 +341,7 @@ fun OrganizatorViewWidget (
             contentAlignment = Alignment.Center
         ) {
             FriendImageComponent (
-                image = eventViewModel.event.value?.owner_profile_image
+                image = if (eventViewModel.organizator.isInitialized) eventViewModel.organizator.value?.profileImage else null
             )
         }
         Spacer(modifier = Modifier
@@ -339,12 +355,14 @@ fun OrganizatorViewWidget (
                 fontSize = 17.sp,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Text(
-                text = "${eventViewModel.event.value?.owner_firstname.toString()}  ${eventViewModel.event.value?.owner_lastname.toString()}",
-                style = welcomeStyle,
-                fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
+            if (eventViewModel.organizator.isInitialized) {
+                Text(
+                    text = "${eventViewModel.organizator.value?.firstname.toString()}  ${eventViewModel.organizator.value?.lastname.toString()}",
+                    style = welcomeStyle,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
@@ -354,7 +372,7 @@ fun EventTopBar (
     eventViewModel: EventViewModel,
     viewModel: MainViewModel,
     toBack: () -> Unit,
-    toEdit: (id: Int) -> Unit
+    toEdit: (event: Event) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -390,12 +408,12 @@ fun EventTopBar (
                 Box {}
 
                 val context = LocalContext.current
-                if (eventViewModel.event.value?.owner_id != viewModel.loggedUser.value?.id) {
+                if (eventViewModel.event.ownerId != mainViewModel.loggedUser.value?.id) {
                     SmallButtonComponent(
                         text = stringResource(id = R.string.notify_me),
                         isSelected = false,
                         onClick = {
-                            scheduleNotification(context, 600000)
+                            scheduleNotification(context, 3000)
                         }
                     )
                 } else {
@@ -403,7 +421,7 @@ fun EventTopBar (
                         text = stringResource(id = R.string.edit),
                         isSelected = false,
                         onClick = {
-                            toEdit(eventViewModel.event.value?.event_id!!)
+                            toEdit(eventViewModel.event)
                         }
                     )
                 }
@@ -415,27 +433,48 @@ fun EventTopBar (
                     .padding(8.dp)
             ) {
                 Text(
-                    text = if(eventViewModel.event.value?.title == null) stringResource(id = R.string.tittle)else eventViewModel.event.value?.title ?: "",
+                    text = eventViewModel.event.title,
                     style = labelStyle,
                     fontSize = 24.sp,
-                    textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.background
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = if(eventViewModel.event.value?.location?.address == null) stringResource(id = R.string.somewhere)else eventViewModel.event.value?.location?.address ?: "",
+                    text = eventViewModel.event.location,
                     style = labelStyle,
                     fontSize = 20.sp,
-                    textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.background
                 )
                 Text(
-                    text = if(eventViewModel.event.value?.estimated_end == null) stringResource(id = R.string.over_the_rainbow)else eventViewModel.event.value?.estimated_end ?: "",
+                    text = eventViewModel.event.estimatedEnd,
                     style = labelStyle,
                     fontSize = 20.sp,
-                    textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.background
                 )
+            }
+            Spacer (
+                modifier = Modifier.height(10.dp)
+            )
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                if (eventViewModel.event.ownerId != viewModel.loggedUser.value?.id) {
+                    val isAttending = observeLiveData(liveData = eventViewModel.isAttending)
+                    SmallButtonComponent(
+                        text = if (isAttending == false) stringResource(id = R.string.attend) else stringResource(
+                            id = R.string.you_attending
+                        ),
+                        isSelected = isAttending ?: false,
+                        onClick = {
+                            eventViewModel.viewModelScope.launch {
+                                eventViewModel.attendEvent()
+                            }
+                        }
+                    )
+                }
             }
         }
     }

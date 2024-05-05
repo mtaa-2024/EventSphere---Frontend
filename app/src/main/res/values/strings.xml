@@ -92,7 +92,7 @@
 
 
     <string name="address">Address</string>
-    <string name="tittle">Title</string>
+    <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="no_description">No description</string>
 
@@ -112,4 +112,20 @@
     <string name="notify_me">Notify me</string>
     <string name="somewhere">Somewhere</string>
     <string name="over_the_rainbow">Over the rainbow</string>
+    <string name="username_initialize">Please enter username</string>
+    <string name="email_initialize">Please enter email</string>
+    <string name="email_format">Email is in wrong format \"example@mail.com\"</string>
+    <string name="password_initialize">Please enter password</string>
+    <string name="password_match">Password doesn\'t match</string>
+    <string name="password_length">Password have to be atleast 8 characters long</string>
+    <string name="password_digit">Password must contains atleast 1 digit</string>
+    <string name="password_upper">Password must contain atleast one upper case</string>
+    <string name="check_internet">Something went wrong, please try again later</string>
+    <string name="check_data">Your information already exists, consider loging into your account</string>
+    <string name="no_perfromers">No performers</string>
+    <string name="attend">Attend</string>
+    <string name="you_attending">Attending</string>
+    <string name="change_image">Understand</string>
+    <string name="error_image">Profile image is not containing human</string>
+    <string name="error_image_title">Error profile image</string>
 </resources>

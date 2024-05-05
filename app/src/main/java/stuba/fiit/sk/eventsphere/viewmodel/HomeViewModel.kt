@@ -6,11 +6,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import stuba.fiit.sk.eventsphere.api.apiService
-import stuba.fiit.sk.eventsphere.model.BannerStruct
-import stuba.fiit.sk.eventsphere.model.CategorySelectStates
-import stuba.fiit.sk.eventsphere.model.EventSelectStates
-import stuba.fiit.sk.eventsphere.model.Events
+import stuba.fiit.sk.eventsphere.model.Event
+import stuba.fiit.sk.eventsphere.model.apiCalls
+
+data class EventSelectStates (
+    var upcoming: Boolean = true,
+    var attending: Boolean = false,
+    var invited: Boolean = false
+)
+data class CategorySelectStates (
+    var education: Boolean = false,
+    var music: Boolean = false,
+    var art: Boolean = false,
+    var food: Boolean = false,
+    var sport: Boolean = false
+)
+
+data class Events (
+    var events: MutableList<Event>?
+)
 
 class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
     private val viewModel = viewModel
@@ -23,168 +37,17 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
     val eventSelectStates: LiveData<EventSelectStates>
         get() = _eventSelectedStates
 
-
     private val _events = MutableLiveData<Events>()
-    val events: LiveData<Events>
-        get() = _events
+    val events: LiveData<Events> = _events
 
     init {
+        _categories.value = CategorySelectStates ()
+        _eventSelectedStates.value = EventSelectStates()
+        _events.value = Events (
+            events = null
+        )
         viewModelScope.launch {
             getUpcoming()
-        }
-
-        _eventSelectedStates.value = EventSelectStates(
-            upcoming = true,
-            attending = false,
-            invited = false
-        )
-
-        _categories.value = CategorySelectStates(
-            education = false,
-            music = false,
-            art = false,
-            food = false,
-            sport = false
-        )
-    }
-
-    fun onUpdateFilter(input: String) {
-        viewModelScope.launch {
-            searchForEvents(input)
-        }
-    }
-
-    private suspend fun searchForEvents(input: String) {
-        try {
-            val fetchedJson = apiService.searchEvents(input)
-            val eventList = mutableListOf<BannerStruct>()
-            if (fetchedJson.get("result").asBoolean) {
-                val eventArray = fetchedJson.getAsJsonArray("events").asJsonArray
-                eventArray.forEach { eventElement ->
-                    val eventObject = eventElement.asJsonObject
-                    val event = BannerStruct(
-                        id = eventObject.get("id").asInt,
-                        title = if (eventObject.get("title").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("title")?.asString
-                        },
-                        location = if (eventObject.get("location").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("location")?.asString
-                        },
-                        date = if (eventObject.get("estimated_end").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("estimated_end")?.asString
-                        }
-                    )
-                    eventList.add(event)
-                }
-            }
-
-            val upcomingEvents = Events(
-                events = eventList
-            )
-            _events.value = upcomingEvents
-
-        } catch (e: Exception) {
-            return
-        }
-    }
-
-    private suspend fun getUpcoming() {
-        try {
-            val fetchedJson = apiService.getUpcoming(
-                _categories.value?.education ?: false,
-                _categories.value?.music ?: false,
-                _categories.value?.food ?: false,
-                _categories.value?.art ?: false,
-                _categories.value?.sport ?: false
-            )
-
-
-            val eventList = mutableListOf<BannerStruct>()
-            if (fetchedJson.get("result").asBoolean) {
-                val eventArray = fetchedJson.getAsJsonArray("events").asJsonArray
-                eventArray.forEach { eventElement ->
-                    val eventObject = eventElement.asJsonObject
-                    val event = BannerStruct(
-                        id = eventObject.get("id").asInt,
-                        title = if (eventObject.get("title").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("title")?.asString
-                        },
-                        location = if (eventObject.get("location").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("location")?.asString
-                        },
-                        date = if (eventObject.get("estimated_end").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("estimated_end")?.asString
-                        }
-                    )
-                    eventList.add(event)
-                }
-            }
-            val upcomingEvents = Events(
-                    events = eventList
-            )
-            _events.value = upcomingEvents
-        } catch (e: Exception) {
-            println("Error: $e")
-        }
-    }
-
-    private suspend fun getAttending() {
-        if ((viewModel.loggedUser.value?.id ?: 0) == 0)
-            return
-        try {
-            val fetchedJson = apiService.getAttending(viewModel.loggedUser.value?.id)
-            val eventList = mutableListOf<BannerStruct>()
-            if (fetchedJson.get("result").asBoolean) {
-                val eventArray = fetchedJson.getAsJsonArray("events").asJsonArray
-                eventArray.forEach { eventElement ->
-                    val eventObject = eventElement.asJsonObject
-                    val event = BannerStruct(
-                        id = eventObject.get("id").asInt,
-                        title = if (eventObject.get("title").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("title")?.asString
-                        },
-                        location = if (eventObject.get("location").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("location")?.asString
-                        },
-                        date = if (eventObject.get("estimated_end").isJsonNull) {
-                            null
-                        } else {
-                            eventObject.get("estimated_end")?.asString
-                        }
-                    )
-                    eventList.add(event)
-                }
-            }
-            val upcomingEvents = Events(
-                events = eventList
-            )
-            _events.value = upcomingEvents
-        } catch (e: Exception) {
-            println("Error: $e")
-        }
-    }
-
-    private suspend fun getInvited() {
-        try {
-
-        } catch (e: Exception) {
-            println("Error: $e")
         }
     }
 
@@ -193,25 +56,26 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
         _eventSelectedStates.value?.upcoming = true
         _eventSelectedStates.value?.attending = false
         _eventSelectedStates.value?.invited = false
-        viewModelScope.launch{
+        viewModelScope.launch {
             getUpcoming()
         }
+
     }
     fun onAttendingSelect() {
         _eventSelectedStates.value?.upcoming = false
         _eventSelectedStates.value?.attending = true
         _eventSelectedStates.value?.invited = false
-        viewModelScope.launch{
+        viewModelScope.launch {
             getAttending()
         }
     }
+
+
     fun onInvitedSelect() {
         _eventSelectedStates.value?.upcoming = false
         _eventSelectedStates.value?.attending = false
         _eventSelectedStates.value?.invited = true
-        viewModelScope.launch{
-            getInvited()
-        }
+
     }
 
     fun onClickEducation(value: Boolean) {
@@ -219,6 +83,10 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
         if (eventSelectStates.value?.upcoming == true) {
             viewModelScope.launch {
                 getUpcoming()
+            }
+        } else {
+            viewModelScope.launch {
+                getAttending()
             }
         }
     }
@@ -229,6 +97,10 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
             viewModelScope.launch {
                 getUpcoming()
             }
+        } else {
+            viewModelScope.launch {
+                getAttending()
+            }
         }
     }
 
@@ -237,6 +109,10 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
         if (eventSelectStates.value?.upcoming == true) {
             viewModelScope.launch {
                 getUpcoming()
+            }
+        } else {
+            viewModelScope.launch {
+                getAttending()
             }
         }
     }
@@ -247,6 +123,10 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
             viewModelScope.launch {
                 getUpcoming()
             }
+        } else {
+            viewModelScope.launch {
+                getAttending()
+            }
         }
     }
 
@@ -256,6 +136,38 @@ class HomeViewModel(viewModel: MainViewModel) : ViewModel() {
             viewModelScope.launch {
                 getUpcoming()
             }
+        } else {
+            viewModelScope.launch {
+                getAttending()
+            }
+        }
+    }
+
+    private suspend fun getUpcoming() {
+        val events: MutableList<Event>? = apiCalls.getUpcomingEvents(categories.value!!)
+        _events.value = _events.value?.copy(
+            events = events
+        )
+    }
+
+    private suspend fun getAttending() {
+        val events: MutableList<Event>? = apiCalls.getAttendingEvents(categories.value!!, viewModel.loggedUser.value!!)
+        _events.value = _events.value?.copy(
+            events = events
+        )
+    }
+
+    suspend fun onUpdateFilter(filter: String) {
+        if (eventSelectStates.value?.upcoming == true) {
+            val events: MutableList<Event>? = apiCalls.searchEvents(categories.value!!, filter)
+            _events.value = _events.value?.copy(
+                events = events
+            )
+        } else {
+            val events: MutableList<Event>? = apiCalls.searchEventsAttending(categories.value!!, filter, viewModel.loggedUser.value!!)
+            _events.value = _events.value?.copy(
+                events = events
+            )
         }
     }
 }

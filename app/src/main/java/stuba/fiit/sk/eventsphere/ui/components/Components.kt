@@ -3,12 +3,16 @@ package stuba.fiit.sk.eventsphere.ui.components
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.app.DatePickerDialog
 import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.util.Log
+import android.widget.DatePicker
+import android.widget.TimePicker
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -37,6 +41,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults.shape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
@@ -67,6 +72,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -87,13 +93,22 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
 import stuba.fiit.sk.eventsphere.model.AlarmReceiver
+import stuba.fiit.sk.eventsphere.model.DateInput
+import stuba.fiit.sk.eventsphere.model.Event
 import stuba.fiit.sk.eventsphere.model.LocationData
+import stuba.fiit.sk.eventsphere.model.User
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.theme.buttonStyle
 import stuba.fiit.sk.eventsphere.ui.theme.labelStyle
 import stuba.fiit.sk.eventsphere.ui.theme.paragraph
 import stuba.fiit.sk.eventsphere.ui.theme.smallButton
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
+import stuba.fiit.sk.eventsphere.viewmodel.CreateEventViewModel
+import stuba.fiit.sk.eventsphere.viewmodel.Events
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+import java.util.UUID
 import kotlin.reflect.KSuspendFunction1
 
 
@@ -102,17 +117,16 @@ fun FriendBox (
     firstname: String,
     lastname: String,
     image: ImageBitmap?,
-    onClick: (id: Int?) -> Unit,
-    id: Int
+    onClick: (User) -> Unit,
+    user: User
 ) {
-
     Column (
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box (
             modifier = Modifier
                 .clickable(
-                    onClick = { onClick(id) }
+                    onClick = { onClick(user) }
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -120,6 +134,9 @@ fun FriendBox (
                 image = image,
             )
         }
+        Spacer (
+            modifier = Modifier.height(5.dp)
+        )
         Text(
             text = "$firstname $lastname",
             style = labelStyle,
@@ -131,7 +148,7 @@ fun FriendBox (
 
 @Composable
 fun ProfileImageComponent (
-    image: ImageBitmap?,
+    image: ImageBitmap?
 ) {
     Box (
         contentAlignment = Alignment.Center
@@ -142,24 +159,29 @@ fun ProfileImageComponent (
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(117.dp)
                     .clip(CircleShape)
             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.profile_default),
                 contentDescription = "Profile background",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(117.dp)
             )
         }
         Box(
             modifier = Modifier
                 .background(Color.Transparent)
-                .border(3.dp, shape = RoundedCornerShape(75.dp), color = MaterialTheme.colorScheme.primary)
+                .border(
+                    3.dp,
+                    shape = RoundedCornerShape(75.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
                 .size(120.dp),
         )
     }
 }
+
 
 @Composable
 fun TopBarProfileComponent (
@@ -172,23 +194,23 @@ fun TopBarProfileComponent (
             Image(
                 painter = BitmapPainter(image),
                 contentDescription = null,
-                contentScale = ContentScale.Inside,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(65.dp)
+                    .size(69.dp)
                     .clip(CircleShape)
             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.profile_default),
                 contentDescription = "Profile background",
-                modifier = Modifier.size(65.dp)
+                modifier = Modifier.size(69.dp)
             )
         }
         Box(
             modifier = Modifier
-                .background(shape = RoundedCornerShape(75.dp), color = Color.Transparent)
+                .background(Color.Transparent)
                 .border(
-                    2.dp,
+                    1.dp,
                     shape = RoundedCornerShape(75.dp),
                     color = MaterialTheme.colorScheme.background
                 )
@@ -208,22 +230,26 @@ fun FriendImageComponent (
             Image(
                 painter = BitmapPainter(image),
                 contentDescription = null,
-                contentScale = ContentScale.Inside,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(65.dp)
+                    .size(68.dp)
                     .clip(CircleShape)
             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.profile_default),
                 contentDescription = "Profile background",
-                modifier = Modifier.size(65.dp)
+                modifier = Modifier.size(68.dp)
             )
         }
         Box(
             modifier = Modifier
-                .background(shape = RoundedCornerShape(75.dp), color = Color.Transparent)
-                .border(2.dp, shape = RoundedCornerShape(75.dp), color = MaterialTheme.colorScheme.primary)
+                .background(Color.Transparent)
+                .border(
+                    2.dp,
+                    shape = RoundedCornerShape(75.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
                 .size(70.dp),
         )
     }
@@ -261,22 +287,30 @@ fun SearchBarComponent (
     onUpdate: (String) -> Unit,
     modifier: Modifier
 ) {
-    var value by remember { mutableStateOf("Search") }
+    val search = stringResource(id = R.string.search)
+    var value by remember { mutableStateOf(search) }
     var isFocused by remember { mutableStateOf(false) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val maxCharacters = 40
 
     TextField (
         modifier = modifier
             .height(50.dp)
             .clip(shape = RoundedCornerShape(15.dp))
-            .border(1.dp, shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.primary)
+            .border(
+                1.dp,
+                shape = RoundedCornerShape(15.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
             .onFocusChanged { isFocused = it.isFocused },
         value = if (isFocused && value == "Search") "" else value,
         singleLine = false,
         onValueChange = {
-            value = it
-            onUpdate(value)
+            if (it.length < maxCharacters) {
+                value = it
+                onUpdate(value)
+            }
         },
         textStyle = labelStyle.copy(
             fontSize = 16.sp,
@@ -311,9 +345,10 @@ fun SearchBarComponent (
 @Composable
 fun InputCommentFieldComponent (
     onUpdate: (String) -> Unit,
+    comment: String,
     modifier: Modifier
 ) {
-    var value by remember { mutableStateOf("Insert you comment") }
+    var value by remember { mutableStateOf(comment) }
     var isFocused by remember { mutableStateOf(false) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -322,7 +357,7 @@ fun InputCommentFieldComponent (
         modifier = modifier
             .height(IntrinsicSize.Min)
             .onFocusChanged { isFocused = it.isFocused },
-        value = if (isFocused && value == "Insert you comment") "" else value,
+        value = value,
         label = { Text(text = "") },
         singleLine = false,
         onValueChange = {
@@ -356,29 +391,25 @@ fun InputCommentFieldComponent (
 @Composable
 fun InputFieldComponent (
     onUpdate: (String) -> Unit,
-    onCheck: KSuspendFunction1<String, Pair<Boolean, String>>?,
+    onCheck: KSuspendFunction1<String, String>?,
     label: String,
     text: String,
     keyboardType: KeyboardType,
     modifier: Modifier
 ) {
     var value by remember { mutableStateOf(text) }
-    var isFocused by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
+    var isFocused by remember { mutableStateOf(false) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
     var passwordVisible by remember { mutableStateOf(true) }
 
-
     val coroutineScope = rememberCoroutineScope()
 
-    if (!isFocused && value != text) {
+    if (!isFocused) {
         coroutineScope.launch {
-            if (onCheck != null) {
-                val (newError, newMessage) = onCheck(value)
-                error = newError
-                message = newMessage
+            if (onCheck != null && value.length > 1) {
+                message = onCheck(value)
             }
         }
     }
@@ -387,7 +418,7 @@ fun InputFieldComponent (
         modifier = modifier
             .height(IntrinsicSize.Min)
             .onFocusChanged { isFocused = it.isFocused },
-        value = if (isFocused && value == text) "" else value,
+        value = value,
         label = { Text(
                     text = label,
                     style = labelStyle,
@@ -431,7 +462,7 @@ fun InputFieldComponent (
             focusedLabelColor = MaterialTheme.colorScheme.primary
         ),
     )
-    if (error) {
+    if (message != "") {
         Text (
             text = message,
             color = MaterialTheme.colorScheme.error,
@@ -493,7 +524,7 @@ fun SmallButtonComponent (
 ) {
     Box(
         modifier = Modifier
-            .width(100.dp)
+            .width(110.dp)
             .height(30.dp)
             .clip(RoundedCornerShape(15.dp))
             .border(
@@ -519,17 +550,17 @@ fun SmallButtonComponent (
 
 @Composable
 fun EventBanner (
-    id: Int,
+    event: Event,
     title: String,
     date: String,
     location: String,
     icon: Int,
-    toEvent: (id: Int) -> Unit
+    toEvent: (event: Event) -> Unit
 ) {
     Box (
         modifier = Modifier
             .width(350.dp)
-            .clickable { toEvent(id) }
+            .clickable { toEvent(event) }
     ) {
         Box (
             modifier = Modifier
@@ -560,7 +591,7 @@ fun EventBanner (
                 Text (
                     text = date,
                     style = smallButton,
-                    fontSize = 17.sp,
+                    fontSize = 15.sp,
                     color = MaterialTheme.colorScheme.background
                 )
                 Text (
@@ -601,7 +632,7 @@ fun CommentProfileImage (
             Image(
                 painter = BitmapPainter(image),
                 contentDescription = null,
-                contentScale = ContentScale.Inside,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(39.dp)
                     .clip(CircleShape)
@@ -613,12 +644,21 @@ fun CommentProfileImage (
                 modifier = Modifier.size(39.dp)
             )
         }
+        Box(
+            modifier = Modifier
+                .background(Color.Transparent)
+                .border(
+                    1.dp,
+                    shape = RoundedCornerShape(75.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                .size(40.dp),
+        )
     }
 }
 
 @Composable
 fun CommentBanner (
-    id: Int,
     firstname: String,
     lastname: String,
     text: String,
@@ -670,7 +710,8 @@ fun CommentBanner (
                             onUpdate = { input ->
                                        value = input
                             },
-                            modifier = Modifier
+                            modifier = Modifier,
+                            comment = value
                         )
                     } else {
                         Text(
@@ -710,9 +751,7 @@ fun CommentBanner (
                         text = "Publish",
                         isSelected = false,
                         onClick = {
-                            if (id != 0) {
-                                onPublish(value)
-                            }
+                            onPublish(value)
                         }
                     )
                 }
@@ -725,13 +764,14 @@ fun CommentBanner (
 @Composable
 fun MapLocationPicker (
     onAdd: (input: LocationData) -> Unit,
-    userLocationInput: LatLng?,
+    longitude: Double,
+    latitude: Double,
     properties: MapProperties,
     uiSettings: MapUiSettings,
     isForPicking: Boolean
 ) {
     val context = LocalContext.current
-    var userLocation by remember { mutableStateOf<LatLng?>(userLocationInput) }
+    var userLocation by remember { mutableStateOf<LatLng?>(LatLng(latitude, longitude)) }
     var address by remember { mutableStateOf("") }
 
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
@@ -841,7 +881,7 @@ fun MapLocationPicker (
                     onClick = {
                         onAdd(
                             LocationData(
-                                address = address,
+                                address = if (address.contains(",")) address.substring(address.indexOf(",") + 1, address.indexOf(",", address.indexOf(",") + 1)).trim() else address,
                                 latitude = userLocation?.latitude ?: 0.0,
                                 longitude = userLocation?.longitude ?: 0.0,
                             )
@@ -914,6 +954,75 @@ fun AlertDialogComponent(
             }
         }
     )
+}
+
+@Composable
+fun DateTimePicker(
+    updateDate: (year: Int, month: Int, day: Int) -> Unit,
+    updateTime: (hours: Int, minutes: Int) -> Unit,
+    date: String?
+){
+    val mContext = LocalContext.current
+    val mYear: Int
+    val mMonth: Int
+    val mDay: Int
+    val mHours: Int
+    val mMinutes: Int
+
+    val mCalendar = Calendar.getInstance()
+
+    mYear = mCalendar.get(Calendar.YEAR)
+    mMonth = mCalendar.get(Calendar.MONTH) + 1
+    mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+    mHours = mCalendar.get(Calendar.HOUR_OF_DAY)
+    mMinutes = mCalendar.get(Calendar.MINUTE)
+
+    mCalendar.time = Date()
+    val mDate = remember { mutableStateOf("$mDay/$mMonth/$mYear") }
+    val mTime = remember { mutableStateOf("$mHours:$mMinutes") }
+
+    val mDatePickerDialog = DatePickerDialog(
+        mContext,
+        { _: DatePicker, mYear: Int, mMonth: Int, mDay: Int ->
+            mDate.value = "${mDay}/${mMonth+1}/$mYear"
+            updateDate(mYear, mMonth, mDay)
+        }, mYear, mMonth, mDay
+    )
+
+    val mTimePickerDialog = TimePickerDialog (
+        mContext,
+        { _: TimePicker, mHours: Int, mMinutes: Int ->
+            mTime.value = "$mHours:$mMinutes"
+            updateTime(mHours, mMinutes)
+        }, mHours, mMinutes, true
+    )
+
+    Column (
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box (
+            modifier = Modifier.clickable(onClick = {
+                mTimePickerDialog.show()
+                mDatePickerDialog.show()
+            })
+        ) {
+            Image (
+                painter = painterResource(id = R.drawable.icon),
+                contentDescription = "Location picker" 
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = date ?: "${mDate.value} ${mTime.value}",
+            modifier = Modifier,
+            style = labelStyle,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.background
+        )
+    }
 }
 
 @SuppressLint("ScheduleExactAlarm")

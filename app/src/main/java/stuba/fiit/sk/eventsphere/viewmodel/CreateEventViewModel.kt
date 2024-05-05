@@ -1,202 +1,145 @@
 package stuba.fiit.sk.eventsphere.viewmodel
 
-import android.icu.util.Calendar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import kotlinx.coroutines.launch
-import stuba.fiit.sk.eventsphere.api.apiService
 import stuba.fiit.sk.eventsphere.model.DateInput
-import stuba.fiit.sk.eventsphere.model.EventInput
-import stuba.fiit.sk.eventsphere.model.FriendPerformer
+import stuba.fiit.sk.eventsphere.model.Event
 import stuba.fiit.sk.eventsphere.model.LocationData
+import stuba.fiit.sk.eventsphere.model.User
+import stuba.fiit.sk.eventsphere.model.apiCalls
+import java.io.IOException
+import java.util.Calendar
 
-class CreateEventViewModel(viewModel: MainViewModel) : ViewModel() {
-    private val creatorId = viewModel.loggedUser.value?.id
-
-    private val _event = MutableLiveData<EventInput>()
-    val event: LiveData<EventInput> = _event
-
-    private val performersList: MutableList<FriendPerformer> = mutableListOf()
-    val friendsList: MutableList<FriendPerformer> = mutableListOf()
-
-    var timestamp: String = ""
-
-    fun updateTimestamp() {
-        timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
-    }
-
-    private val calendar: Calendar = Calendar.getInstance()
-    var date = DateInput (
-        day = calendar[Calendar.DAY_OF_MONTH],
-        month = calendar[Calendar.MONTH],
-        year = calendar[Calendar.YEAR],
-        hour = calendar[Calendar.HOUR_OF_DAY],
-        minutes = calendar[Calendar.MINUTE]
-    )
-
-    val actualDate = DateInput (
-        day = calendar[Calendar.DAY_OF_MONTH],
-        month = calendar[Calendar.MONTH],
-        year = calendar[Calendar.YEAR],
-        hour = calendar[Calendar.HOUR_OF_DAY],
-        minutes = calendar[Calendar.MINUTE]
-    )
+class CreateEventViewModel(private val viewModel: MainViewModel, private  val initializeData: Event) : ViewModel() {
+    private val _eventData = MutableLiveData<Event>()
+    val eventData: LiveData<Event> = _eventData
+    val estimatedEnd = MutableLiveData<DateInput>()
+    private val initializeDate: DateInput
+    val eventLocation = MutableLiveData<LocationData>()
+    val performers = mutableListOf<User>()
 
     init {
-        viewModelScope.launch {
-            getFriends()
-        }
-
-        _event.value = EventInput (
-            title = "Title",
-            description = "Description",
-            location = LocationData (
-                address = "",
-                latitude = 0.0,
-                longitude = 0.0,
-            ),
-            user_id = viewModel.loggedUser.value?.id ?: -1,
-            estimated_end = date,
-            performers = performersList,
-            category = 0
+        val mCalendar = Calendar.getInstance()
+        initializeDate = DateInput(
+            year = mCalendar.get(Calendar.YEAR),
+            month = mCalendar.get(Calendar.MONTH) + 1,
+            day = mCalendar.get(Calendar.DAY_OF_MONTH),
+            hours = mCalendar.get(Calendar.HOUR_OF_DAY),
+            minutes = mCalendar.get(Calendar.MINUTE)
+        )
+        estimatedEnd.value = initializeDate.copy()
+        _eventData.value = initializeData.copy(
+            ownerId = viewModel.loggedUser.value?.id!!,
+            estimatedEnd = formatLocalDate()
         )
     }
 
+    private fun formatDate(): String {
+        return "${estimatedEnd.value?.year}-${estimatedEnd.value?.month}-${estimatedEnd.value?.day} ${estimatedEnd.value?.hours}:${estimatedEnd.value?.minutes}:00"
+    }
 
-    fun updateTitle(input: String) {
-        _event.value?.title = input
+    private fun formatLocalDate(): String {
+        return "${estimatedEnd.value?.day}/${estimatedEnd.value?.month}/${estimatedEnd.value?.year} ${estimatedEnd.value?.hours}:${estimatedEnd.value?.minutes}"
     }
-    fun updateDescription(input: String) {
-        _event.value?.description = input
-    }
+
     fun updateLocation(input: LocationData) {
-        _event.value?.location = input
-    }
-    fun addPerformer(friend: FriendPerformer) {
-        performersList.add(friend)
-        friendsList.remove(friend)
-    }
-
-    fun removePerformer(performer: FriendPerformer?) {
-        if (performer != null) {
-            performersList.remove(performer)
-            if ((performer.id ?: -1) != -1)
-                friendsList.add(performer)
-        }
-    }
-
-
-    suspend fun getFriends() {
-        try {
-            val fetchedJson = apiService.getFriends(creatorId)
-            if (fetchedJson.get("result").asBoolean) {
-                friendsList.clear()
-                val friendsArray = fetchedJson.getAsJsonArray("friends").asJsonArray
-                friendsArray.forEach { friendsElement ->
-                    val friendsObject = friendsElement.asJsonObject
-                    val friendsView = FriendPerformer(
-                        id = if (friendsObject.get("id").isJsonNull) null else friendsObject.get("id").asInt,
-                        firstname = if (friendsObject.get("firstname").isJsonNull) null else friendsObject.get(
-                            "firstname"
-                        ).asString,
-                        lastname = if (friendsObject.get("lastname").isJsonNull) null else friendsObject.get(
-                            "lastname"
-                        ).asString,
-                        profile_picture = null,
-                    )
-                    friendsList.add(friendsView)
-                }
-            }
-
-        } catch (e: Exception) {
-            println("Error: $e")
-        }
-    }
-
-    suspend fun createEvent(): Pair<Boolean, String> {
-        updateTimestamp()
-
-        if (_event.value?.title == "" || _event.value?.title == "Title") {
-            return Pair(false, "Title must be initialized")
-        }
-        if (_event.value?.description == "" || _event.value?.description == "Description") {
-            return Pair(false, "Description must be initialized")
-        }
-
-        /*
-        if (_event.value?.location == LocationData (
-                address = null,
-                latitude = 0.0,
-                longitude = 0.0, )
-            ) {
-            return Pair(false, "Location must be initialized")
-        }
-
-         */
-
-
-        if (_event.value?.estimated_end == actualDate) {
-            return Pair(false, "Date must be initialized")
-        }
-
-        if (_event.value?.estimated_end?.day!! < actualDate.day && _event.value?.estimated_end?.month!! < actualDate.month && _event.value?.estimated_end?.year!! < actualDate.year && _event.value?.estimated_end?.hour!! < actualDate.hour && _event.value?.estimated_end?.minutes!! < actualDate.minutes) {
-            return Pair(false, "Selected date is in past, select time in future")
-        }
-
-        if (_event.value?.category == 0) {
-            return Pair(false, "Category must be initialized")
-        }
-
-        try {
-            val jsonBody = JsonObject()
-            jsonBody.addProperty("title", _event.value?.title)
-            jsonBody.addProperty("user_id", _event.value?.user_id)
-            jsonBody.addProperty("description", _event.value?.description)
-            jsonBody.addProperty("location", _event.value?.location?.address)
-            jsonBody.addProperty("latitude", _event.value?.location?.latitude)
-            jsonBody.addProperty("longitude", _event.value?.location?.longitude)
-            jsonBody.addProperty("category", _event.value?.category)
-
-            timestamp = "${_event.value?.estimated_end?.day}.${_event.value?.estimated_end?.month!! + 1}.${_event.value?.estimated_end?.year} ${_event.value?.estimated_end?.hour}:${_event.value?.estimated_end?.minutes}"
-            jsonBody.addProperty("estimated_end", timestamp)
-
-
-            val performersArray = JsonArray()
-            performersList.forEach { performer ->
-                val performerObject = JsonObject()
-                performerObject.addProperty("id", performer.id)
-                performersArray.add(performerObject)
-            }
-            jsonBody.add("performers", performersArray)
-
-            println(jsonBody)
-
-            val fetchedJson = apiService.createEvent(jsonBody)
-            if (fetchedJson.get("result").asBoolean)
-                return Pair(true, "")
-            else
-                return Pair(false, "Error creating event")
-        } catch (e: Exception) {
-            println("Error: $e")
-        }
-        return Pair(false, "Unexpected error")
+        eventLocation.value = input.copy()
     }
 
     fun onUpdateCategory(id: Int) {
-        _event.value?.category = id
+        _eventData.value = _eventData.value?.copy(
+            category = id
+        )
+
+    }
+
+    fun updateDescription(description: String) {
+        _eventData.value = _eventData.value?.copy(
+            description = description
+        )
+        _eventData.value?.description = description
+    }
+
+    fun updateTitle(title: String) {
+        _eventData.value = _eventData.value?.copy(
+            title = title
+        )
+    }
+
+    fun removePerformer(selectedPerformer: User?) {
+        performers.remove(selectedPerformer)
+    }
+
+    fun addPerformer(friend: User) {
+        if (!performers.contains(friend))
+            performers.add(friend)
+    }
+
+    fun updateTime(mHours: Int, mMinutes: Int) {
+        estimatedEnd.value = estimatedEnd.value?.copy(
+            hours = mHours,
+            minutes = mMinutes
+        )
+        _eventData.value = _eventData.value?.copy(
+            estimatedEnd = formatLocalDate()
+        )
+    }
+
+    fun updateDate(mYear: Int, mMonth: Int, mDay: Int) {
+        estimatedEnd.value = estimatedEnd.value?.copy(
+            year = mYear,
+            month = mMonth + 1,
+            day = mDay
+        )
+    }
+
+    suspend fun createEvent(): Pair<Boolean, String> {
+        if (_eventData.value?.title == initializeData.title)
+            return Pair(false, "Title is not initialized")
+        if (_eventData.value?.description == initializeData.description)
+            return Pair(false, "Description is not initialized")
+        if (_eventData.value?.category == 0)
+            return Pair(false, "Please select category of event")
+        if (!eventLocation.isInitialized)
+            return Pair(false, "Please select location")
+        if (
+            estimatedEnd.value?.year!! <= initializeDate.year &&
+            estimatedEnd.value?.month!! <= initializeDate.month &&
+            estimatedEnd.value?.day!! <= initializeDate.day &&
+            estimatedEnd.value?.hours!! <= initializeDate.hours &&
+            estimatedEnd.value?.minutes!! <= initializeDate.minutes
+            )
+            return Pair(false, "Please select valid date")
+        if (eventLocation.isInitialized) {
+            _eventData.value?.location = eventLocation.value?.address.toString()
+            _eventData.value?.latitude = eventLocation.value?.latitude!!
+            _eventData.value?.longitude = eventLocation.value?.longitude!!
+        }
+        if (performers.isEmpty())
+            _eventData.value?.performers = null
+        else
+            _eventData.value?.performers = performers
+        _eventData.value?.estimatedEnd = formatDate()
+
+        if (eventData.isInitialized) {
+            try {
+                apiCalls.createEvent(eventData.value!!)
+                return Pair(true, "")
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return Pair(false, "ALL DONE")
     }
 }
 
-class CreateEventViewModelFactory(private val mainViewModel: MainViewModel) : ViewModelProvider.Factory {
+class CreateEventViewModelFactory(private val mainViewModel: MainViewModel, private val eventData: Event) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CreateEventViewModel::class.java)) {
-            return CreateEventViewModel(mainViewModel) as T
+            return CreateEventViewModel(mainViewModel, eventData) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

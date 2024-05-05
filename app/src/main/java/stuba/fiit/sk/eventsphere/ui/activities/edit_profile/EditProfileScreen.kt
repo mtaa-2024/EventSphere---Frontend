@@ -1,5 +1,6 @@
 package stuba.fiit.sk.eventsphere.ui.activities.edit_profile
 
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,11 +26,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,14 +43,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.launch
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.detector
+import stuba.fiit.sk.eventsphere.model.model
+import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.AlertDialogComponent
 import stuba.fiit.sk.eventsphere.ui.components.InputFieldComponent
+import stuba.fiit.sk.eventsphere.ui.components.ProfileImageComponent
 import stuba.fiit.sk.eventsphere.ui.components.SmallButtonComponent
 import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.EditProfileViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
+import java.io.IOException
 
 
 @Composable
@@ -54,13 +65,6 @@ fun EditProfileScreen (
     viewModel: MainViewModel,
     editProfileViewModel: EditProfileViewModel
 ) {
-    editProfileViewModel.userNewData.value?.firstname = stringResource(id = R.string.enter_firstname)
-    editProfileViewModel.userNewData.value?.lastname = stringResource(id = R.string.enter_lastname)
-    editProfileViewModel.userNewData.value?.oldEmail = stringResource(id = R.string.enter_old_email)
-    editProfileViewModel.userNewData.value?.newEmail = stringResource(id = R.string.enter_new_email)
-    editProfileViewModel.userNewData.value?.oldPassword = stringResource(id = R.string.enter_old_password)
-    editProfileViewModel.userNewData.value?.newPassword = stringResource(id = R.string.enter_new_password)
-
 
     Column (
         modifier = Modifier
@@ -84,15 +88,52 @@ fun EditProfileScreen (
                     .height(10.dp)
             )
 
-
             val context = LocalContext.current
+            var showError by remember { mutableStateOf(false) }
+            
             val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-                uri?.let {
-                    editProfileViewModel.viewModelScope.launch {
-                        editProfileViewModel.uriToByteArray(context, it, viewModel.loggedUser.value?.id ?: 0)
+                if (uri != null) {
+                    editProfileViewModel.userNewData.value?.profileImage = uri
+                    try {
+                        val inputStream = context.contentResolver.openInputStream(uri)
+                        inputStream?.use { stream ->
+                            val bitmap = BitmapFactory.decodeStream(stream)
+                            val resizedBitmap = model.resizeBitmap(bitmap, 100)
+                            editProfileViewModel.profileImage.value = resizedBitmap.asImageBitmap()
+                        }
+                        val inputImage = InputImage.fromBitmap(editProfileViewModel.profileImage.value?.asAndroidBitmap()!!, 0)
+                        val result = detector.process(inputImage)
+                            .addOnSuccessListener { faces ->
+                                if (faces.isNotEmpty()) {
+                                    editProfileViewModel.canBeProfilePictureAdded = true
+                                } else {
+                                    editProfileViewModel.canBeProfilePictureAdded = false
+                                    showError = true
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                e.printStackTrace()
+                            }
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
                     }
                 }
             }
+
+            if (showError) {
+                AlertDialogComponent(
+                    onDismissRequest = {},
+                    onConfirmation = {
+                        showError = false
+                    },
+                    onConfirmText = stringResource(id = R.string.change_image),
+                    onDismissText = "",
+                    dialogText = stringResource(id = R.string.error_image),
+                    dialogTitle = stringResource(id = R.string.error_image_title)
+                )
+            }
+
             Box (
                 modifier = Modifier
                     .clickable {
@@ -100,17 +141,19 @@ fun EditProfileScreen (
                     },
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.profile_default),
-                    contentDescription = "Profile background",
-                    contentScale = ContentScale.Inside,
-                    modifier = Modifier
-                        .size(100.dp)
+
+                val image = observeLiveData(liveData = editProfileViewModel.profileImage)
+                ProfileImageComponent (
+                    image = image
                 )
                 Box(
                     modifier = Modifier
                         .background(Color.Transparent)
-                        .border(3.dp, shape = RoundedCornerShape(75.dp), color = MaterialTheme.colorScheme.primary)
+                        .border(
+                            3.dp,
+                            shape = RoundedCornerShape(75.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                         .size(120.dp),
                 )
             }
@@ -175,7 +218,7 @@ fun EditProfileScreen (
 
                 InputFieldComponent(
                     label = stringResource(id = R.string.old_email),
-                    text = editProfileViewModel.userNewData.value?.oldEmail.toString(),
+                    text = editProfileViewModel.userNewData.value?.email.toString(),
                     onUpdate = editProfileViewModel::updateOldEmail,
                     keyboardType = KeyboardType.Text,
                     onCheck = null,
@@ -201,31 +244,6 @@ fun EditProfileScreen (
                 Spacer(
                     modifier = Modifier
                         .height(25.dp)
-                )
-
-                InputFieldComponent(
-                    label = stringResource(id = R.string.old_password),
-                    text = editProfileViewModel.userNewData.value?.oldPassword.toString(),
-                    onUpdate = editProfileViewModel::updateOldPassword,
-                    keyboardType = KeyboardType.Password,
-                    onCheck = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .height(15.dp)
-                )
-
-                InputFieldComponent(
-                    label = stringResource(id = R.string.new_password),
-                    text = editProfileViewModel.userNewData.value?.newPassword.toString(),
-                    onUpdate = editProfileViewModel::updateNewPassword,
-                    keyboardType = KeyboardType.Password,
-                    onCheck = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
                 )
             }
         }
@@ -266,23 +284,21 @@ fun EditProfileTopBar (
                 )
             }
             val openSaveDialog = remember { mutableStateOf(false) }
+            val openErrorDialog = remember { mutableStateOf(false) }
+            val error = remember { mutableStateOf("") }
+            val context = LocalContext.current
             SmallButtonComponent(
                 onClick = {
                     editProfileViewModel.viewModelScope.launch {
-                        if (editProfileViewModel.updateProfileInfo(
-                                viewModel.loggedUser.value?.id?: 0,
-                                editProfileViewModel.userNewData.value?.firstname.toString(),
-                                editProfileViewModel.userNewData.value?.lastname.toString(),
-                                editProfileViewModel.userNewData.value?.oldEmail.toString(),
-                                editProfileViewModel.userNewData.value?.newEmail.toString()
-                            )
-                        ) {
-                            viewModel.viewModelScope.launch {
-                                viewModel.updateUser()
-                            }
+
+                        val (result, message) = editProfileViewModel.updateProfileOnSave(context)
+                        error.value = message
+                        if (result) {
+                            openSaveDialog.value = true
+                        } else {
+                            openErrorDialog.value = true
                         }
                     }
-                    openSaveDialog.value = true
                 },
                 text = stringResource(id = R.string.save),
                 isSelected = false
@@ -296,6 +312,18 @@ fun EditProfileTopBar (
                     },
                     dialogTitle = stringResource(id = R.string.save_dialog_label),
                     dialogText = "",
+                    onDismissText = "",
+                    onConfirmText = stringResource(id = R.string.ok)
+                )
+            }
+            if(openErrorDialog.value) {
+                AlertDialogComponent(
+                    onDismissRequest = { openErrorDialog.value = false },
+                    onConfirmation = {
+                        openErrorDialog.value = false
+                    },
+                    dialogTitle = "Error",
+                    dialogText = error.value,
                     onDismissText = "",
                     onConfirmText = stringResource(id = R.string.ok)
                 )

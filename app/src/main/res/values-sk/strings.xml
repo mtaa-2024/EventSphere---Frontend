@@ -82,7 +82,7 @@
     <string name="search">Hľadať</string>
 
     <string name="address">Adresa</string>
-    <string name="tittle">Názov</string>
+    <string name="title">Názov</string>
     <string name="description">Popis</string>
     <string name="no_description">Bez popisu</string>
 
@@ -102,4 +102,20 @@
     <string name="notify_me">Upozorni ma</string>
     <string name="somewhere">Niečo</string>
     <string name="over_the_rainbow">Za dúhou</string>
+    <string name="username_initialize">Prosím zadajte username</string>
+    <string name="email_initialize">Prosím zadajte email</string>
+    <string name="email_format">Email je v zlom formáte</string>
+    <string name="password_initialize">Prosím zadajte heslo</string>
+    <string name="password_match">Heslá sa nezhodujú</string>
+    <string name="password_length">Heslo musí mať minimálne 8 znakov</string>
+    <string name="password_digit">Heslo musí obsahovať aspoň jednu číslicu</string>
+    <string name="password_upper">Heslo musí obsahovať jedno veľké písmeno</string>
+    <string name="check_internet">Niekde nastala chyba, skúste to neskôr</string>
+    <string name="check_data">Prihlasovacie údaje už existujú, skúste sa prihlásiť</string>
+    <string name="no_perfromers">Žiadny učinkujúci</string>
+    <string name="attend">Zúčastniť sa</string>
+    <string name="you_attending">Zúčastnený</string>
+    <string name="change_image">Chápem</string>
+    <string name="error_image">Profilová fotka neobsahuje človeka</string>
+    <string name="error_image_title">Chybná profilová fotka</string>
 </resources>

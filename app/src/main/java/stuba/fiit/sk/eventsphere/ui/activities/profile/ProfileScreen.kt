@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.User
 import stuba.fiit.sk.eventsphere.model.observeLiveData
 import stuba.fiit.sk.eventsphere.ui.components.ButtonComponent
 import stuba.fiit.sk.eventsphere.ui.components.FriendBox
@@ -52,6 +53,7 @@ import stuba.fiit.sk.eventsphere.ui.theme.welcomeStyle
 import stuba.fiit.sk.eventsphere.viewmodel.MainViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.ProfileViewModel
 import java.util.Locale
+import java.util.UUID
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -61,7 +63,7 @@ fun ProfileScreen (
     back: () -> Unit,
     toEventCenter: () -> Unit,
     toEditProfile: () -> Unit,
-    toFriend: (id:Int?) -> Unit,
+    toFriend: (User) -> Unit,
     toSearchUser: ()-> Unit,
     viewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
@@ -74,10 +76,41 @@ fun ProfileScreen (
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileTopBar (
-            back = back,
-            toEditProfile = toEditProfile
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.top_bar),
+                contentDescription = "welcome_background",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Row (
+                modifier = Modifier
+                    .padding(10.dp)
+                    .matchParentSize(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button (
+                    onClick = back,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.back_arrow),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
+                        contentDescription = "Back"
+                    )
+                }
+                SmallButtonComponent (
+                    text = stringResource(id = R.string.edit_profile),
+                    isSelected = false,
+                    onClick = { toEditProfile() }
+                )
+            }
+        }
 
         val scrollState = rememberScrollState()
 
@@ -93,12 +126,12 @@ fun ProfileScreen (
             )
 
             ProfileImageComponent (
-                image = viewModel.loggedUser.value?.profile_image
+                image = viewModel.loggedUser.value?.profileImage
             )
 
             Spacer(
                 modifier = Modifier
-                    .height(10.dp)
+                    .height(5.dp)
             )
 
             val firstName = if (viewModel.loggedUser.value?.firstname == null) stringResource(id = R.string.firstname) else viewModel.loggedUser.value?.firstname ?: ""
@@ -147,9 +180,9 @@ fun ProfileScreen (
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
 
-                val friends = observeLiveData(profileViewModel.friends)
+                val friends = observeLiveData(viewModel.friendsData)
 
-                if (friends?.listFriends?.isEmpty() == true) {
+                if (friends?.friends?.isEmpty() == true || friends?.friends == null) {
                     Text (
                         text = stringResource(id = R.string.no_friends),
                         style = welcomeStyle,
@@ -158,16 +191,15 @@ fun ProfileScreen (
                         textAlign = TextAlign.Center
                     )
                 } else {
-                    friends?.listFriends?.forEach { friend ->
+                    friends.friends?.forEach { friend ->
                         val firstname = if (friend.firstname == null) stringResource(id = R.string.firstname) else friend.firstname ?: ""
                         val lastname = if (friend.lastname == null) stringResource(id = R.string.lastname) else friend.lastname ?: ""
-                        val id = friend.id ?: 0
                         FriendBox (
                             firstname = firstname,
                             lastname =lastname,
                             onClick = toFriend,
-                            id = id,
-                            image = friend.profile_picture
+                            user = friend,
+                            image = friend.profileImage
                         )
                     }
                 }
@@ -285,7 +317,7 @@ fun ProfileScreen (
 
 
                                 SmallButtonComponent(
-                                    text = "mode",
+                                    text = if (modeChange) "off" else " on",
                                     isSelected = false,
                                     onClick = {
                                         modeChange = !modeChange
@@ -299,9 +331,9 @@ fun ProfileScreen (
                                         .height(10.dp)
                                 )
 
-                                var language by remember { mutableStateOf("en") }
+                                var language by remember { mutableStateOf(Locale.getDefault().toString()) }
                                 SmallButtonComponent(
-                                    text = if (language == "en") "English" else "Slovak",
+                                    text = if (language == "en") "Slovak" else "Angličtina",
                                     isSelected = false,
                                     onClick = {
                                         if (language == "en") language = "sk" else
@@ -328,48 +360,6 @@ fun ProfileScreen (
             Spacer (
                 modifier = Modifier
                     .height(50.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun ProfileTopBar (
-    back: () -> Unit,
-    toEditProfile: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(),
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.top_bar),
-            contentDescription = "welcome_background",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        Row (
-            modifier = Modifier
-                .padding(10.dp)
-                .matchParentSize(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button (
-                onClick = back,
-                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_arrow),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
-                    contentDescription = "Back"
-                )
-            }
-            SmallButtonComponent (
-                text = stringResource(id = R.string.edit_profile),
-                isSelected = false,
-                onClick = { toEditProfile() }
             )
         }
     }

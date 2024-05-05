@@ -1,7 +1,10 @@
 package stuba.fiit.sk.eventsphere.ui.navigation.routes
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import stuba.fiit.sk.eventsphere.R
+import stuba.fiit.sk.eventsphere.model.LoginData
 import stuba.fiit.sk.eventsphere.ui.activities.login.LoginScreen
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModel
 import stuba.fiit.sk.eventsphere.viewmodel.LoginViewModelFactory
@@ -13,7 +16,11 @@ fun LoginRoute(
     onNavigationToBack: () -> Unit,
     mainViewModel: MainViewModel
 ) {
-    val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory())
+    val loginData = LoginData (
+        username = "",
+        password = "",
+    )
+    val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(loginData))
     LoginScreen (
         toHome = onNavigationToHome,
         back = onNavigationToBack,

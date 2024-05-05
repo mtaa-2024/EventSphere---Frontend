@@ -8,126 +8,144 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
+import java.util.Locale
+import java.util.UUID
 
 interface ApiService {
 
-    @GET("login")
-    suspend fun getUser(
-        @Query("username") username: String?,
-        @Query("password") password: String?
+    @POST("create/user")
+    suspend fun registerUser (
+        @Body body: JsonObject
     ): JsonObject
 
-    @GET("friends/search")
-    suspend fun getFriendsSearch(
-        @Query("filter") filter: String?
+    @GET("login/user")
+    suspend fun loginUser(
+        @Query("username") username: String,
+        @Query("password") password: String,
+        @Query("locale") locale: String = Locale.getDefault().toString()
+    ): JsonObject
+
+    @POST("edit/profile")
+    suspend fun editUser(
+        @Body body: JsonObject
     ): JsonObject
 
     @GET("user")
-    suspend fun getUserData(
-        @Query("id") id: Int
+    suspend fun getUser(
+        @Query("id") id: String
     ): JsonObject
 
-    @POST("register")
-    suspend fun register(
-        @Body registrationData: JsonObject
-    ): JsonObject
-
-    @POST("friend/add")
+    @POST("add/friend")
     suspend fun addFriend(
-        @Body addFriendData: JsonObject
+        @Body body: JsonObject
     ): JsonObject
 
-    @GET("friends")
+    @GET("is/friend")
+    suspend fun isFriend(
+        @Query("user_id") user_id: UUID,
+        @Query("friend_id") friend_id: UUID
+    ): JsonObject
+
+    @GET("search/users")
+    suspend fun getSearchFriend(
+        @Query("filter") filter: String
+    ): JsonObject
+
+    @GET("user/friends")
     suspend fun getFriends(
-        @Query("id") id: Int?
+        @Query("id") id: UUID
     ): JsonObject
 
-    @POST("user/edit")
-    suspend fun editUser(
-        @Body editUserData: JsonObject
-    ): JsonObject
-
-    @GET("upcoming")
-    suspend fun getUpcoming(
+    @GET("upcoming/events")
+    suspend fun getUpcomingEvents(
         @Query("education") education: Boolean,
         @Query("music") music: Boolean,
         @Query("food") food: Boolean,
         @Query("art") art: Boolean,
-        @Query("sport") sport: Boolean
+        @Query("sport") sport: Boolean,
     ): JsonObject
 
-    @GET("attending")
-    suspend fun getAttending(
-        @Query("id") id: Int?
+    @GET("upcoming/events")
+    suspend fun getAttendingEvents(
+        @Query("education") education: Boolean,
+        @Query("music") music: Boolean,
+        @Query("food") food: Boolean,
+        @Query("art") art: Boolean,
+        @Query("sport") sport: Boolean,
+        @Query("id") id: UUID
     ): JsonObject
 
-    @GET("event")
-    suspend fun getEvent(
-        @Query("id") id: Int
+    @GET("search/events")
+    suspend fun getSearchEvent(
+        @Query("education") education: Boolean,
+        @Query("music") music: Boolean,
+        @Query("food") food: Boolean,
+        @Query("art") art: Boolean,
+        @Query("sport") sport: Boolean,
+        @Query("filter") filter: String
     ): JsonObject
 
-    @GET("upcoming/owner")
-    suspend fun getUpcomingOwner(
-        @Query("id") id: Int?
+    @GET("search/events")
+    suspend fun getSearchAttendingEvent(
+        @Query("education") education: Boolean,
+        @Query("music") music: Boolean,
+        @Query("food") food: Boolean,
+        @Query("art") art: Boolean,
+        @Query("sport") sport: Boolean,
+        @Query("filter") filter: String,
+        @Query("id") id: String
     ): JsonObject
 
-    @GET("expired/owner")
-    suspend fun getExpiredOwner(
-        @Query("id") id: Int?
+    @GET("user/upcoming")
+    suspend fun getUpcomingEventsUser(
+        @Query("id") id: String
+    ): JsonObject
+
+    @GET("user/expired")
+    suspend fun getExpiredEventsUser(
+        @Query("id") id: String
+    ): JsonObject
+
+    @GET("exists/username")
+    suspend fun checkUsername(
+        @Query("username") input: String,
+        @Query("locale") locale: String = Locale.getDefault().toString()
+    ): JsonObject
+
+    @GET("exists/email")
+    suspend fun checkEmail(
+        @Query("email") input: String,
+        @Query("locale") locale: String = Locale.getDefault().toString()
     ): JsonObject
 
     @POST("create/event")
     suspend fun createEvent(
-        @Body eventData: JsonObject
+        @Body body: JsonObject
     ): JsonObject
 
-    @POST("comment")
+    @POST("insert/comment")
     suspend fun insertComment(
         @Body body: JsonObject
     ): JsonObject
 
-    @GET("event/comments")
-    suspend fun getUpdatedComments(
-        @Query("id") id: Int
-    ): JsonObject
-
-    @PUT("profile/image")
-    suspend fun updateImage (
+    @POST("attend/event")
+    suspend fun attendEvent(
         @Body body: JsonObject
     ): JsonObject
 
-    @GET("username")
-    suspend fun usernameExists (
-        @Query("input") input: String,
-        @Query("locale") locale: String,
+    @POST("is/attending")
+    suspend fun isAttendingEvent(
+        @Body body: JsonObject
     ): JsonObject
 
-    @GET("email")
-    suspend fun emailExists (
-        @Query("input") input: String,
-        @Query("locale") locale: String,
-    ): JsonObject
-
-    @GET("isFriend")
-    suspend fun isFriend(
-        @Query("user_id") id: Int,
-        @Query("friend_id") friend_id: Int
-    ): JsonObject
-
-    @GET("event/search")
-    suspend fun searchEvents(
-        @Query("input") input: String
-    ): JsonObject
-
-    @POST("update/event")
+    @POST("edit/event")
     suspend fun updateEvent(
         @Body body: JsonObject
     ): JsonObject
-
 }
 
 val retrofit = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:9000/")
+    .baseUrl("https://mtaa-421316.uc.r.appspot.com/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
