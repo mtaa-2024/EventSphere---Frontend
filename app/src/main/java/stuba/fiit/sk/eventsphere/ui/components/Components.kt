@@ -524,7 +524,7 @@ fun SmallButtonComponent (
 ) {
     Box(
         modifier = Modifier
-            .width(110.dp)
+            .width(120.dp)
             .height(30.dp)
             .clip(RoundedCornerShape(15.dp))
             .border(
@@ -1027,8 +1027,6 @@ fun DateTimePicker(
 
 @SuppressLint("ScheduleExactAlarm")
 fun scheduleNotification(context: Context, delay: Long) {
-    Log.d("MainActivity", "scheduleNotification called with delay: $delay milliseconds")
-
     val intent = Intent(context, AlarmReceiver::class.java)
     val pendingIntent = PendingIntent.getBroadcast(
         context,

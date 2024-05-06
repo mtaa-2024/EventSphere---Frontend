@@ -88,21 +88,21 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    suspend fun authenticateUser(login: LoginData?, loginDataCopy: LoginData): Pair<Boolean, Int> {
+    suspend fun authenticateUser(login: LoginData?, loginDataCopy: LoginData): Pair<Boolean, String> {
         loginDataS = login?.copy()!!
         loginDataCopyS = loginDataCopy.copy()
         if (login.username == loginDataCopy.username || login.username == "")
-            return Pair(false, R.string.username_initialize)
+            return Pair(false, "")
         if (login.password == loginDataCopy.password || login.password == "")
-            return Pair(false, R.string.password_initialize)
-        val user = apiCalls.loginUser(login)
+            return Pair(false, "")
+        val (user, message) = apiCalls.loginUser(login)
         if (user != null) {
             _loggedUser.value = user.copy()
             if (ws == null)
                 ws = client.newWebSocket(Request.Builder().url("https://websockets-en52qho2eq-uc.a.run.app/").build(), listener)
-            return Pair(true, -1)
+            return Pair(true, "")
         }
-        return Pair(false, R.string.check_internet)
+        return Pair(false, message)
     }
 
     fun updateUser(user: User) {

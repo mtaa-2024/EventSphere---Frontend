@@ -60,7 +60,7 @@ fun GroupChat (
     groupChatViewModel: GroupChatViewModel
 ) {
     Column ( modifier = Modifier
-        .fillMaxSize()
+        .fillMaxWidth()
     ) {
         ChatTopBar(
             back = toBack
@@ -75,7 +75,6 @@ fun GroupChat (
                 .padding(15.dp, 15.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
-
             val chat = observeLiveData(liveData = viewModel.listener.messages)
             chat?.forEach { message ->
                 MessageBox(text = message.message, username = message.username, mainViewModel = viewModel)

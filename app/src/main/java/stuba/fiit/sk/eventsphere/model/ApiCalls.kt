@@ -35,16 +35,17 @@ class ApiCalls {
         }
     }
 
-    suspend fun loginUser(login: LoginData): User? {
+    suspend fun loginUser(login: LoginData): Pair<User?, String> {
         try {
             val fetchedJson =
                 apiService.loginUser(username = login.username.trim(), password = login.password.trim())
             if (fetchedJson.get("result").asBoolean)
-                return model.getUser(fetchedJson.get("user").asJsonObject)
+                return Pair(model.getUser(fetchedJson.get("user").asJsonObject), "")
+            return Pair(null, fetchedJson.get("message").asString)
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return null
+        return Pair(null, "Error")
     }
 
     suspend fun editUserProfile(actualUser: User, newUserData: NewUserData, userDataCopy: NewUserData, context: Context): User? {

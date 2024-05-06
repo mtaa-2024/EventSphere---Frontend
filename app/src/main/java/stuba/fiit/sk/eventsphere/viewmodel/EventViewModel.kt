@@ -10,6 +10,7 @@ import stuba.fiit.sk.eventsphere.model.Comment
 import stuba.fiit.sk.eventsphere.model.Event
 import stuba.fiit.sk.eventsphere.model.User
 import stuba.fiit.sk.eventsphere.model.apiCalls
+import java.io.IOException
 
 data class Comments(
     var comments: MutableList<Comment>?
@@ -72,7 +73,8 @@ class EventViewModel(val event: Event, private val viewModel: MainViewModel) : V
     }
 
     private suspend fun isUserAttending(): Boolean {
-        return apiCalls.isAttending(event, viewModel.loggedUser.value!!)
+
+        return false
     }
 }
 

@@ -67,8 +67,9 @@ fun EventSphereNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = WELCOME_ROUTE
+        startDestination = if (mainViewModel.loggedUser.isInitialized) HOME_ROUTE else WELCOME_ROUTE
     ) {
+
         composable(WELCOME_ROUTE) {
             mainViewModel = viewModel(factory = MainViewModelFactory())
             WelcomeRoute(

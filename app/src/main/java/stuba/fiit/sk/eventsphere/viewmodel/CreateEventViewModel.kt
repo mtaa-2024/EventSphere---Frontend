@@ -104,6 +104,7 @@ class CreateEventViewModel(private val viewModel: MainViewModel, private  val in
             return Pair(false, "Please select category of event")
         if (!eventLocation.isInitialized)
             return Pair(false, "Please select location")
+
         if (
             estimatedEnd.value?.year!! <= initializeDate.year &&
             estimatedEnd.value?.month!! <= initializeDate.month &&

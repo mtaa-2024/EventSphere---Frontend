@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -98,10 +99,10 @@ fun LoginScreen (
                     .fillMaxWidth()
             )
 
-            var errorMessage by remember { mutableIntStateOf(-1) }
+            var errorMessage by remember { mutableStateOf("") }
 
             Text (
-                text = if (errorMessage != -1) stringResource(id = errorMessage) else "" ,
+                text = if (errorMessage != "") errorMessage else "" ,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.fillMaxWidth(),
